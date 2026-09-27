@@ -30,7 +30,7 @@ form.addEventListener("submit",async e=>{
  e.preventDefault();
  const val=id=>document.getElementById(id).value.trim();
  const name=val("name"),mobile=val("mobile"),email=val("email"),service=val("service"),message=val("message");
- if(!/^\\d{10}$/.test(mobile)){st.className="status bad";st.textContent="Please enter a valid 10-digit mobile number.";st.style.display="block";return;}
+ if(!/^\d{10}$/.test(mobile)){st.className="status bad";st.textContent="Please enter a valid 10-digit mobile number.";st.style.display="block";return;}
  btn.disabled=true;btn.textContent="Submitting...";
  try{
   await addDoc(collection(db,"inquiries"),{name,mobile,email,service,message,status:"new",portal:"india",createdAt:serverTimestamp(),updatedAt:serverTimestamp()});
