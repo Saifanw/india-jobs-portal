@@ -1,22 +1,230 @@
+
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
 <title>Inquiry | India Jobs Portal</title>
+
 <style>
-*{box-sizing:border-box}body{margin:0;font:16px Arial;background:#f4f7fb;color:#172b45}.top{background:#102a43;color:#fff;padding:15px 4%;font-weight:800}main{max-width:850px;width:92%;margin:28px auto}.card{background:#fff;border:1px solid #dce5ef;border-radius:16px;padding:24px;box-shadow:0 8px 25px #102a4310}h1{margin-top:0}label{display:block;font-weight:700;font-size:14px;margin:14px 0 6px}input,select,textarea{width:100%;padding:12px;border:1px solid #cbd8e5;border-radius:9px;font:inherit}textarea{min-height:125px}button,.btn{display:inline-block;border:0;border-radius:9px;padding:12px 18px;background:#1769e8;color:#fff;font-weight:800;text-decoration:none;cursor:pointer;margin-top:16px}button:disabled{opacity:.6}.status{display:none;padding:12px;border-radius:9px;margin-top:12px}.ok{background:#edf8f2;color:#11623f}.bad{background:#fff0f0;color:#a63d3d}a{color:#1769e8}
-</style></head><body><div class="top">India Jobs Portal · Inquiry</div><main><section class="card"><h1>Send an Inquiry</h1><p>Job search, hiring, resume, interview preparation ya portal support ke liye message bhejein.</p>
-<form id="form">
-<label>Name *</label><input id="name" maxlength="80" required placeholder="Your name">
-<label>Mobile (10 digits) *</label><input id="mobile" inputmode="numeric" maxlength="10" required placeholder="10-digit mobile">
-<label>Email (optional)</label><input id="email" type="email" maxlength="160" placeholder="you@example.com">
-<label>Service</label><select id="service"><option value="">Choose service</option><option>Private Job</option><option>Government Job</option><option>Employer Job Posting</option><option>Resume / Interview Support</option><option>Other</option></select>
-<label>Your Requirement *</label><textarea id="message" maxlength="1500" required placeholder="Write your requirement..."></textarea>
-<button id="send" type="submit">Submit Inquiry</button><div id="status" class="status" role="status"></div></form>
-<p><a href="index.html">← Back to Home</a></p></section></main>
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font: 16px Arial, sans-serif;
+  background: #f4f7fb;
+  color: #172b45;
+}
+
+.top {
+  background: #102a43;
+  color: #fff;
+  padding: 15px 4%;
+  font-weight: 800;
+}
+
+main {
+  max-width: 850px;
+  width: 92%;
+  margin: 28px auto;
+}
+
+.card {
+  background: #fff;
+  border: 1px solid #dce5ef;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 8px 25px #102a4310;
+}
+
+h1 {
+  margin-top: 0;
+}
+
+label {
+  display: block;
+  font-weight: 700;
+  font-size: 14px;
+  margin: 14px 0 6px;
+}
+
+input,
+select,
+textarea {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #cbd8e5;
+  border-radius: 9px;
+  font: inherit;
+}
+
+textarea {
+  min-height: 125px;
+  resize: vertical;
+}
+
+button,
+.btn {
+  display: inline-block;
+  border: 0;
+  border-radius: 9px;
+  padding: 12px 18px;
+  background: #1769e8;
+  color: #fff;
+  font-weight: 800;
+  text-decoration: none;
+  cursor: pointer;
+  margin-top: 16px;
+}
+
+button:disabled {
+  opacity: .6;
+  cursor: not-allowed;
+}
+
+.status {
+  display: none;
+  padding: 12px;
+  border-radius: 9px;
+  margin-top: 12px;
+  overflow-wrap: anywhere;
+}
+
+.ok {
+  background: #edf8f2;
+  color: #11623f;
+}
+
+.bad {
+  background: #fff0f0;
+  color: #a63d3d;
+}
+
+a {
+  color: #1769e8;
+}
+
+@media (max-width: 600px) {
+  .card {
+    padding: 18px;
+  }
+
+  h1 {
+    font-size: 25px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div class="top">
+  India Jobs Portal · Inquiry
+</div>
+
+<main>
+  <section class="card">
+
+    <h1>Send an Inquiry</h1>
+
+    <p>
+      Job search, hiring, resume, interview preparation
+      ya portal support ke liye message bhejein.
+    </p>
+
+    <form id="form">
+
+      <label for="name">Name *</label>
+      <input
+        id="name"
+        type="text"
+        maxlength="80"
+        required
+        placeholder="Your name"
+      >
+
+      <label for="mobile">Mobile (10 digits) *</label>
+      <input
+        id="mobile"
+        type="tel"
+        inputmode="numeric"
+        maxlength="10"
+        pattern="[0-9]{10}"
+        required
+        placeholder="10-digit mobile"
+      >
+
+      <label for="email">Email (optional)</label>
+      <input
+        id="email"
+        type="email"
+        maxlength="160"
+        placeholder="you@example.com"
+      >
+
+      <label for="service">Service</label>
+      <select id="service">
+        <option value="">Choose service</option>
+        <option value="Private Job">Private Job</option>
+        <option value="Government Job">Government Job</option>
+        <option value="Employer Job Posting">
+          Employer Job Posting
+        </option>
+        <option value="Resume / Interview Support">
+          Resume / Interview Support
+        </option>
+        <option value="Other">Other</option>
+      </select>
+
+      <label for="message">Your Requirement *</label>
+      <textarea
+        id="message"
+        maxlength="1500"
+        required
+        placeholder="Write your requirement..."
+      ></textarea>
+
+      <button id="send" type="submit">
+        Submit Inquiry
+      </button>
+
+      <div
+        id="status"
+        class="status"
+        role="status"
+        aria-live="polite"
+      ></div>
+
+    </form>
+
+    <p>
+      <a href="index.html">← Back to Home</a>
+    </p>
+
+  </section>
+</main>
+
 <script type="module">
-import {initializeApp} from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
-import {getFirestore,collection,addDoc,serverTimestamp} from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
+
+import {
+  initializeApp
+} from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
+
+import {
+  getFirestore,
+  collection,
+  addDoc,
+  serverTimestamp
+} from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
+
+
+/* INDIA JOBS PORTAL FIREBASE CONFIG */
+
 const firebaseConfig = {
-  apiKey: "AIzaSyCh20UGNM3-tWZiB6pkNUXcbWK-lwkc-sU",
+  apiKey: "AIzaSyCh20UGNM3-tWZiB6pkNUXcbWK-lwkc-s",
   authDomain: "india-jobs-portal.firebaseapp.com",
   projectId: "india-jobs-portal",
   storageBucket: "india-jobs-portal.firebasestorage.app",
@@ -24,18 +232,141 @@ const firebaseConfig = {
   appId: "1:1035209974762:web:622a242e1a291c4b604893",
   measurementId: "G-XSH6QC1PG4"
 };
-const db=getFirestore(initializeApp(firebaseConfig,"india-inquiry-page"));
-const form=document.getElementById("form"),btn=document.getElementById("send"),st=document.getElementById("status");
-form.addEventListener("submit",async e=>{
- e.preventDefault();
- const val=id=>document.getElementById(id).value.trim();
- const name=val("name"),mobile=val("mobile"),email=val("email"),service=val("service"),message=val("message");
- if(!/^\d{10}$/.test(mobile)){st.className="status bad";st.textContent="Please enter a valid 10-digit mobile number.";st.style.display="block";return;}
- btn.disabled=true;btn.textContent="Submitting...";
- try{
-  await addDoc(collection(db,"inquiries"),{name,mobile,email,service,message,status:"new",portal:"india",createdAt:serverTimestamp(),updatedAt:serverTimestamp()});
-  form.reset();st.className="status ok";st.textContent="Inquiry submitted successfully. India Jobs Portal team will review it.";st.style.display="block";
- }catch(err){console.error(err);st.className="status bad";st.textContent="Inquiry submit nahi hui. Firestore Rules publish hone ke baad dobara try karein.";st.style.display="block";}
- finally{btn.disabled=false;btn.textContent="Submit Inquiry";}
+
+
+/* INITIALIZE FIREBASE */
+
+const app = initializeApp(
+  firebaseConfig,
+  "india-inquiry-page"
+);
+
+const db = getFirestore(app);
+
+
+/* FORM ELEMENTS */
+
+const form = document.getElementById("form");
+const btn = document.getElementById("send");
+const st = document.getElementById("status");
+
+
+/* STATUS MESSAGE */
+
+function showStatus(message, type) {
+  st.className = "status " + type;
+  st.textContent = message;
+  st.style.display = "block";
+}
+
+
+/* SUBMIT INQUIRY */
+
+form.addEventListener("submit", async (e) => {
+
+  e.preventDefault();
+
+  const val = (id) =>
+    document.getElementById(id).value.trim();
+
+  const name = val("name");
+  const mobile = val("mobile");
+  const email = val("email");
+  const service = val("service");
+  const message = val("message");
+
+
+  /* VALIDATE MOBILE NUMBER */
+
+  if (!/^\d{10}$/.test(mobile)) {
+    showStatus(
+      "Please enter a valid 10-digit mobile number.",
+      "bad"
+    );
+    return;
+  }
+
+
+  /* VALIDATE REQUIRED FIELDS */
+
+  if (!name || !message) {
+    showStatus(
+      "Please fill in all required fields.",
+      "bad"
+    );
+    return;
+  }
+
+
+  /* START SUBMISSION */
+
+  btn.disabled = true;
+  btn.textContent = "Submitting...";
+
+  st.style.display = "none";
+
+
+  try {
+
+    /* SAVE INQUIRY TO INDIA FIRESTORE */
+
+    await addDoc(
+      collection(db, "inquiries"),
+      {
+        name: name,
+        mobile: mobile,
+        email: email,
+        service: service,
+        message: message,
+
+        status: "new",
+        portal: "india",
+
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp()
+      }
+    );
+
+
+    /* SUCCESS */
+
+    form.reset();
+
+    showStatus(
+      "Inquiry submitted successfully! India Jobs Portal team will review your inquiry.",
+      "ok"
+    );
+
+  } catch (err) {
+
+    console.error("Inquiry submission error:", err);
+
+    if (err.code === "permission-denied") {
+
+      showStatus(
+        "Inquiry submit nahi hui. Firebase Firestore Rules mein permission check karein.",
+        "bad"
+      );
+
+    } else {
+
+      showStatus(
+        "Inquiry submit nahi hui. Internet connection aur Firebase configuration check karein. Please try again.",
+        "bad"
+      );
+
+    }
+
+  } finally {
+
+    btn.disabled = false;
+    btn.textContent = "Submit Inquiry";
+
+  }
+
 });
-</script></body></html>
+
+</script>
+
+</body>
+</html>
