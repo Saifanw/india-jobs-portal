@@ -321,7 +321,7 @@ footer{background:#0d2138;color:#cedbea;padding:45px 0 18px}.foot{display:grid;g
 <nav><div class="wrap navin">
 <a href="#home" class="brand"><div class="logo">IJ</div><div>India Jobs Portal<small>Private Jobs • Government Jobs • Fresher Jobs • Career Support</small></div></a>
 <div class="menu">
-<a href="jobs.html">Jobs</a><a href="government-jobs.html">Govt Jobs</a><a href="post-a-job.html">Post a Job</a><a href="job-seeker.html">👤 Job Seeker</a><button type="button" class="employerChatNavBtn" id="openEmployerChat">🏢 HR / Company Chat</button><a class="btn primary" href="inquiry.html">Inquiry</a><a class="donate-nav-btn" href="upi://pay?pa=6350566010@ybl&amp;pn=India%20Jobs%20Portal&amp;cu=INR" style="display:inline-flex;align-items:center;justify-content:center;background:#fff7ed;color:#9a3412;border:1px solid #fed7aa;border-radius:10px;padding:9px 12px;font-weight:850;white-space:nowrap">❤️ Donate</a><div class="notifWrap">
+<a href="jobs.html">Jobs</a><a href="government-jobs.html">Govt Jobs</a><a href="post-a-job.html">Post a Job</a><a href="job-seeker.html">👤 Job Seeker</a><button type="button" class="employerChatNavBtn" id="openEmployerChat">🏢 HR / Company Chat</button><a class="btn primary" href="#contact" id="navInquiryButton">Inquiry</a><button type="button" class="donate-nav-btn" id="openDonateModal" style="display:inline-flex;align-items:center;justify-content:center;background:#fff7ed;color:#9a3412;border:1px solid #fed7aa;border-radius:10px;padding:9px 12px;font-weight:850;white-space:nowrap;cursor:pointer;font:inherit">❤️ Donate</button><div class="notifWrap">
   <button id="notifBell" class="notifBell" aria-label="Notifications" title="Notifications">🔔<span id="notifBadge" class="notifBadge">0</span></button>
   <div id="notifPanel" class="notifPanel">
     <div class="notifPanelHead">
@@ -1088,6 +1088,69 @@ const visitorDb=getFirestore(visitorApp);
      }catch(e){}
    });
  }catch(e){console.warn("Visitor analytics tracker:",e)}
+})();
+</script>
+
+
+<!-- DONATION MODAL: works on desktop and mobile; UPI app launch is optional -->
+<div id="donateModal" role="dialog" aria-modal="true" aria-labelledby="donateTitle"
+ style="display:none;position:fixed;inset:0;background:rgba(8,25,45,.58);z-index:10030;align-items:center;justify-content:center;padding:16px">
+ <div style="background:#fff;width:min(420px,100%);border-radius:18px;padding:24px;box-shadow:0 25px 80px #0004;text-align:center;position:relative">
+  <button type="button" id="closeDonateModal" aria-label="Close" style="position:absolute;right:12px;top:10px;border:0;background:#eef2f7;border-radius:50%;width:32px;height:32px;font-size:20px;cursor:pointer">×</button>
+  <div style="font-size:34px">❤️</div>
+  <h2 id="donateTitle" style="margin:8px 0;color:#102a43;font-size:23px">Support India Jobs Portal</h2>
+  <p style="color:#64748b;font-size:14px">Aap apni marzi se UPI ke through support kar sakte hain.</p>
+  <div style="background:#f7faff;border:1px solid #dce5ef;border-radius:12px;padding:13px;margin:16px 0">
+   <small style="display:block;color:#64748b">UPI ID</small><strong id="donateUpiId" style="font-size:18px;color:#102a43">6350566010@ybl</strong>
+  </div>
+  <button type="button" id="copyDonateUpi" class="btn light" style="width:100%;margin-bottom:9px">📋 Copy UPI ID</button>
+  <a id="launchDonateUpi" class="btn primary" style="width:100%" href="upi://pay?pa=6350566010%40ybl&amp;pn=India%20Jobs%20Portal&amp;cu=INR">Open UPI App</a>
+  <p id="donateStatus" style="font-size:12px;color:#64748b;margin-bottom:0" aria-live="polite">Desktop par UPI ID copy karke apne UPI app mein pay karein.</p>
+ </div>
+</div>
+<script>
+(function(){
+  const chatModal=document.getElementById('employerChatOverlay');
+  const chatOpenBtn=document.getElementById('openEmployerChat');
+  const chatCloseBtn=document.getElementById('closeEmployerChat');
+  // Non-module fallback makes the chat window open even if a Firebase module fails to load.
+  if(chatOpenBtn && chatModal){
+    chatOpenBtn.addEventListener('click',function(){
+      chatModal.classList.add('open');
+      chatModal.style.display='flex';
+      document.body.style.overflow='hidden';
+    });
+  }
+  function closeChatFallback(){
+    if(chatModal){chatModal.classList.remove('open');chatModal.style.display='none';}
+    document.body.style.overflow='';
+  }
+  chatCloseBtn?.addEventListener('click',closeChatFallback);
+  chatModal?.addEventListener('click',function(e){if(e.target===chatModal)closeChatFallback();});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape'){closeChatFallback();closeDonate();}});
+
+  const donateModal=document.getElementById('donateModal');
+  const donateOpen=document.getElementById('openDonateModal');
+  const donateClose=document.getElementById('closeDonateModal');
+  const donateStatus=document.getElementById('donateStatus');
+  function openDonate(){if(donateModal){donateModal.style.display='flex';document.body.style.overflow='hidden';}}
+  function closeDonate(){if(donateModal){donateModal.style.display='none';document.body.style.overflow='';}}
+  donateOpen?.addEventListener('click',openDonate);
+  donateClose?.addEventListener('click',closeDonate);
+  donateModal?.addEventListener('click',function(e){if(e.target===donateModal)closeDonate();});
+  document.getElementById('copyDonateUpi')?.addEventListener('click',async function(){
+    try{
+      await navigator.clipboard.writeText('6350566010@ybl');
+      donateStatus.textContent='✅ UPI ID copied. Ab apne UPI app mein paste karke payment karein.';
+    }catch(e){
+      donateStatus.textContent='UPI ID: 6350566010@ybl — ise manually copy karke apne UPI app mein paste karein.';
+    }
+  });
+  // Inquiry button should scroll to the actual inquiry form on this homepage.
+  document.getElementById('navInquiryButton')?.addEventListener('click',function(e){
+    const target=document.getElementById('contact');
+    if(target){e.preventDefault();target.scrollIntoView({behavior:'smooth',block:'start'});history.replaceState(null,'','#contact');}
+  });
 })();
 </script>
 
