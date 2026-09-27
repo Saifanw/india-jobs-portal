@@ -496,8 +496,8 @@ function jdKeywords(jd, skills){
 
 <script>
 /* Notification center local read-state */
-window.RJNotificationRead = {
-  key: "rj_read_notifications_v1",
+window.IndiaNotificationRead = {
+  key: "india_jobs_read_notifications_v1",
   get: function(){
     try{return JSON.parse(localStorage.getItem(this.key)||"[]")}catch(e){return []}
   },
@@ -608,7 +608,7 @@ function notifTime(ts){
   }catch(e){return '';}
 }
 function renderNotificationCenter(){
-  const read=window.RJNotificationRead.get();
+  const read=window.IndiaNotificationRead.get();
   const unread=latestNotifications.filter(n=>!read.includes(n.id));
   notifBadge.textContent=unread.length>99?'99+':unread.length;
   notifBadge.style.display=unread.length?'flex':'none';
@@ -637,14 +637,14 @@ document.addEventListener('click',function(e){
   if(!notifPanel.contains(e.target) && !notifBell.contains(e.target)) notifPanel.classList.remove('open');
 });
 markAllRead.addEventListener('click',function(){
-  window.RJNotificationRead.all(latestNotifications.map(n=>n.id));
+  window.IndiaNotificationRead.all(latestNotifications.map(n=>n.id));
   renderNotificationCenter();
 });
 notifItems.addEventListener('click',function(e){
   const item=e.target.closest('.notifItem');
   if(!item)return;
   const id=item.getAttribute('data-notif-id');
-  window.RJNotificationRead.mark(id);
+  window.IndiaNotificationRead.mark(id);
   renderNotificationCenter();
   notifPanel.classList.remove('open');
   const updates=document.getElementById('updates');
@@ -660,7 +660,7 @@ try{
       if(change.type!=='added') return;
       const j=change.doc.data();
       const id='job_'+change.doc.id;
-      if(!window.RJNotificationRead.has(id)){
+      if(!window.IndiaNotificationRead.has(id)){
         latestNotifications=[{id:id,title:'New Job Available',message:`${j.title||'New vacancy'}${j.company?' • '+j.company:''}${j.location?' • '+j.location:''}`,type:'job',status:'published',createdAt:new Date()}].concat(latestNotifications).slice(0,15);
         renderNotificationCenter();
       }
@@ -722,6 +722,7 @@ const inquiryForm=document.getElementById('inquiryForm');
 inquiryForm.addEventListener('submit',async function(e){
   e.preventDefault();
   e.stopPropagation();
+  inquiryForm.dataset.firebaseSubmitted='yes';
 
   const btn=document.getElementById('inqBtn');
   const st=document.getElementById('inqStatus');
@@ -801,66 +802,7 @@ commentForm.addEventListener('submit',async e=>{e.preventDefault();const btn=doc
 </script>
 
 
-<script type="module">
-import { initializeApp, getApps, getApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
-import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
 
-const inquiryFirebaseConfig = {
-  apiKey:"AIzaSyCh20UGNM3-tWZiB6pkNUXcbWK-lwkc-sU",
-  authDomain:"india-jobs-portal.firebaseapp.com",
-  projectId:"india-jobs-portal",
-  storageBucket:"india-jobs-portal.firebasestorage.app",
-  messagingSenderId:"1035209974762",
-  appId:"1:1035209974762:web:622a242e1a291c4b604893"
-};
-
-const existingInquiryApp = getApps().find(a => a.name === "public-home");
-const inquiryApp = existingInquiryApp || initializeApp(inquiryFirebaseConfig, "inquiry-fallback");
-const inquiryDb = getFirestore(inquiryApp);
-
-const inquiryFormFallback = document.getElementById("inquiryForm");
-if(inquiryFormFallback){
-  inquiryFormFallback.addEventListener("submit", async function(e){
-    // The main handler normally handles this. This listener is only a safety net.
-    if(this.dataset.firebaseSubmitted === "yes") return;
-    e.preventDefault();
-    e.stopImmediatePropagation();
-
-    const btn=document.getElementById("inqBtn");
-    const st=document.getElementById("inqStatus");
-    const name=document.getElementById("inqName").value.trim();
-    const mobile=document.getElementById("inqMobile").value.trim();
-    const email=document.getElementById("inqEmail").value.trim();
-    const service=document.getElementById("inqService").value;
-    const message=document.getElementById("inqMessage").value.trim();
-
-    if(!name || !message || !/^\d{10}$/.test(mobile)){
-      st.style.display="block";
-      st.textContent="❌ Name, 10-digit mobile aur requirement sahi se fill karein.";
-      return;
-    }
-
-    btn.disabled=true;
-    btn.textContent="⏳ Sending...";
-    try{
-      await addDoc(collection(inquiryDb,"inquiries"),{
-        name,mobile,email,service,message,status:"new",
-        createdAt:serverTimestamp(),updatedAt:serverTimestamp()
-      });
-      st.style.display="block";
-      st.textContent="✅ Inquiry submitted successfully. India Jobs Portal admin ise review karega.";
-      inquiryFormFallback.reset();
-    }catch(err){
-      console.error(err);
-      st.style.display="block";
-      st.textContent="❌ Inquiry submit nahi ho saki. Please try again.";
-    }finally{
-      btn.disabled=false;
-      btn.textContent="📩 Submit Inquiry";
-    }
-  }, true);
-}
-</script>
 
 
 <!-- HR / COMPANY CHAT MODAL -->
@@ -907,6 +849,34 @@ const visitorConfig={
 const visitorApp=initializeApp(visitorConfig,"india-visitor-tracker");
 const visitorAuth=getAuth(visitorApp);
 const visitorDb=getFirestore(visitorApp);
+
+// India-only HR chat submission. Anonymous Firebase Auth gives each visitor
+// an owner UID so chat threads can be kept private from other visitors.
+const chatApp=initializeApp(visitorConfig,"india-employer-chat");
+const chatAuth=getAuth(chatApp);
+const chatDb=getFirestore(chatApp);
+const employerChatForm=document.getElementById("employerChatForm");
+if(employerChatForm){
+ employerChatForm.addEventListener("submit",async e=>{
+  e.preventDefault();
+  const val=id=>document.getElementById(id).value.trim();
+  const name=val("employerChatName"), company=val("employerChatCompany"), email=val("employerChatEmail"), phone=val("employerChatPhone"), message=val("employerChatMessage");
+  const status=document.getElementById("employerChatStatus"), button=document.getElementById("employerChatSend");
+  const show=(text,ok=false)=>{status.style.display="block";status.textContent=text;status.style.background=ok?"#edf8f2":"#fff0f0";status.style.color=ok?"#11623f":"#a63d3d";};
+  if(name.length<2||company.length<2||!email||message.length<2){show("Name, company, email aur message sahi se fill karein.");return;}
+  if(phone&&!/^\d{10}$/.test(phone)){show("Mobile number 10 digits ka hona chahiye.");return;}
+  button.disabled=true;button.textContent="Sending…";
+  try{
+   let user=chatAuth.currentUser;if(!user)user=(await signInAnonymously(chatAuth)).user;
+   const thread=doc(collection(chatDb,"employerChats"));
+   await setDoc(thread,{ownerUid:user.uid,portal:"india",employerName:name,companyName:company,email,phone,status:"open",latestMessage:message,latestSender:"employer",unreadForAdmin:true,unreadForEmployer:false,createdAt:serverTimestamp(),updatedAt:serverTimestamp()});
+   await addDoc(collection(chatDb,"employerChats",thread.id,"messages"),{ownerUid:user.uid,text:message,sender:"employer",senderName:name,createdAt:serverTimestamp()});
+   show("Message India Jobs Portal HR team ko bhej diya gaya. Admin dashboard se review hoga.",true);employerChatForm.reset();
+  }catch(err){console.error("India HR chat submit:",err);show("Chat send nahi hua: "+(err.code||err.message||"Please retry"));}
+  finally{button.disabled=false;button.textContent="💬 Send Message";}
+ });
+}
+
 
 (async()=>{
  try{
