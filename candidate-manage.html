@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Job Seekers Manager | India Jobs Portal</title>
+<style>
+:root{--navy:#102a43;--blue:#1769e8;--green:#16865b;--orange:#e78b16;--red:#c94747;--bg:#f5f8fc;--line:#dce5ef;--muted:#64748b}
+*{box-sizing:border-box}body{margin:0;font-family:Inter,Segoe UI,Arial,sans-serif;background:var(--bg);color:#182536}
+header{background:var(--navy);color:#fff;padding:17px 4%}.head{max-width:1250px;margin:auto;display:flex;justify-content:space-between;align-items:center;gap:12px}
+.brand{font-size:21px;font-weight:900}.sub{font-size:12px;color:#dce9f8}.btn{border:0;border-radius:8px;padding:10px 13px;font-weight:800;cursor:pointer}.primary{background:var(--blue);color:#fff}.light{background:#fff;color:var(--navy)}
+.wrap{max-width:1250px;width:94%;margin:24px auto}.top{display:flex;justify-content:space-between;gap:12px;align-items:end;margin-bottom:18px}
+h1{margin:0;color:var(--navy)}.muted{font-size:13px;color:var(--muted)}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px}.stat{background:#fff;border:1px solid var(--line);border-radius:12px;padding:15px}.stat b{font-size:25px;display:block}.stat span{font-size:11px;font-weight:900;color:var(--muted)}
+.card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:17px;margin-bottom:16px}
+.filters{display:grid;grid-template-columns:2fr 1fr 1fr 1fr auto;gap:9px}input,select{width:100%;padding:10px;border:1px solid #cbd8e7;border-radius:8px;font:inherit}
+.tableWrap{overflow:auto}.table{width:100%;border-collapse:collapse;min-width:1050px}.table th,.table td{padding:10px 8px;border-bottom:1px solid #e7edf4;text-align:left;font-size:12px;vertical-align:top}.table th{background:#f7faff;color:var(--navy);font-size:11px}.pill{display:inline-block;padding:4px 7px;border-radius:20px;background:#eef4fa;font-size:10px;font-weight:800}.pill.green{background:#eaf8f1;color:#146b48}.pill.orange{background:#fff5e6;color:#9a5d0b}.pill.red{background:#fff0f0;color:#a63d3d}
+.small{padding:6px 8px;font-size:11px}.danger{background:#fff0f0;color:#a63d3d}.empty{text-align:center;padding:28px;color:var(--muted)}
+.modal-backdrop{display:none;position:fixed;inset:0;background:#0b1d30aa;z-index:9999;padding:18px;overflow:auto;align-items:center;justify-content:center}
+.modal{background:#fff;width:min(900px,100%);max-height:92vh;overflow:auto;border-radius:16px;padding:22px;box-shadow:0 20px 70px #0004}
+.modal-head{display:flex;justify-content:space-between;align-items:center;gap:12px;position:sticky;top:-22px;background:#fff;padding:4px 0 14px;border-bottom:1px solid var(--line);z-index:1}
+.job-option{display:flex;gap:12px;align-items:flex-start;padding:13px;border:1px solid var(--line);border-radius:11px;margin:9px 0;background:#fbfdff}
+.job-option input{width:auto;margin-top:4px;transform:scale(1.15)}.job-option b{display:block;color:var(--navy);margin-bottom:4px}.job-option small{color:var(--muted);line-height:1.5}
+.modal-actions{display:flex;flex-wrap:wrap;gap:9px;margin-top:15px}.sharebox{background:#f2f7ff;border:1px solid #d4e5ff;padding:13px;border-radius:10px;margin-top:14px;overflow-wrap:anywhere}.sharebox input{margin:8px 0}
+@media(max-width:650px){.modal{padding:15px}.modal-head{top:-15px}.modal-actions .btn{flex:1}}
+@media(max-width:800px){.stats{grid-template-columns:1fr 1fr}.filters{grid-template-columns:1fr 1fr}.top{align-items:flex-start;flex-direction:column}}
+</style>
+</head>
+<body>
+<header><div class="head">
+<div><div class="brand">India Jobs Portal — Job Seekers</div><div class="sub">Private candidate management area</div></div>
+<div style="display:flex;gap:8px"><a class="btn light" href="admin-dashboard.html">Dashboard</a><button id="logout" class="btn light">Logout</button></div>
+</div></header>
+
+<main class="wrap">
+<div id="login" class="card" style="text-align:center;max-width:480px;margin:55px auto">
+<h2>🔐 Admin Login</h2><p class="muted">Only authorised admin can view candidate data.</p>
+<button id="loginBtn" class="btn primary">🔑 Login with Google</button>
+<div id="loginMsg" class="muted" style="margin-top:12px"></div>
+</div>
+
+<section id="app" style="display:none">
+<div class="top"><div><div class="muted">CANDIDATE DATABASE</div><h1>👤 Job Seekers</h1><div id="signed" class="muted"></div></div>
+<button id="export" class="btn primary">📊 Export to Excel</button></div>
+
+<div class="stats">
+<div class="stat"><b id="total">0</b><span>TOTAL CANDIDATES</span></div>
+<div class="stat"><b id="newCount">0</b><span>NEW</span></div>
+<div class="stat"><b id="shortCount">0</b><span>SHORTLISTED</span></div>
+<div class="stat"><b id="contactCount">0</b><span>CONTACTED</span></div>
+</div>
+
+<div class="card">
+<div class="filters">
+<input id="search" placeholder="Search name, mobile, email, role, skill...">
+<select id="location"><option value="">All Locations</option></select>
+<select id="experience"><option value="">All Experience</option><option>Fresher</option><option>0-1 Year</option><option>1-2 Years</option><option>2-5 Years</option><option>5+ Years</option></select>
+<select id="status"><option value="">All Status</option><option>new</option><option>contacted</option><option>shortlisted</option><option>closed</option></select>
+<button id="clear" class="btn light">Clear</button>
+</div>
+</div>
+
+<div class="card tableWrap">
+<table class="table">
+<thead><tr><th>Name</th><th>Contact</th><th>Location</th><th>Role</th><th>Experience</th><th>Skills</th><th>Qualification</th><th>Salary</th><th>Status</th><th>Registered</th><th>Actions</th></tr></thead>
+<tbody id="rows"></tbody>
+</table>
+<div id="empty" class="empty" style="display:none">No candidates found.</div>
+</div>
+</section>
+</main>
+<div id="matchModal" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="matchTitle">
+ <div class="modal">
+  <div class="modal-head"><div><h2 id="matchTitle" style="margin:0;color:var(--navy)">🎯 Match Approved Jobs</h2><div id="matchCandidate" class="muted" style="margin-top:5px"></div></div><button class="btn light" id="closeMatch">✕ Close</button></div>
+  <p class="muted">Candidate ko bhejne ke liye jobs select karein. Phir personalized link generate karke WhatsApp ya email se share karein.</p>
+  <div style="display:flex;gap:10px;flex-wrap:wrap;margin:12px 0"><button id="selectAllJobs" class="btn light">Select all</button><button id="clearJobs" class="btn light">Clear selection</button><span id="selectedCount" class="muted" style="align-self:center">0 selected</span></div>
+  <div id="matchJobList"><div class="empty">Loading approved jobs…</div></div>
+  <div class="modal-actions"><button id="generateLink" class="btn primary">🔗 Generate Candidate Link</button></div>
+  <div id="shareArea" style="display:none" class="sharebox"><b>Candidate link ready</b><input id="candidateShareLink" readonly><div class="modal-actions"><button id="copyCandidateLink" class="btn light">Copy Link</button><a id="shareWhatsApp" class="btn primary" target="_blank" rel="noopener">Share on WhatsApp</a><a id="shareEmail" class="btn light">Share by Email</a></div></div>
+ </div>
+</div>
+
+<script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
+<script type="module">
+import {initializeApp} from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
+import {getAuth,GoogleAuthProvider,signInWithPopup,onAuthStateChanged,signOut} from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
+import {getFirestore,collection,getDocs,updateDoc,deleteDoc,doc} from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
+
+const firebaseConfig={apiKey:"AIzaSyDO75-iuVlRP9emqnR-d1T4g66akuQS328",authDomain:"rajasthan-job.firebaseapp.com",projectId:"rajasthan-job",storageBucket:"rajasthan-job.firebasestorage.app",messagingSenderId:"894888753938",appId:"1:894888753938:web:92e66d7a7237be1fd9d1cb",measurementId:"G-15S2XJQK80"};
+const app=initializeApp(firebaseConfig,"candidate-manager"),auth=getAuth(app),db=getFirestore(app);
+const ADMIN_EMAIL="saif.anwar1618@gmail.com";let all=[];
+
+const $=id=>document.getElementById(id);
+$("loginBtn").onclick=async()=>{try{await signInWithPopup(auth,new GoogleAuthProvider())}catch(e){$("loginMsg").textContent=e.message}};
+$("logout").onclick=()=>signOut(auth);
+
+onAuthStateChanged(auth,async user=>{
+ if(!user){$("login").style.display="block";$("app").style.display="none";return}
+ if(user.email!==ADMIN_EMAIL){$("loginMsg").textContent="This Google account is not authorised.";await signOut(auth);return}
+ $("login").style.display="none";$("app").style.display="block";$("signed").textContent="Signed in as: "+user.email;await load();
+});
+
+async function load(){
+ const snap=await getDocs(collection(db,"candidates"));
+ all=snap.docs.map(d=>({id:d.id,...d.data()}));
+ updateStats();populateLocations();render();
+}
+function updateStats(){
+ $("total").textContent=all.length;
+ $("newCount").textContent=all.filter(x=>x.status==="new").length;
+ $("shortCount").textContent=all.filter(x=>x.status==="shortlisted").length;
+ $("contactCount").textContent=all.filter(x=>x.status==="contacted").length;
+}
+function populateLocations(){
+ const loc=[...new Set(all.map(x=>x.city).filter(Boolean))].sort();
+ $("location").innerHTML='<option value="">All Locations</option>'+loc.map(x=>'<option>'+escapeHtml(x)+'</option>').join("");
+}
+function escapeHtml(v){return String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]))}
+function filtered(){
+ const q=$("search").value.toLowerCase().trim(),loc=$("location").value,exp=$("experience").value,st=$("status").value;
+ return all.filter(x=>{
+  const blob=[x.name,x.mobile,x.email,x.role,x.city,x.district,x.skills?.join(" "),x.qualification,x.course,x.otherSkills].join(" ").toLowerCase();
+  return (!q||blob.includes(q))&&(!loc||x.city===loc)&&(!exp||x.experience===exp)&&(!st||x.status===st);
+ });
+}
+function render(){
+ const data=filtered();$("empty").style.display=data.length?"none":"block";
+ $("rows").innerHTML=data.map(x=>{
+  const dt=x.createdAt?.toDate?x.createdAt.toDate().toLocaleDateString("en-IN"):"—";
+  const status=x.status||"new";
+  return `<tr>
+  <td><b>${escapeHtml(x.name)}</b></td>
+  <td>${escapeHtml(x.mobile)}<br>${escapeHtml(x.email)}</td>
+  <td>${escapeHtml(x.city)}<br>${escapeHtml(x.district)}</td>
+  <td>${escapeHtml(x.role)}<br><span class="pill">${escapeHtml(x.jobType)}</span></td>
+  <td>${escapeHtml(x.experience)}<br>${escapeHtml(x.availability)}</td>
+  <td>${escapeHtml((x.skills||[]).join(", "))}<br>${escapeHtml(x.otherSkills)}</td>
+  <td>${escapeHtml(x.qualification)}<br>${escapeHtml(x.course)}<br>${escapeHtml(x.passingYear)}</td>
+  <td>${escapeHtml(x.salary)}</td>
+  <td><span class="pill ${status==="shortlisted"?"green":status==="contacted"?"orange":status==="closed"?"red":""}">${escapeHtml(status)}</span></td>
+  <td>${dt}</td>
+  <td><select class="small" onchange="window.changeStatus('${x.id}',this.value)"><option ${status==="new"?"selected":""}>new</option><option ${status==="contacted"?"selected":""}>contacted</option><option ${status==="shortlisted"?"selected":""}>shortlisted</option><option ${status==="closed"?"selected":""}>closed</option></select><br><button class="btn primary small" style="margin-top:6px" onclick="window.matchJobs('${x.id}')">🎯 Match Jobs</button><br><button class="btn danger small" style="margin-top:6px" onclick="window.deleteCandidate('${x.id}')">🗑 Delete</button></td>
+  </tr>`;
+ }).join("");
+}
+window.deleteCandidate=async(id)=>{
+ const candidate=all.find(x=>x.id===id);if(!candidate)return;
+ if(!confirm(`Permanently delete candidate ${candidate.name||"this record"}? This cannot be undone.`))return;
+ try{await deleteDoc(doc(db,"candidates",id));all=all.filter(x=>x.id!==id);updateStats();populateLocations();render();alert("Candidate deleted.")}
+ catch(e){alert("Delete failed: "+e.message)}
+};
+let activeCandidate=null,availableMatches=[];
+function closeMatchModal(){$("matchModal").style.display="none";$('shareArea').style.display="none";}
+$('closeMatch').onclick=closeMatchModal;
+$('matchModal').addEventListener('click',e=>{if(e.target===$('matchModal'))closeMatchModal()});
+function refreshSelectedCount(){const n=document.querySelectorAll('.match-check:checked').length;$('selectedCount').textContent=n+" selected"}
+$('selectAllJobs').onclick=()=>{document.querySelectorAll('.match-check').forEach(x=>x.checked=true);refreshSelectedCount()};
+$('clearJobs').onclick=()=>{document.querySelectorAll('.match-check').forEach(x=>x.checked=false);refreshSelectedCount()};
+window.matchJobs=async(id)=>{
+ const c=all.find(x=>x.id===id);if(!c)return;activeCandidate=c;availableMatches=[];
+ $('matchCandidate').textContent=`For ${c.name||'candidate'} • ${c.role||'Role not specified'} • ${c.city||c.preferredLocation||'Location not specified'}`;
+ $('matchJobList').innerHTML='<div class="empty">Loading approved jobs…</div>';$('matchModal').style.display='flex';$('shareArea').style.display='none';
+ try{
+  const snap=await getDocs(collection(db,'jobs'));
+  const jobs=snap.docs.map(d=>({id:d.id,...d.data()})).filter(j=>String(j.status||'').toLowerCase()==='approved');
+  const terms=[c.role,c.preferredLocation,c.city,c.district,...(c.skills||[]),c.otherSkills,c.qualification].filter(Boolean).join(' ').toLowerCase().split(/[^a-z0-9+#.]+/).filter(t=>t.length>2);
+  availableMatches=jobs.map(j=>{const hay=[j.title,j.company,j.location,j.category,j.type,j.experience,j.qualification,j.description,j.salary].filter(Boolean).join(' ').toLowerCase();let score=0;for(const term of new Set(terms)){if(hay.includes(term))score++}return {j,score}}).filter(x=>x.score>0).sort((a,b)=>b.score-a.score).slice(0,30);
+  if(!availableMatches.length){$('matchJobList').innerHTML='<div class="empty">No matching approved jobs found. You can still close this window and approve relevant jobs in Job Manager.</div>';return}
+  $('matchJobList').innerHTML=availableMatches.map((x,i)=>`<label class="job-option"><input type="checkbox" class="match-check" value="${escapeHtml(x.j.id)}"><span><b>${escapeHtml(x.j.title||'Untitled job')} — ${escapeHtml(x.j.company||'Company not specified')}</b><small>📍 ${escapeHtml(x.j.location||'Location not specified')} &nbsp; • &nbsp; ${escapeHtml(x.j.type||x.j.jobType||'Full Time')} &nbsp; • &nbsp; ${escapeHtml(x.j.experience||'Any experience')}<br>Match terms: ${x.score}</small></span></label>`).join('');
+  document.querySelectorAll('.match-check').forEach(x=>x.addEventListener('change',refreshSelectedCount));refreshSelectedCount();
+ }catch(e){$('matchJobList').innerHTML='<div class="empty" style="color:#a63d3d">Could not load jobs: '+escapeHtml(e.message)+'</div>'}
+};
+$('generateLink').onclick=()=>{
+ if(!activeCandidate)return;
+ const ids=[...document.querySelectorAll('.match-check:checked')].map(x=>x.value);
+ if(!ids.length){alert('Please select at least one job first.');return}
+ const link=new URL('candidate-jobs.html',location.href);link.searchParams.set('jobs',ids.join(','));link.searchParams.set('candidate',activeCandidate.id);
+ const url=link.href;$('candidateShareLink').value=url;$('shareArea').style.display='block';
+ const msg=`Hi ${activeCandidate.name||'there'}, India Jobs Portal par aapke profile ke hisaab se kuch job opportunities mili hain. Details aur apply karne ke liye ye link open karein: ${url}`;
+ const phone=String(activeCandidate.whatsapp||activeCandidate.mobile||'').replace(/\D/g,'');
+ $('shareWhatsApp').href='https://wa.me/'+(phone.length===10?'91'+phone:phone)+'?text='+encodeURIComponent(msg);
+ $('shareEmail').href='https://mail.google.com/mail/?view=cm&fs=1&to='+encodeURIComponent(activeCandidate.email||'')+'&su='+encodeURIComponent('Job opportunities matching your profile')+'&body='+encodeURIComponent(msg);$('shareEmail').target='_blank';$('shareEmail').rel='noopener noreferrer';
+};
+$('copyCandidateLink').onclick=async()=>{try{await navigator.clipboard.writeText($('candidateShareLink').value);alert('Candidate link copied.')}catch(e){$('candidateShareLink').select();document.execCommand('copy');alert('Candidate link copied.')}};
+window.changeStatus=async(id,status)=>{
+ try{await updateDoc(doc(db,"candidates",id),{status,updatedAt:new Date()});const x=all.find(a=>a.id===id);if(x)x.status=status;updateStats();render()}catch(e){alert("Status update failed: "+e.message)}
+};
+["search","location","experience","status"].forEach(id=>$(id).addEventListener("input",render));
+$("clear").onclick=()=>{$("search").value="";$("location").value="";$("experience").value="";$("status").value="";render()};
+
+$("export").onclick=()=>{
+ const data=filtered().map(x=>({
+  "Candidate ID":x.id,"Name":x.name||"","Mobile":x.mobile||"","WhatsApp":x.whatsapp||"","Email":x.email||"",
+  "City":x.city||"","District":x.district||"","Preferred Role":x.role||"","Job Type":x.jobType||"",
+  "Preferred Location":x.preferredLocation||"","Experience":x.experience||"","Availability":x.availability||"",
+  "Qualification":x.qualification||"","Course":x.course||"","Passing Year":x.passingYear||"",
+  "Previous Company":x.company||"","Skills":(x.skills||[]).join(", "),"Other Skills":x.otherSkills||"",
+  "Expected Salary":x.salary||"","Status":x.status||"","Registered":x.createdAt?.toDate?x.createdAt.toDate().toLocaleString("en-IN"):""
+ }));
+ if(!data.length)return alert("No candidates to export.");
+ const ws=XLSX.utils.json_to_sheet(data),wb=XLSX.utils.book_new();
+ XLSX.utils.book_append_sheet(wb,ws,"Job Seekers");
+ XLSX.writeFile(wb,"India-Jobs-Portal-Seekers-"+new Date().toISOString().slice(0,10)+".xlsx");
+};
+</script>
+</body>
+</html>
