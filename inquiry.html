@@ -337,11 +337,26 @@ form.addEventListener("submit", async (e) => {
       "ok"
     );
 
-  } catch (err) {
+ 
+} catch (err) {
 
-    console.error("Inquiry submission error:", err);
+  console.error("Inquiry submission error:", err);
 
-    if (err.code === "permission-denied") {
+  showStatus(
+    "Firebase Error: " +
+    (err.code || "unknown") +
+    " — " +
+    (err.message || "Unknown error") +
+    ". Please send this error to support.",
+    "bad"
+  );
+
+} finally {
+
+  btn.disabled = false;
+  btn.textContent = "Submit Inquiry";
+
+}
 
       showStatus(
         "Inquiry submit nahi hui. Firebase Firestore Rules mein permission check karein.",
