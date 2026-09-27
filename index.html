@@ -30,7 +30,8 @@ nav{position:sticky;top:0;z-index:100;background:rgba(255,255,255,.97);backdrop-
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;border:0;border-radius:10px;padding:11px 17px;font-weight:850;cursor:pointer;font-size:14px}
 .primary{background:var(--blue);color:#fff}.green{background:var(--green);color:#fff}.light{background:#fff;color:var(--navy);border:1px solid #cbd8e7}.orange{background:var(--orange);color:#fff}
 .dynamic{background:#fff;border-bottom:1px solid var(--line);overflow:hidden}.dynamicin{height:34px;display:flex;align-items:center;white-space:nowrap;overflow:hidden}
-.dynamictrack{display:flex;gap:34px;animation:move 27s linear infinite;font-size:13px;font-weight:850}.dynamictrack span:before{content:"•";color:var(--orange);margin-right:12px}
+.dynamictrack{display:flex;width:max-content;flex:0 0 auto;animation:move 42s linear infinite;font-size:13px;font-weight:850;will-change:transform}.tickerGroup{display:flex;align-items:center;gap:34px;flex:0 0 auto;padding-right:34px}.tickerGroup span{flex:0 0 auto;white-space:nowrap}.tickerGroup span:before{content:"•";color:var(--orange);margin-right:12px}
+.dynamicin:hover .dynamictrack{animation-play-state:paused}
 @keyframes move{from{transform:translateX(0)}to{transform:translateX(-50%)}}
 .quickActions{background:#fff;padding:13px 0 12px;border-bottom:1px solid var(--line);box-shadow:0 6px 18px rgba(16,42,67,.05)}.quickTitle{display:flex;align-items:end;justify-content:space-between;gap:18px;margin-bottom:10px}.quickTitle h2{margin:1px 0 0;color:var(--navy);font-size:21px}.quickTitle p{margin:0;color:var(--muted);font-size:13px}.quickGrid{display:grid;grid-template-columns:repeat(4,1fr);gap:9px}.quickCard{min-height:62px;padding:8px 11px;border:1px solid #d6e7fa;border-radius:13px;display:flex;align-items:center;gap:10px;background:#f5f9ff;transition:.2s;box-shadow:0 4px 13px rgba(16,42,67,.045)}.quickCard:hover{transform:translateY(-1px);background:#edf6ff;border-color:#bcd9f8;box-shadow:0 8px 20px rgba(16,42,67,.09)}.quickCard>span{width:36px;height:36px;border-radius:11px;display:grid;place-items:center;font-size:17px;background:#e5f1ff;flex:0 0 36px}.quickCard div{flex:1}.quickCard strong{display:block;color:var(--navy);font-size:13px}.quickCard small{display:block;color:#5e7690;font-size:9px;line-height:1.25;margin-top:1px}.quickCard>b{font-size:18px;color:var(--blue)}.quickCard.orange>span{background:#fff4e7}.quickCard.orange>b{color:var(--orange)}.quickCard.navy>span{background:#eef2f7}.quickCard.navy>b{color:var(--navy)}.quickCard.green>span{background:#eaf8f1}.quickCard.green>b{color:var(--green)}
 .hero{background:#fff;padding:24px 0 22px;border-bottom:1px solid var(--line)}
@@ -320,7 +321,7 @@ footer{background:#0d2138;color:#cedbea;padding:45px 0 18px}.foot{display:grid;g
 <nav><div class="wrap navin">
 <a href="#home" class="brand"><div class="logo">IJ</div><div>India Jobs Portal<small>Private Jobs • Government Jobs • Fresher Jobs • Career Support</small></div></a>
 <div class="menu">
-<a href="jobs.html">Jobs</a><a href="government-jobs.html">Govt Jobs</a><a href="post-a-job.html">Post a Job</a><a href="job-seeker.html">👤 Job Seeker</a><button type="button" class="employerChatNavBtn" id="openEmployerChat">🏢 HR / Company Chat</button><a href="#services">Services</a><a class="btn primary" href="inquiry.html">Inquiry</a><div class="notifWrap">
+<a href="jobs.html">Jobs</a><a href="government-jobs.html">Govt Jobs</a><a href="post-a-job.html">Post a Job</a><a href="job-seeker.html">👤 Job Seeker</a><button type="button" class="employerChatNavBtn" id="openEmployerChat">🏢 HR / Company Chat</button><a class="btn primary" href="inquiry.html">Inquiry</a><a class="donate-nav-btn" href="upi://pay?pa=6350566010@ybl&amp;pn=India%20Jobs%20Portal&amp;cu=INR" style="display:inline-flex;align-items:center;justify-content:center;background:#fff7ed;color:#9a3412;border:1px solid #fed7aa;border-radius:10px;padding:9px 12px;font-weight:850;white-space:nowrap">❤️ Donate</a><div class="notifWrap">
   <button id="notifBell" class="notifBell" aria-label="Notifications" title="Notifications">🔔<span id="notifBadge" class="notifBadge">0</span></button>
   <div id="notifPanel" class="notifPanel">
     <div class="notifPanelHead">
@@ -340,11 +341,20 @@ footer{background:#0d2138;color:#cedbea;padding:45px 0 18px}.foot{display:grid;g
 <div class="dynamic jobMessageStrip">
   <div class="wrap dynamicin">
     <div class="dynamictrack">
-      <span>🔥 Job chahiye? India bhar ki jobs, government vacancies aur career support yahan dekhein.</span>
-      <span>💼 India bhar ki latest job opportunities yahan dekhein.</span>
-      <span>🎓 Freshers ke liye bhi Jobs aur Career Support available hai.</span>
-      <span>🏛️ Government Jobs • RPSC • RSSB • CET Updates</span>
-      <span>💻 MIS • Excel • Power BI • SQL • Data Analyst Jobs</span>
+      <div class="tickerGroup" aria-label="India Jobs Portal updates">
+        <span>🔥 India bhar ki private jobs, government vacancies aur career support yahan dekhein.</span>
+        <span>💼 All India latest job opportunities — state aur city ke hisaab se search karein.</span>
+        <span>🎓 Freshers, experienced candidates aur work-from-home jobs.</span>
+        <span>🏛️ Central Government • SSC • UPSC • Railways • Banking updates.</span>
+        <span>💻 MIS • Excel • Power BI • SQL • Data Analyst vacancies.</span>
+      </div>
+      <div class="tickerGroup" aria-hidden="true">
+        <span>🔥 India bhar ki private jobs, government vacancies aur career support yahan dekhein.</span>
+        <span>💼 All India latest job opportunities — state aur city ke hisaab se search karein.</span>
+        <span>🎓 Freshers, experienced candidates aur work-from-home jobs.</span>
+        <span>🏛️ Central Government • SSC • UPSC • Railways • Banking updates.</span>
+        <span>💻 MIS • Excel • Power BI • SQL • Data Analyst vacancies.</span>
+      </div>
     </div>
   </div>
 </div>
