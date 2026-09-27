@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Government Jobs | India Jobs Portal</title><style>
+*{box-sizing:border-box}body{margin:0;font:16px Arial;background:#f4f7fb;color:#172b45}.top{background:#102a43;color:#fff;padding:17px 4%;font-weight:800}main{max-width:1000px;width:92%;margin:25px auto}.card{background:#fff;border:1px solid #dce5ef;border-radius:14px;padding:20px}.job{border:1px solid #dce5ef;border-radius:12px;padding:16px;margin:12px 0;background:#fbfdff}.muted{color:#64748b;font-size:13px}.btn{display:inline-block;background:#1769e8;color:white;padding:10px 14px;border-radius:8px;text-decoration:none;font-weight:800;margin-top:10px}.status{padding:15px;text-align:center;color:#64748b}a{color:#1769e8}
+</style></head><body><div class="top">India Jobs Portal · Government Jobs</div><main><section class="card"><h1>Government Job Vacancies</h1><p class="muted">Approved government vacancies appear here. Application details ko official recruitment website par verify karein.</p><div id="jobs" class="status">Loading approved government jobs…</div><p><a href="index.html">← Home</a> · <a href="jobs.html">Browse all jobs</a></p></section></main>
+<script type="module">
+import {initializeApp} from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
+import {getFirestore,collection,query,where,getDocs} from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
+const firebaseConfig = {
+  apiKey: "AIzaSyCh20UGNM3-tWZiB6pkNUXcbWK-lwkc-sU",
+  authDomain: "india-jobs-portal.firebaseapp.com",
+  projectId: "india-jobs-portal",
+  storageBucket: "india-jobs-portal.firebasestorage.app",
+  messagingSenderId: "1035209974762",
+  appId: "1:1035209974762:web:622a242e1a291c4b604893",
+  measurementId: "G-XSH6QC1PG4"
+};
+const db=getFirestore(initializeApp(firebaseConfig,"india-government-jobs")),root=document.getElementById("jobs");
+const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+try{
+ const snap=await getDocs(query(collection(db,"jobs"),where("status","==","approved")));
+ const jobs=snap.docs.map(d=>({id:d.id,...d.data()})).filter(j=>[j.category,j.jobCategory,j.type,j.jobType].some(x=>/government|govt/i.test(String(x||""))));
+ if(!jobs.length){root.innerHTML='<div class="status">Abhi koi approved government vacancy available nahi hai.</div>';}
+ else{root.className="";root.innerHTML=jobs.map(j=>{
+ const u=String(j.apply||j.applyLink||"");const link=/^https?:\\/\\//i.test(u)?`<a class="btn" href="${esc(u)}" target="_blank" rel="noopener noreferrer">Official Apply Link ↗</a>`:"";
+ return `<article class="job"><h3>${esc(j.title||"Government Vacancy")}</h3><b>${esc(j.company||"Recruitment Authority")}</b><p class="muted">${esc(j.location||"India")} · ${esc(j.salary||"Salary as per notification")} · Last date: ${esc(j.deadline||j.lastDate||"Check official notice")}</p><p>${esc(j.description||"Please check official recruitment notice.")}</p>${link}</article>`;
+ }).join("");}
+}catch(e){console.error(e);root.textContent="Government jobs load nahi ho paaye. Firebase Rules/connection check karein.";root.className="status";}
+</script></body></html>

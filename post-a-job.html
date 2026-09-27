@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Post a Job | India Jobs Portal</title><style>
+*{box-sizing:border-box}body{margin:0;font:16px Arial;background:#f4f7fb;color:#172b45}.top{background:#102a43;color:#fff;padding:15px 4%;font-weight:800}main{max-width:900px;width:92%;margin:28px auto}.card{background:#fff;border:1px solid #dce5ef;border-radius:16px;padding:24px}h1{margin-top:0}.grid{display:grid;grid-template-columns:1fr 1fr;gap:0 15px}.full{grid-column:1/-1}label{display:block;font-weight:700;font-size:14px;margin:13px 0 6px}input,select,textarea{width:100%;padding:12px;border:1px solid #cbd8e5;border-radius:9px;font:inherit}textarea{min-height:130px}button,.btn{display:inline-block;border:0;border-radius:9px;padding:12px 18px;background:#1769e8;color:#fff;font-weight:800;text-decoration:none;cursor:pointer;margin-top:16px}.status{display:none;padding:12px;border-radius:9px;margin-top:12px}.ok{background:#edf8f2;color:#11623f}.bad{background:#fff0f0;color:#a63d3d}@media(max-width:600px){.grid{grid-template-columns:1fr}.full{grid-column:auto}}
+</style></head><body><div class="top">India Jobs Portal · Employer</div><main><section class="card"><h1>Post a Job</h1><p>Vacancy details submit karein. Job admin review aur approval ke baad publish hogi.</p>
+<form id="form"><div class="grid">
+<div><label>Job Title *</label><input id="title" required maxlength="120"></div><div><label>Company *</label><input id="company" required maxlength="120"></div>
+<div><label>Location *</label><input id="location" required maxlength="120" placeholder="City, State / Remote"></div>
+<div><label>Job Type *</label><select id="type" required><option value="">Select</option><option>Full Time</option><option>Part Time</option><option>Contract</option><option>Internship</option><option>Work From Home</option></select></div>
+<div><label>Experience</label><input id="experience" maxlength="80" placeholder="Fresher / 0-2 years"></div><div><label>Salary</label><input id="salary" maxlength="80"></div>
+<div><label>Contact Email *</label><input id="email" type="email" required maxlength="160"></div><div><label>Apply URL</label><input id="apply" type="url" maxlength="500" placeholder="https://..."></div>
+<div class="full"><label>Job Description *</label><textarea id="description" required maxlength="5000"></textarea></div></div>
+<button id="send" type="submit">Submit for Review</button><div id="status" class="status" role="status"></div></form><p><a href="index.html">← Back to Home</a></p></section></main>
+<script type="module">
+import {initializeApp} from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
+import {getFirestore,collection,addDoc,serverTimestamp} from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
+const firebaseConfig = {
+  apiKey: "AIzaSyCh20UGNM3-tWZiB6pkNUXcbWK-lwkc-sU",
+  authDomain: "india-jobs-portal.firebaseapp.com",
+  projectId: "india-jobs-portal",
+  storageBucket: "india-jobs-portal.firebasestorage.app",
+  messagingSenderId: "1035209974762",
+  appId: "1:1035209974762:web:622a242e1a291c4b604893",
+  measurementId: "G-XSH6QC1PG4"
+};
+const db=getFirestore(initializeApp(firebaseConfig,"india-public-job-submit"));
+const form=document.getElementById("form"),btn=document.getElementById("send"),st=document.getElementById("status");
+form.addEventListener("submit",async e=>{
+ e.preventDefault();const v=id=>document.getElementById(id).value.trim();
+ const type=v("type"),apply=v("apply");
+ const data={title:v("title"),company:v("company"),location:v("location"),type,jobType:type,experience:v("experience"),salary:v("salary"),email:v("email"),apply,applyLink:apply,description:v("description"),status:"pending",portal:"india",source:"employer_submission",createdAt:serverTimestamp(),updatedAt:serverTimestamp()};
+ btn.disabled=true;btn.textContent="Submitting...";
+ try{await addDoc(collection(db,"jobs"),data);form.reset();st.className="status ok";st.textContent="Vacancy submitted for admin review. It will appear after approval.";st.style.display="block";}
+ catch(err){console.error(err);st.className="status bad";st.textContent="Submission blocked. India Firestore Rules need to allow validated public pending job submissions.";st.style.display="block";}
+ finally{btn.disabled=false;btn.textContent="Submit for Review";}
+});
+</script></body></html>
