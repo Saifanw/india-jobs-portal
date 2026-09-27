@@ -101,7 +101,7 @@ th{background:#f2f6fa;color:var(--navy);position:sticky;top:0}
           <a class="btn light" href="job-manager.html">💼 Job Manager</a>
           <a class="btn light" href="candidate-manager.html">👤 Candidate Manager</a>
           <a class="btn light" href="notification-manager.html">🔔 Notifications</a>
-          <a class="btn light" href="enquiry-manager.html">📩 Enquiries</a>
+          <button class="btn light" type="button" id="openInquiries">📩 Enquiries <span id="inquiryCountBadge" class="badge new">0</span></button>
           <a class="btn bulk" href="private-job-import.html">📥 Bulk Private Job Import</a>
         <a class="light" href="visitor-analytics.html" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;text-decoration:none">📈 Website Visitor Analytics</a></div>
       </div>
@@ -224,6 +224,21 @@ th{background:#f2f6fa;color:var(--navy);position:sticky;top:0}
         <p id="candidateEmpty" class="muted" style="display:none">No job seekers found.</p>
       </div>
 
+      <!-- INQUIRIES -->
+      <div id="inquiriesTab" class="hidden">
+        <div style="display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap">
+          <div><h2 style="margin:0">📩 Website Inquiries</h2><p class="muted">Public inquiry form se aane wale messages yahan dikhengi.</p></div>
+          <button class="light" type="button" id="refreshInquiries">↻ Refresh Inquiries</button>
+        </div>
+        <div class="toolbar" style="margin-top:15px">
+          <input id="inquirySearch" class="search" placeholder="Search name, mobile, email, message...">
+          <select id="inquiryStatus"><option value="">All Status</option><option value="new">New</option><option value="contacted">Contacted</option><option value="resolved">Resolved</option></select>
+        </div>
+        <div id="inquiryError" class="error hidden"></div>
+        <div class="tableWrap"><table style="min-width:900px"><thead><tr><th>Date</th><th>Name / Contact</th><th>Service</th><th>Requirement</th><th>Status</th><th>Action</th></tr></thead><tbody id="inquiryTable"></tbody></table></div>
+        <p id="inquiryEmpty" class="muted" style="display:none">No inquiries found.</p>
+      </div>
+
       <!-- HR / COMPANY CHAT -->
       <div id="chatTab" class="hidden">
         <div style="display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap">
@@ -277,7 +292,7 @@ const app=initializeApp(firebaseConfig,"admin-dashboard-final");
 const auth=getAuth(app),db=getFirestore(app);
 const ADMIN_EMAIL="saif.anwar1618@gmail.com";
 
-let jobs=[], candidates=[];
+let jobs=[], candidates=[], inquiries=[];
 let chatThreads=[], selectedChatId=null, unsubscribeChatThreads=null, unsubscribeChatMessages=null;
 const $=id=>document.getElementById(id);
 
@@ -330,7 +345,7 @@ onAuthStateChanged(auth,async user=>{
 });
 
 async function loadAll(){
-  await Promise.all([loadJobs(),loadCandidates(),loadNoticeCount()]);
+  await Promise.all([loadJobs(),loadCandidates(),loadNoticeCount(),loadInquiries()]);
   renderAnalytics();
   startChatThreadsListener();
 }
@@ -366,6 +381,53 @@ async function loadCandidates(){
     $("candidateError").classList.remove("hidden");
   }
 }
+
+async function loadInquiries(){
+  try{
+    const snap=await getDocs(query(collection(db,"inquiries"),orderBy("createdAt","desc")));
+    inquiries=snap.docs.map(d=>({id:d.id,...d.data()}));
+    $("inquiryCountBadge").textContent=String(inquiries.filter(x=>(x.status||"new")==="new").length);
+    $("inquiryError").classList.add("hidden");
+    renderInquiries();
+  }catch(e){
+    console.error("Inquiry load error:",e);
+    $("inquiryError").textContent="Inquiries load nahi hui. Admin login / Firestore Rules check karein: "+e.message;
+    $("inquiryError").classList.remove("hidden");
+    $("inquiryTable").innerHTML="";
+  }
+}
+
+function renderInquiries(){
+  const term=$("inquirySearch").value.trim().toLowerCase();
+  const status=$("inquiryStatus").value;
+  const rows=[...inquiries].filter(x=>{
+    const hay=[x.name,x.mobile,x.email,x.service,x.message].join(" ").toLowerCase();
+    return (!term||hay.includes(term))&&(!status||String(x.status||"new").toLowerCase()===status);
+  });
+  $("inquiryEmpty").style.display=rows.length?"none":"block";
+  $("inquiryTable").innerHTML=rows.map(x=>{
+    const st=String(x.status||"new").toLowerCase();
+    return `<tr><td>${esc(dateValue(x.createdAt))}</td><td><b>${esc(x.name)}</b><br>${esc(x.mobile)}<br><span class="small muted">${esc(x.email||"")}</span></td><td>${esc(x.service||"—")}</td><td style="white-space:pre-wrap;min-width:220px">${esc(x.message)}</td><td><span class="badge ${esc(st)}">${esc(st.toUpperCase())}</span></td><td><div class="actions"><select aria-label="Inquiry status" onchange="updateInquiryStatus('${x.id}',this.value)"><option value="new" ${st==="new"?"selected":""}>New</option><option value="contacted" ${st==="contacted"?"selected":""}>Contacted</option><option value="resolved" ${st==="resolved"?"selected":""}>Resolved</option></select><button class="btn danger" type="button" onclick="deleteInquiry('${x.id}')">Delete</button></div></td></tr>`;
+  }).join("");
+}
+
+window.updateInquiryStatus=async(id,status)=>{
+  try{await updateDoc(doc(db,"inquiries",id),{status,updatedAt:serverTimestamp()}); const x=inquiries.find(i=>i.id===id); if(x)x.status=status; $("inquiryCountBadge").textContent=String(inquiries.filter(i=>(i.status||"new")==="new").length); renderInquiries();}
+  catch(e){alert("Inquiry status update nahi hua: "+e.message);}
+};
+window.deleteInquiry=async id=>{
+  if(!confirm("Is inquiry ko permanently delete karna hai?"))return;
+  try{await deleteDoc(doc(db,"inquiries",id)); inquiries=inquiries.filter(i=>i.id!==id); $("inquiryCountBadge").textContent=String(inquiries.filter(i=>(i.status||"new")==="new").length); renderInquiries();}
+  catch(e){alert("Inquiry delete nahi hui: "+e.message);}
+};
+
+$("openInquiries").addEventListener("click",()=>{
+  document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));
+  ["jobsTab","analyticsTab","candidatesTab","chatTab","inquiriesTab"].forEach(id=>$(id).classList.toggle("hidden",id!=="inquiriesTab"));
+  loadInquiries();
+});
+$("refreshInquiries").addEventListener("click",loadInquiries);
+["inquirySearch","inquiryStatus"].forEach(id=>$(id).addEventListener("input",renderInquiries));
 
 async function loadNoticeCount(){
   try{
@@ -506,7 +568,7 @@ $("chatReplyForm").addEventListener("submit",async e=>{
   btn.disabled=true;
   try{
     await addDoc(collection(db,"employerChats",selectedChatId,"messages"),{
-      text, sender:"admin", senderName:"Rajasthan Career Hub Admin",
+      text, sender:"admin", senderName:"India Jobs Portal Admin",
       createdAt:serverTimestamp()
     });
     await updateDoc(doc(db,"employerChats",selectedChatId),{
@@ -655,6 +717,7 @@ document.querySelectorAll(".tab").forEach(btn=>{
     $("analyticsTab").classList.toggle("hidden",btn.dataset.tab!=="analyticsTab");
     $("candidatesTab").classList.toggle("hidden",btn.dataset.tab!=="candidatesTab");
     $("chatTab").classList.toggle("hidden",btn.dataset.tab!=="chatTab");
+    $("inquiriesTab").classList.add("hidden");
     if(btn.dataset.tab==="analyticsTab")renderAnalytics();
   };
 });
@@ -687,7 +750,7 @@ $("exportJobs").onclick=()=>{
     "Notes":j.notes||j.note||"",
     "Created":dateValue(j.createdAt)
   }));
-  exportExcel(rows,"Rajasthan-Job-Listings.xlsx","Jobs");
+  exportExcel(rows,"India-Job-Listings.xlsx","Jobs");
 };
 
 $("exportCandidates").onclick=()=>{
@@ -715,7 +778,7 @@ $("exportCandidates").onclick=()=>{
     "Consent":c.consent===true?"Yes":"No",
     "Registered":dateValue(c.createdAt)
   }));
-  exportExcel(rows,"Rajasthan-Job-Seekers.xlsx","Job Seekers");
+  exportExcel(rows,"India-Job-Seekers.xlsx","Job Seekers");
 };
 </script>
 </body>
