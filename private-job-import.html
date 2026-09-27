@@ -30,16 +30,13 @@ small,.muted{color:var(--muted)}.actions{display:flex;gap:10px;flex-wrap:wrap;ma
 </div></header>
 <main class="wrap">
 <section class="card">
-<div class="warning"><b>Important:</b> Sign in with the portal administrator account. Imported jobs will be saved with <b>Pending</b> status by default, so they will not appear publicly until approved from the admin dashboard. Do not upload candidate personal data in this tool.</div>
+<div class="warning"><b>Important:</b> Sign in with the authorized India portal administrator Google account. Imported jobs will be saved with <b>Pending</b> status by default, so they will not appear publicly until approved from the admin dashboard. Do not upload candidate personal data in this tool.</div>
 </section>
 
 <section class="card" id="loginCard">
 <h2>🔐 Admin Sign In</h2>
-<div class="grid">
-<div><label>Admin email</label><input id="email" type="email" autocomplete="username" placeholder="Admin email"></div>
-<div><label>Password</label><input id="password" type="password" autocomplete="current-password" placeholder="Firebase Authentication password"></div>
-</div>
-<div class="actions"><button id="loginBtn">Sign In</button><button class="secondary hidden" id="logoutBtn">Sign Out</button></div>
+<p class="muted">Apne authorized admin Google account se sign in karein.</p>
+<div class="actions"><button id="loginBtn">🔐 Sign in with Google</button><button class="secondary hidden" id="logoutBtn">Sign Out</button></div>
 <div id="authMsg" class="msg"></div>
 <p class="muted" id="signedIn"></p>
 </section>
@@ -63,17 +60,17 @@ small,.muted{color:var(--muted)}.actions{display:flex;gap:10px;flex-wrap:wrap;ma
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script type="module">
 import {initializeApp} from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
-import {getAuth,onAuthStateChanged,signInWithEmailAndPassword,signOut} from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
+import {getAuth,onAuthStateChanged,GoogleAuthProvider,signInWithPopup,signOut} from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
 import {getFirestore,collection,addDoc,serverTimestamp} from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
 
 const firebaseConfig={
- apiKey:"AIzaSyDO75-iuVlRP9emqnR-d1T4g66akuQS328",
- authDomain:"rajasthan-job.firebaseapp.com",
- projectId:"rajasthan-job",
- storageBucket:"rajasthan-job.firebasestorage.app",
- messagingSenderId:"894888753938",
- appId:"1:894888753938:web:92e66d7a7237be1fd9d1cb",
- measurementId:"G-15S2XJQK80"
+ apiKey:"AIzaSyCh20UGNM3-tWZiB6pkNUXcbWK-lwkc-sU",
+ authDomain:"india-jobs-portal.firebaseapp.com",
+ projectId:"india-jobs-portal",
+ storageBucket:"india-jobs-portal.firebasestorage.app",
+ messagingSenderId:"1035209974762",
+ appId:"1:1035209974762:web:622a242e1a291c4b604893",
+ measurementId:"G-XSH6QC1PG4"
 };
 const app=initializeApp(firebaseConfig,"india-bulk-import");
 const auth=getAuth(app),db=getFirestore(app);
@@ -106,7 +103,20 @@ function mapRow(row){
  return {title,company,location,category,experience,type,salary,qualification,deadline,description,apply,contactEmail,phone,notes};
 }
 function escapeHtml(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
-onAuthStateChanged(auth,user=>{
+const ADMIN_EMAIL="saif.anwar1618@gmail.com";
+const googleProvider=new GoogleAuthProvider();
+googleProvider.setCustomParameters({prompt:"select_account"});
+onAuthStateChanged(auth,async user=>{
+ if(user && (user.email||"").toLowerCase()!==ADMIN_EMAIL){
+   await signOut(auth);
+   currentUser=null;
+   $("signedIn").textContent="";
+   $("loginBtn").classList.remove("hidden");
+   $("logoutBtn").classList.add("hidden");
+   $("importCard").classList.add("hidden");
+   show("authMsg","Access denied. Please sign in with "+ADMIN_EMAIL,"err");
+   return;
+ }
  currentUser=user;
  $("signedIn").textContent=user?("Signed in as: "+user.email):"Not signed in.";
  $("loginBtn").classList.toggle("hidden",!!user);
@@ -114,11 +124,18 @@ onAuthStateChanged(auth,user=>{
  $("importCard").classList.toggle("hidden",!user);
 });
 $("loginBtn").onclick=async()=>{
- const email=$("email").value.trim(),password=$("password").value;
- if(!email||!password)return show("authMsg","Email aur password enter karein.","err");
  $("loginBtn").disabled=true;
- try{await signInWithEmailAndPassword(auth,email,password);show("authMsg","Admin sign-in successful.","ok")}
- catch(e){show("authMsg","Sign in failed: "+e.message,"err")}
+ try{
+   const result=await signInWithPopup(auth,googleProvider);
+   if((result.user.email||"").toLowerCase()!==ADMIN_EMAIL){
+     await signOut(auth);
+     show("authMsg","Access denied. Please use "+ADMIN_EMAIL,"err");
+   } else {
+     show("authMsg","Google admin sign-in successful.","ok");
+   }
+ }catch(e){
+   show("authMsg","Google sign-in failed: "+(e.message||e),"err");
+ }
  finally{$("loginBtn").disabled=false}
 };
 $("logoutBtn").onclick=async()=>{await signOut(auth);show("authMsg","Signed out.","ok")};
