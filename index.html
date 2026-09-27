@@ -321,7 +321,7 @@ footer{background:#0d2138;color:#cedbea;padding:45px 0 18px}.foot{display:grid;g
 <nav><div class="wrap navin">
 <a href="#home" class="brand"><div class="logo">IJ</div><div>India Jobs Portal<small>Private Jobs • Government Jobs • Fresher Jobs • Career Support</small></div></a>
 <div class="menu">
-<a href="jobs.html">Jobs</a><a href="government-jobs.html">Govt Jobs</a><a href="post-a-job.html">Post a Job</a><a href="job-seeker.html">👤 Job Seeker</a><button type="button" class="employerChatNavBtn" id="openEmployerChat">🏢 HR / Company Chat</button><a class="btn primary" href="inquiry.html" id="navInquiryButton">Inquiry</a><button type="button" class="donate-nav-btn" id="openDonateModal" style="display:inline-flex;align-items:center;justify-content:center;background:#fff7ed;color:#9a3412;border:1px solid #fed7aa;border-radius:10px;padding:9px 12px;font-weight:850;white-space:nowrap;cursor:pointer;font:inherit">❤️ Donate</button><div class="notifWrap">
+<a href="jobs.html">Jobs</a><a href="government-jobs.html">Govt Jobs</a><a href="post-a-job.html">Post a Job</a><a href="job-seeker.html">👤 Job Seeker</a><button type="button" class="employerChatNavBtn" id="openEmployerChat">🏢 HR / Company Chat</button><a class="btn primary" href="#contact" id="navInquiryButton">Inquiry</a><button type="button" class="donate-nav-btn" id="openDonateModal" style="display:inline-flex;align-items:center;justify-content:center;background:#fff7ed;color:#9a3412;border:1px solid #fed7aa;border-radius:10px;padding:9px 12px;font-weight:850;white-space:nowrap;cursor:pointer;font:inherit">❤️ Donate</button><div class="notifWrap">
   <button id="notifBell" class="notifBell" aria-label="Notifications" title="Notifications">🔔<span id="notifBadge" class="notifBadge">0</span></button>
   <div id="notifPanel" class="notifPanel">
     <div class="notifPanelHead">
@@ -402,7 +402,7 @@ footer{background:#0d2138;color:#cedbea;padding:45px 0 18px}.foot{display:grid;g
       <a class="quickCard pro green" href="job-seeker.html">
         <span>👤</span><div><strong>Find a Job</strong><small>Job chahiye? Yahan se milegi</small></div><b>→</b>
       </a>
-      <a class="quickCard pro orange" href="inquiry.html">
+      <a class="quickCard pro orange" href="#contact">
         <span>💬</span><div><strong>Inquiry Karein</strong><small>Job & Career Support</small></div><b>→</b>
       </a>
     </div>
@@ -445,10 +445,18 @@ footer{background:#0d2138;color:#cedbea;padding:45px 0 18px}.foot{display:grid;g
 <section class="white" id="contact">
 <div class="wrap"><div class="head"><div class="kick">CONTACT & COMMUNITY</div><h2>Apni requirement bhejein</h2><p>Job, resume, interview, skills ya employer service — inquiry bhejein aur community mein comment bhi karein.</p></div>
 <div class="inquiry">
-  <div class="formbox" style="display:flex;flex-direction:column;justify-content:center;align-items:flex-start;gap:12px">
+  <div class="formbox">
     <h3 style="color:var(--navy);margin-top:0">📩 Job / Service Inquiry</h3>
-    <p class="resumeHint">Job, resume, interview preparation ya employer service ke liye alag inquiry page par apni requirement bhejein.</p>
-    <a class="btn primary" href="inquiry.html">Open Inquiry Form →</a>
+    <p class="resumeHint">Aapki inquiry Firebase mein securely save hogi aur admin panel mein review ki ja sakegi.</p>
+    <form id="inquiryForm">
+      <label>Name <span class="required">*</span></label><input id="inqName" required placeholder="Your Name">
+      <label>Mobile <span class="required">*</span></label><input id="inqMobile" required inputmode="numeric" placeholder="10-digit mobile number">
+      <label>📧 Email Address <span style="color:#888;font-weight:500">(Optional)</span></label><input id="inqEmail" type="email" autocomplete="email" placeholder="yourname@example.com">
+      <label>Service</label><select id="inqService"><option value="">Choose Service</option><option>India Job</option><option>Government Job</option><option>Interview Preparation</option><option>Excel / MIS</option><option>Power BI / SQL / Python</option><option>Other</option><option>Employer Job Posting</option><option>Other</option></select>
+      <label>Your Requirement <span class="required">*</span></label><textarea id="inqMessage" required placeholder="Apni requirement clearly likhiye..."></textarea>
+      <button id="inqBtn" class="btn primary" type="submit">📩 Submit Inquiry</button>
+      <div id="inqStatus" class="resumeStatus"></div>
+    </form>
   </div>
   <div class="comments">
     <div style="display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap"><div><h3 style="color:var(--navy);margin:0">💬 Public Comments</h3><p style="color:var(--muted);font-size:13px;margin:4px 0 0">Comment submit karein. Review ke baad public page par sabko visible hoga.</p></div><span class="liveBadge lightLive">PUBLIC</span></div>
@@ -710,12 +718,149 @@ try{onSnapshot(query(collection(db2,'comments'),where('status','==','approved'),
  if(!snap.docs.length){commentBox.innerHTML='<div class="comment"><small>No public comments yet. Be the first to comment.</small></div>';return;}
  commentBox.innerHTML=snap.docs.map(d=>{const c=d.data();return `<div class="comment"><div class="commentMeta"><span class="commentUser">${esc2(c.name||'Visitor')}</span><span class="commentTime">${esc2(fmt2(c.createdAt))}</span></div><div class="commentText">${esc2(c.comment||'')}</div></div>`}).join('');
 },()=>{commentBox.innerHTML='<div class="comment"><small>Comments temporarily unavailable.</small></div>';});}catch(e){}
+const inquiryForm=document.getElementById('inquiryForm');
+inquiryForm.addEventListener('submit',async function(e){
+  e.preventDefault();
+  e.stopPropagation();
+
+  const btn=document.getElementById('inqBtn');
+  const st=document.getElementById('inqStatus');
+
+  const name=document.getElementById('inqName').value.trim();
+  const mobile=document.getElementById('inqMobile').value.trim();
+  const email=document.getElementById('inqEmail').value.trim();
+  const service=document.getElementById('inqService').value;
+  const message=document.getElementById('inqMessage').value.trim();
+
+  if(!name || !mobile || !message){
+    st.style.display='block';
+    st.textContent='❌ Name, mobile aur requirement fill karein.';
+    st.style.color='#a63d3d';
+    st.style.background='#fff5f5';
+    st.style.borderColor='#f2cccc';
+    return;
+  }
+
+  if(email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
+    st.style.display='block';
+    st.textContent='❌ Please enter a valid email address.';
+    st.style.color='#a63d3d';
+    st.style.background='#fff5f5';
+    st.style.borderColor='#f2cccc';
+    return;
+  }
+
+  if(!/^\d{10}$/.test(mobile)){
+    st.style.display='block';
+    st.textContent='❌ Please enter a valid 10-digit mobile number.';
+    st.style.color='#a63d3d';
+    st.style.background='#fff5f5';
+    st.style.borderColor='#f2cccc';
+    return;
+  }
+
+  btn.disabled=true;
+  btn.textContent='⏳ Sending...';
+  st.style.display='block';
+  st.textContent='⏳ Inquiry submit ho rahi hai...';
+  st.style.color='#1769aa';
+  st.style.background='#eef6ff';
+  st.style.borderColor='#cfe4fb';
+
+  try{
+    await addDoc(collection(db2,'inquiries'),{
+      name,
+      mobile,
+      email,
+      service,
+      message,
+      status:'new',
+      portal:'india',
+      createdAt:serverTimestamp(),
+      updatedAt:serverTimestamp()
+    });
+
+    st.textContent='✅ Inquiry submitted successfully. India Jobs Portal admin ise review karega.';
+    st.style.color='#11623f';
+    st.style.background='#edf8f2';
+    st.style.borderColor='#c9ead9';
+    inquiryForm.reset();
+  }catch(err){
+    console.error('Inquiry submit error:',err);
+    st.textContent='❌ Inquiry submit nahi hui: '+(err.code||'error')+' — '+(err.message||'Please try again.');
+    st.style.color='#a63d3d';
+    st.style.background='#fff5f5';
+    st.style.borderColor='#f2cccc';
+  }finally{
+    btn.disabled=false;
+    btn.textContent='📩 Submit Inquiry';
+  }
+});
 const commentForm=document.getElementById('commentForm');
 commentForm.addEventListener('submit',async e=>{e.preventDefault();const btn=document.getElementById('commentBtn'),st=document.getElementById('commentStatus');const name=document.getElementById('commentName').value.trim(),comment=document.getElementById('commentText').value.trim();if(name.length<2||comment.length<1){st.style.display='block';st.textContent='Name aur comment dono fill karein.';st.style.color='#a63d3d';return;}btn.disabled=true;btn.textContent='⏳ Posting...';try{await addDoc(collection(db2,'comments'),{name,comment,status:'pending',createdAt:serverTimestamp()});st.style.display='block';st.textContent='✅ Comment submitted. Review ke baad public page par show hoga.';st.style.color='#11623f';st.style.background='#edf8f2';st.style.borderColor='#c9ead9';commentForm.reset();}catch(err){console.error(err);st.style.display='block';st.textContent='❌ Comment submit nahi ho saka.';st.style.color='#a63d3d';st.style.background='#fff5f5';st.style.borderColor='#f2cccc';}finally{btn.disabled=false;btn.textContent='💬 Post Comment';}});
 </script>
 
 
+<script type="module">
+import { initializeApp, getApps, getApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
+import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
 
+const inquiryFirebaseConfig = {
+  apiKey:"AIzaSyCh20UGNM3-tWZiB6pkNUXcbWK-lwkc-sU",
+  authDomain:"india-jobs-portal.firebaseapp.com",
+  projectId:"india-jobs-portal",
+  storageBucket:"india-jobs-portal.firebasestorage.app",
+  messagingSenderId:"1035209974762",
+  appId:"1:1035209974762:web:622a242e1a291c4b604893"
+};
+
+const existingInquiryApp = getApps().find(a => a.name === "public-home");
+const inquiryApp = existingInquiryApp || initializeApp(inquiryFirebaseConfig, "inquiry-fallback");
+const inquiryDb = getFirestore(inquiryApp);
+
+const inquiryFormFallback = document.getElementById("inquiryForm");
+if(inquiryFormFallback){
+  inquiryFormFallback.addEventListener("submit", async function(e){
+    // The main handler normally handles this. This listener is only a safety net.
+    if(this.dataset.firebaseSubmitted === "yes") return;
+    e.preventDefault();
+    e.stopImmediatePropagation();
+
+    const btn=document.getElementById("inqBtn");
+    const st=document.getElementById("inqStatus");
+    const name=document.getElementById("inqName").value.trim();
+    const mobile=document.getElementById("inqMobile").value.trim();
+    const email=document.getElementById("inqEmail").value.trim();
+    const service=document.getElementById("inqService").value;
+    const message=document.getElementById("inqMessage").value.trim();
+
+    if(!name || !message || !/^\d{10}$/.test(mobile)){
+      st.style.display="block";
+      st.textContent="❌ Name, 10-digit mobile aur requirement sahi se fill karein.";
+      return;
+    }
+
+    btn.disabled=true;
+    btn.textContent="⏳ Sending...";
+    try{
+      await addDoc(collection(inquiryDb,"inquiries"),{
+        name,mobile,email,service,message,status:"new",
+        createdAt:serverTimestamp(),updatedAt:serverTimestamp()
+      });
+      st.style.display="block";
+      st.textContent="✅ Inquiry submitted successfully. India Jobs Portal admin ise review karega.";
+      inquiryFormFallback.reset();
+    }catch(err){
+      console.error(err);
+      st.style.display="block";
+      st.textContent="❌ Inquiry submit nahi ho saki. Please try again.";
+    }finally{
+      btn.disabled=false;
+      btn.textContent="📩 Submit Inquiry";
+    }
+  }, true);
+}
+</script>
 
 
 <!-- HR / COMPANY CHAT MODAL -->
@@ -742,107 +887,7 @@ commentForm.addEventListener('submit',async e=>{e.preventDefault();const btn=doc
   </div>
 </div>
 
-<script type="module">
-import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
-import { getFirestore, collection, addDoc, doc, getDoc, setDoc, updateDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
-import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
 
-const employerChatConfig={
-  apiKey:"AIzaSyCh20UGNM3-tWZiB6pkNUXcbWK-lwkc-sU",
-  authDomain:"india-jobs-portal.firebaseapp.com",
-  projectId:"india-jobs-portal",
-  storageBucket:"india-jobs-portal.firebasestorage.app",
-  messagingSenderId:"1035209974762",
-  appId:"1:1035209974762:web:622a242e1a291c4b604893"
-};
-const employerChatApp=getApps().find(a=>a.name==="public-home")||initializeApp(employerChatConfig,"employer-chat-public");
-const employerChatDb=getFirestore(employerChatApp);
-
-// Anonymous Firebase Auth lets Firestore rules scope each chat to its owner UID.
-const employerChatAuth=getAuth(employerChatApp);
-async function ensureEmployerChatUser(){
-  if(employerChatAuth.currentUser) return employerChatAuth.currentUser;
-  const credential=await signInAnonymously(employerChatAuth);
-  return credential.user;
-}
-const chatOverlay=document.getElementById("employerChatOverlay");
-const chatForm=document.getElementById("employerChatForm");
-const chatStatus=document.getElementById("employerChatStatus");
-const chatOpen=document.getElementById("openEmployerChat");
-const chatClose=document.getElementById("closeEmployerChat");
-
-chatOpen?.addEventListener("click",()=>{chatOverlay.classList.add("open");document.body.style.overflow="hidden";});
-function closeEmployerChat(){chatOverlay.classList.remove("open");document.body.style.overflow="";}
-chatClose?.addEventListener("click",closeEmployerChat);
-chatOverlay?.addEventListener("click",e=>{if(e.target===chatOverlay)closeEmployerChat();});
-document.addEventListener("keydown",e=>{if(e.key==="Escape")closeEmployerChat();});
-
-chatForm?.addEventListener("submit",async e=>{
-  e.preventDefault();
-  const name=document.getElementById("employerChatName").value.trim();
-  const companyName=document.getElementById("employerChatCompany").value.trim();
-  const email=document.getElementById("employerChatEmail").value.trim().toLowerCase();
-  const phone=document.getElementById("employerChatPhone").value.trim();
-  const message=document.getElementById("employerChatMessage").value.trim();
-  const sendBtn=document.getElementById("employerChatSend");
-  if(!name||!companyName||!email||!message)return;
-  if(phone && !/^\d{10}$/.test(phone)){
-    chatStatus.style.display="block";chatStatus.style.color="#a63d3d";chatStatus.style.background="#fff5f5";chatStatus.style.borderColor="#f2cccc";
-    chatStatus.textContent="Mobile number 10 digits ka hona chahiye.";return;
-  }
-  sendBtn.disabled=true;sendBtn.textContent="Sending…";
-  chatStatus.style.display="block";chatStatus.style.color="#1769aa";chatStatus.style.background="#eef6ff";chatStatus.style.borderColor="#cfe4fb";
-  chatStatus.textContent="Secure connection ban raha hai aur message send ho raha hai…";
-  try{
-    const user=await ensureEmployerChatUser();
-    const storageKey="rj_employer_chat_thread_v2_"+user.uid;
-    let threadId="";
-    try{threadId=localStorage.getItem(storageKey)||"";}catch(_){}
-    let threadRef=null;
-    let existingThread=false;
-
-    if(threadId){
-      threadRef=doc(employerChatDb,"employerChats",threadId);
-      try{
-        const existing=await getDoc(threadRef);
-        existingThread=existing.exists() && existing.data().ownerUid===user.uid;
-      }catch(readErr){
-        // Old or inaccessible thread: start a new private thread.
-        existingThread=false;
-      }
-    }
-
-    if(!existingThread){
-      threadRef=doc(collection(employerChatDb,"employerChats"));
-      threadId=threadRef.id;
-      await setDoc(threadRef,{
-        ownerUid:user.uid,
-        employerName:name,companyName,email,phone,
-        latestMessage:message,latestSender:"employer",
-        createdAt:serverTimestamp(),updatedAt:serverTimestamp(),
-        unreadForAdmin:true,unreadForEmployer:false
-      });
-      try{localStorage.setItem(storageKey,threadId);}catch(_){}
-    }else{
-      await updateDoc(threadRef,{
-        employerName:name,companyName,email,phone,
-        latestMessage:message,latestSender:"employer",
-        updatedAt:serverTimestamp(),unreadForAdmin:true
-      });
-    }
-    await addDoc(collection(employerChatDb,"employerChats",threadId,"messages"),{
-      text:message,sender:"employer",senderName:name,ownerUid:user.uid,createdAt:serverTimestamp()
-    });
-    chatStatus.style.color="#11623f";chatStatus.style.background="#edf8f2";chatStatus.style.borderColor="#c9ead9";
-    chatStatus.textContent="✅ Message submit ho gaya! Aap isi browser se wapas aakar apni conversation continue kar sakte hain. Admin aapke diye gaye email/mobile par bhi contact kar sakta hai.";
-    document.getElementById("employerChatMessage").value="";
-  }catch(err){
-    console.error("Employer chat submit:",err);
-    chatStatus.style.color="#a63d3d";chatStatus.style.background="#fff5f5";chatStatus.style.borderColor="#f2cccc";
-    chatStatus.textContent="❌ Message submit nahi hua. Firebase Console mein Authentication ka Anonymous sign-in enable karein aur secure employerChats Firestore rules publish karein.";
-  }finally{sendBtn.disabled=false;sendBtn.textContent="💬 Send Message";}
-});
-</script>
 
 
 <script type="module">
