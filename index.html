@@ -30,8 +30,7 @@ nav{position:sticky;top:0;z-index:100;background:rgba(255,255,255,.97);backdrop-
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;border:0;border-radius:10px;padding:11px 17px;font-weight:850;cursor:pointer;font-size:14px}
 .primary{background:var(--blue);color:#fff}.green{background:var(--green);color:#fff}.light{background:#fff;color:var(--navy);border:1px solid #cbd8e7}.orange{background:var(--orange);color:#fff}
 .dynamic{background:#fff;border-bottom:1px solid var(--line);overflow:hidden}.dynamicin{height:34px;display:flex;align-items:center;white-space:nowrap;overflow:hidden}
-.dynamictrack{display:flex;width:max-content;flex:0 0 auto;animation:move 42s linear infinite;font-size:13px;font-weight:850;will-change:transform}.tickerGroup{display:flex;align-items:center;gap:34px;flex:0 0 auto;padding-right:34px}.tickerGroup span{flex:0 0 auto;white-space:nowrap}.tickerGroup span:before{content:"•";color:var(--orange);margin-right:12px}
-.dynamicin:hover .dynamictrack{animation-play-state:paused}
+.dynamictrack{display:flex;gap:34px;animation:move 27s linear infinite;font-size:13px;font-weight:850}.dynamictrack span:before{content:"•";color:var(--orange);margin-right:12px}
 @keyframes move{from{transform:translateX(0)}to{transform:translateX(-50%)}}
 .quickActions{background:#fff;padding:13px 0 12px;border-bottom:1px solid var(--line);box-shadow:0 6px 18px rgba(16,42,67,.05)}.quickTitle{display:flex;align-items:end;justify-content:space-between;gap:18px;margin-bottom:10px}.quickTitle h2{margin:1px 0 0;color:var(--navy);font-size:21px}.quickTitle p{margin:0;color:var(--muted);font-size:13px}.quickGrid{display:grid;grid-template-columns:repeat(4,1fr);gap:9px}.quickCard{min-height:62px;padding:8px 11px;border:1px solid #d6e7fa;border-radius:13px;display:flex;align-items:center;gap:10px;background:#f5f9ff;transition:.2s;box-shadow:0 4px 13px rgba(16,42,67,.045)}.quickCard:hover{transform:translateY(-1px);background:#edf6ff;border-color:#bcd9f8;box-shadow:0 8px 20px rgba(16,42,67,.09)}.quickCard>span{width:36px;height:36px;border-radius:11px;display:grid;place-items:center;font-size:17px;background:#e5f1ff;flex:0 0 36px}.quickCard div{flex:1}.quickCard strong{display:block;color:var(--navy);font-size:13px}.quickCard small{display:block;color:#5e7690;font-size:9px;line-height:1.25;margin-top:1px}.quickCard>b{font-size:18px;color:var(--blue)}.quickCard.orange>span{background:#fff4e7}.quickCard.orange>b{color:var(--orange)}.quickCard.navy>span{background:#eef2f7}.quickCard.navy>b{color:var(--navy)}.quickCard.green>span{background:#eaf8f1}.quickCard.green>b{color:var(--green)}
 .hero{background:#fff;padding:24px 0 22px;border-bottom:1px solid var(--line)}
@@ -123,14 +122,7 @@ footer{background:#0d2138;color:#cedbea;padding:45px 0 18px}.foot{display:grid;g
 
 /* FACEBOOK-STYLE NOTIFICATION CENTER */
 .notifWrap{position:relative;display:inline-flex;align-items:center}
-.notifBell{position:relative;width:40px;height:40px;border:1px solid #d7e2f0;border-radius:12px;background:#f7faff;color:#102a43;display:grid;place-items:center;font-size:19px;cursor:pointer;transition:.2s}
-.notifBell:hover{background:#eef5ff;transform:translateY(-1px)}
 .notifBadge{position:absolute;top:-5px;right:-5px;min-width:18px;height:18px;padding:0 5px;border-radius:20px;background:#d84b4b;color:#fff;border:2px solid #fff;font-size:10px;font-weight:900;display:none;align-items:center;justify-content:center}
-.notifPanel{position:absolute;right:0;top:48px;width:355px;max-width:calc(100vw - 24px);background:#fff;border:1px solid #dfe7f0;border-radius:16px;box-shadow:0 18px 45px rgba(16,42,67,.18);z-index:1000;display:none;overflow:hidden}
-.notifPanel.open{display:block}
-.notifPanelHead{padding:14px 15px 10px;border-bottom:1px solid #e8eef5;display:flex;justify-content:space-between;gap:10px;align-items:center}
-.notifPanelHead strong{font-size:17px;color:#102a43}
-.notifPanelHead button{border:0;background:transparent;color:#1769e8;font-size:11px;font-weight:850;cursor:pointer}
 .notifItems{max-height:390px;overflow:auto}
 .notifItem{display:flex;gap:11px;padding:12px 14px;border-bottom:1px solid #edf1f5;cursor:pointer;transition:.15s}
 .notifItem:hover{background:#f7faff}
@@ -144,8 +136,6 @@ footer{background:#0d2138;color:#cedbea;padding:45px 0 18px}.foot{display:grid;g
 .notifFooter{padding:10px;text-align:center;border-top:1px solid #e8eef5}
 .notifFooter a{font-size:11px;font-weight:900;color:#1769e8}
 @media(max-width:800px){
-  .notifPanel{right:-8px;width:340px}
-  .notifBell{width:36px;height:36px}
 }
 
 </style>
@@ -321,40 +311,18 @@ footer{background:#0d2138;color:#cedbea;padding:45px 0 18px}.foot{display:grid;g
 <nav><div class="wrap navin">
 <a href="#home" class="brand"><div class="logo">IJ</div><div>India Jobs Portal<small>Private Jobs • Government Jobs • Fresher Jobs • Career Support</small></div></a>
 <div class="menu">
-<a href="jobs.html">Jobs</a><a href="government-jobs.html">Govt Jobs</a><a href="post-a-job.html">Post a Job</a><a href="job-seeker.html">👤 Job Seeker</a><button type="button" class="employerChatNavBtn" id="openEmployerChat">🏢 HR / Company Chat</button><a class="btn primary" href="#contact" id="navInquiryButton">Inquiry</a><button type="button" class="donate-nav-btn" id="openDonateModal" style="display:inline-flex;align-items:center;justify-content:center;background:#fff7ed;color:#9a3412;border:1px solid #fed7aa;border-radius:10px;padding:9px 12px;font-weight:850;white-space:nowrap;cursor:pointer;font:inherit">❤️ Donate</button><div class="notifWrap">
-  <button id="notifBell" class="notifBell" aria-label="Notifications" title="Notifications">🔔<span id="notifBadge" class="notifBadge">0</span></button>
-  <div id="notifPanel" class="notifPanel">
-    <div class="notifPanelHead">
-      <strong>🔔 Notifications</strong>
-      <button id="markAllRead" type="button">Mark all as read</button>
-    </div>
-    <div id="notifItems" class="notifItems">
-      <div class="notifEmpty">Loading notifications…</div>
-    </div>
-    <div class="notifFooter"><a href="#updates" id="viewAllNotif">View all updates</a></div>
-  </div>
-</div>
-<a class="admin-top-link" href="admin-dashboard.html">🔐 Admin</a>
+<a href="jobs.html">Jobs</a><a href="government-jobs.html">Govt Jobs</a><a href="post-a-job.html">Post a Job</a><a href="job-seeker.html">👤 Job Seeker</a><button type="button" class="employerChatNavBtn" id="openEmployerChat">🏢 HR / Company Chat</button><a href="#services">Services</a><a class="btn primary" href="inquiry.html">Inquiry</a><a class="admin-top-link" href="admin-dashboard.html">🔐 Admin</a>
 </div></div></nav>
 
 <!-- SINGLE DYNAMIC JOB MESSAGE -->
 <div class="dynamic jobMessageStrip">
   <div class="wrap dynamicin">
     <div class="dynamictrack">
-      <div class="tickerGroup" aria-label="India Jobs Portal updates">
-        <span>🔥 India bhar ki private jobs, government vacancies aur career support yahan dekhein.</span>
-        <span>💼 All India latest job opportunities — state aur city ke hisaab se search karein.</span>
-        <span>🎓 Freshers, experienced candidates aur work-from-home jobs.</span>
-        <span>🏛️ Central Government • SSC • UPSC • Railways • Banking updates.</span>
-        <span>💻 MIS • Excel • Power BI • SQL • Data Analyst vacancies.</span>
-      </div>
-      <div class="tickerGroup" aria-hidden="true">
-        <span>🔥 India bhar ki private jobs, government vacancies aur career support yahan dekhein.</span>
-        <span>💼 All India latest job opportunities — state aur city ke hisaab se search karein.</span>
-        <span>🎓 Freshers, experienced candidates aur work-from-home jobs.</span>
-        <span>🏛️ Central Government • SSC • UPSC • Railways • Banking updates.</span>
-        <span>💻 MIS • Excel • Power BI • SQL • Data Analyst vacancies.</span>
-      </div>
+      <span>🔥 Job chahiye? India bhar ki jobs, government vacancies aur career support yahan dekhein.</span>
+      <span>💼 India bhar ki latest job opportunities yahan dekhein.</span>
+      <span>🎓 Freshers ke liye bhi Jobs aur Career Support available hai.</span>
+      <span>🏛️ Government Jobs • RPSC • RSSB • CET Updates</span>
+      <span>💻 MIS • Excel • Power BI • SQL • Data Analyst Jobs</span>
     </div>
   </div>
 </div>
@@ -494,203 +462,11 @@ function jdKeywords(jd, skills){
 }
 </script>
 
-<script>
-/* Notification center local read-state */
-window.IndiaNotificationRead = {
-  key: "india_jobs_read_notifications_v1",
-  get: function(){
-    try{return JSON.parse(localStorage.getItem(this.key)||"[]")}catch(e){return []}
-  },
-  save: function(a){try{localStorage.setItem(this.key,JSON.stringify(a.slice(-100)))}catch(e){}},
-  has: function(id){return this.get().indexOf(id)>=0},
-  mark: function(id){var a=this.get();if(a.indexOf(id)<0)a.push(id);this.save(a)},
-  all: function(ids){this.save(Array.from(new Set(this.get().concat(ids))))}
-};
-</script>
-
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
 import { getFirestore, collection, addDoc, query, where, orderBy, limit, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
-const app2=initializeApp({apiKey:"AIzaSyCh20UGNM3-tWZiB6pkNUXcbWK-lwkc-sU",authDomain:"india-jobs-portal.firebaseapp.com",projectId:"india-jobs-portal",storageBucket:"india-jobs-portal.firebasestorage.app",messagingSenderId:"1035209974762",appId:"1:1035209974762:web:622a242e1a291c4b604893",measurementId:"G-XSH6QC1PG4"},'public-home');
+const app2=initializeApp({apiKey:"AIzaSyCh20UGNM3-tWZiB6pkNUXcbWK-lwkc-sU",authDomain:"india-jobs-portal.firebaseapp.com",projectId:"india-jobs-portal",storageBucket:"india-jobs-portal.firebasestorage.app",messagingSenderId:"1035209974762",appId:"1:1035209974762:web:622a242e1a291c4b604893",measurementId:"G-XSH6QC1PG4"},'india-public-home-v2');
 const db2=getFirestore(app2);
-
-// Render latest approved jobs in the homepage hero panel.
-// Cards link to the public jobs page; if a job has an external application URL,
-// its Apply button opens that destination in a new tab.
-const heroJobsBox=document.getElementById('heroLatestJobs');
-if(!heroJobsBox) console.error('Homepage latest jobs: #heroLatestJobs container not found.');
-function escapeHeroHtml(value){
-  return String(value ?? '').replace(/[&<>"']/g, function(char){
-    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char];
-  });
-}
-function heroJobDate(value){
-  try{
-    const d=value?.toDate?value.toDate():new Date(value);
-    if(!value || isNaN(d.getTime())) return '';
-    return new Intl.DateTimeFormat('en-IN',{day:'2-digit',month:'short'}).format(d);
-  }catch(e){return '';}
-}
-function heroJobText(value){
-  return String(value||'').replace(/\s+/g,' ').trim();
-}
-try{
-  onSnapshot(query(collection(db2,'jobs'),where('status','==','approved')),snap=>{
-    const jobs=snap.docs.map(doc=>({id:doc.id,...doc.data()}));
-    jobs.sort((a,b)=>{
-      const da=a.createdAt?.toDate?a.createdAt.toDate().getTime():new Date(a.createdAt||a.postedAt||0).getTime();
-      const db=b.createdAt?.toDate?b.createdAt.toDate().getTime():new Date(b.createdAt||b.postedAt||0).getTime();
-      return db-da;
-    });
-    const latest=jobs.slice(0,3);
-    if(!latest.length){
-      heroJobsBox.innerHTML='<div class="heroJobEmpty">Abhi koi approved job listed nahi hai. Nayi approved vacancies yahan automatically dikhenगी.</div>';
-      return;
-    }
-    heroJobsBox.innerHTML=latest.map(j=>{
-      const title=escapeHeroHtml(j.title||j.jobTitle||'Job Vacancy');
-      const company=escapeHeroHtml(j.company||j.companyName||'Company details on job page');
-      const location=escapeHeroHtml(j.location||'Location not specified');
-      const type=escapeHeroHtml(j.type||j.jobType||j.category||'Job');
-      const exp=escapeHeroHtml(j.experience||'');
-      const salary=escapeHeroHtml(j.salary||'');
-      const date=escapeHeroHtml(heroJobDate(j.createdAt||j.postedAt||j.created_at));
-      const apply=String(j.applyLink||j.apply||j.applicationLink||'').trim();
-      const safeApply=/^https?:\/\//i.test(apply)?apply:'';
-      const detailsHref='jobs.html';
-      return `<article class="heroJobCard">
-        <div class="heroJobMain"><div class="heroJobInfo">
-          <a class="heroJobTitle" href="${detailsHref}">${title}</a>
-          <div class="heroJobCompany">${company} · ${location}</div>
-        </div>${date?`<span class="tag">${date}</span>`:''}</div>
-        <div class="heroJobMeta">${type}${exp?' · '+exp:''}${salary?' · '+salary:''}</div>
-        <div class="heroJobActions">
-          <a class="heroJobButton" href="${detailsHref}">View Job →</a>
-          ${safeApply?`<a class="heroJobButton secondary" href="${escapeHeroHtml(safeApply)}" target="_blank" rel="noopener noreferrer">Apply ↗</a>`:''}
-        </div>
-      </article>`;
-    }).join('');
-  },err=>{
-    console.error('Homepage latest jobs:',err);
-    heroJobsBox.innerHTML='<div class="heroJobEmpty">Latest jobs abhi load nahi ho pa rahe. <a href="jobs.html">Yahan click karke jobs dekhein.</a></div>';
-  });
-}catch(e){
-  console.error('Homepage latest jobs init:',e);
-  if(heroJobsBox) heroJobsBox.innerHTML='<div class="heroJobEmpty">Jobs load nahi ho pa rahe. <a href="jobs.html">View all jobs</a></div>';
-}
-
-
-const notifBell=document.getElementById('notifBell');
-const notifPanel=document.getElementById('notifPanel');
-const notifBadge=document.getElementById('notifBadge');
-const notifItems=document.getElementById('notifItems');
-const markAllRead=document.getElementById('markAllRead');
-let latestNotifications=[];
-
-function notifIcon(type){
-  type=String(type||'').toLowerCase();
-  if(type.includes('job')) return '💼';
-  if(type.includes('gov')) return '🏛️';
-  if(type.includes('note')) return '📚';
-  if(type.includes('course')) return '🎓';
-  if(type.includes('alert')) return '⚠️';
-  return '🔔';
-}
-function notifTime(ts){
-  if(!ts) return 'Just now';
-  try{
-    const d=ts.toDate?ts.toDate():new Date(ts);
-    const diff=Math.max(0,Date.now()-d.getTime());
-    if(diff<60000) return 'Just now';
-    if(diff<3600000) return Math.floor(diff/60000)+' min ago';
-    if(diff<86400000) return Math.floor(diff/3600000)+' hr ago';
-    return new Intl.DateTimeFormat('en-IN',{day:'2-digit',month:'short',year:'numeric'}).format(d);
-  }catch(e){return '';}
-}
-function renderNotificationCenter(){
-  const read=window.IndiaNotificationRead.get();
-  const unread=latestNotifications.filter(n=>!read.includes(n.id));
-  notifBadge.textContent=unread.length>99?'99+':unread.length;
-  notifBadge.style.display=unread.length?'flex':'none';
-
-  if(!latestNotifications.length){
-    notifItems.innerHTML='<div class="notifEmpty">🔔 No notifications yet.<br>New updates yahan automatically aayenge.</div>';
-    return;
-  }
-  notifItems.innerHTML=latestNotifications.map(n=>{
-    const unreadClass=read.includes(n.id)?'':' unread';
-    return `<div class="notifItem${unreadClass}" data-notif-id="${esc2(n.id)}">
-      <div class="notifIcon">${notifIcon(n.type||n.title)}</div>
-      <div class="notifBody">
-        <div class="notifTitle">${esc2(n.title||'New Update')}</div>
-        <div class="notifMsg">${esc2(n.message||'')}</div>
-        <div class="notifTime">${esc2(notifTime(n.createdAt))}</div>
-      </div>
-    </div>`;
-  }).join('');
-}
-notifBell.addEventListener('click',function(e){
-  e.stopPropagation();
-  notifPanel.classList.toggle('open');
-});
-document.addEventListener('click',function(e){
-  if(!notifPanel.contains(e.target) && !notifBell.contains(e.target)) notifPanel.classList.remove('open');
-});
-markAllRead.addEventListener('click',function(){
-  window.IndiaNotificationRead.all(latestNotifications.map(n=>n.id));
-  renderNotificationCenter();
-});
-notifItems.addEventListener('click',function(e){
-  const item=e.target.closest('.notifItem');
-  if(!item)return;
-  const id=item.getAttribute('data-notif-id');
-  window.IndiaNotificationRead.mark(id);
-  renderNotificationCenter();
-  notifPanel.classList.remove('open');
-  const updates=document.getElementById('updates');
-  if(updates) updates.scrollIntoView({behavior:'smooth',block:'start'});
-});
-
-// APPROVED JOB NOTIFICATIONS — public-safe because only approved jobs are readable.
-let firstApprovedJobSnapshot=true;
-try{
-  onSnapshot(query(collection(db2,'jobs'),where('status','==','approved')),snap=>{
-    if(firstApprovedJobSnapshot){ firstApprovedJobSnapshot=false; return; }
-    snap.docChanges().forEach(change=>{
-      if(change.type!=='added') return;
-      const j=change.doc.data();
-      const id='job_'+change.doc.id;
-      if(!window.IndiaNotificationRead.has(id)){
-        latestNotifications=[{id:id,title:'New Job Available',message:`${j.title||'New vacancy'}${j.company?' • '+j.company:''}${j.location?' • '+j.location:''}`,type:'job',status:'published',createdAt:new Date()}].concat(latestNotifications).slice(0,15);
-        renderNotificationCenter();
-      }
-    });
-  },err=>console.error('Approved job notification listener:',err));
-}catch(e){console.error('Approved job notification init:',e);}
-
-try{
-  // Read announcements without a Firestore composite-index dependency.
-  // We filter and sort on the browser so the bell keeps working even if
-  // Firestore has not created an index for status + createdAt yet.
-  onSnapshot(query(collection(db2,'announcements'),where('status','==','published')),snap=>{
-    latestNotifications=snap.docs
-      .map(d=>({id:d.id,...d.data()}))
-      .filter(n=>String(n.status||'').toLowerCase()==='published')
-      .sort((a,b)=>{
-        const ta=a.createdAt?.toDate?a.createdAt.toDate().getTime():new Date(a.createdAt||0).getTime();
-        const tb=b.createdAt?.toDate?b.createdAt.toDate().getTime():new Date(b.createdAt||0).getTime();
-        return tb-ta;
-      })
-      .slice(0,15);
-    renderNotificationCenter();
-  },err=>{
-    console.error('Notification center:',err);
-    notifItems.innerHTML='<div class="notifEmpty">Notifications temporarily unavailable.<br><small>Please check Firebase announcements read access.</small></div>';
-  });
-}catch(e){
-  console.error('Notification center init:',e);
-  notifItems.innerHTML='<div class="notifEmpty">Notifications temporarily unavailable.</div>';
-}
 
 const esc2=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const fmt2=t=>{if(!t)return '';try{return new Intl.DateTimeFormat('en-IN',{day:'2-digit',month:'short',year:'numeric'}).format(t.toDate? t.toDate():new Date(t));}catch{return ''}};
@@ -722,7 +498,6 @@ const inquiryForm=document.getElementById('inquiryForm');
 inquiryForm.addEventListener('submit',async function(e){
   e.preventDefault();
   e.stopPropagation();
-  inquiryForm.dataset.firebaseSubmitted='yes';
 
   const btn=document.getElementById('inqBtn');
   const st=document.getElementById('inqStatus');
@@ -776,7 +551,6 @@ inquiryForm.addEventListener('submit',async function(e){
       service,
       message,
       status:'new',
-      portal:'india',
       createdAt:serverTimestamp(),
       updatedAt:serverTimestamp()
     });
@@ -788,7 +562,7 @@ inquiryForm.addEventListener('submit',async function(e){
     inquiryForm.reset();
   }catch(err){
     console.error('Inquiry submit error:',err);
-    st.textContent='❌ Inquiry submit nahi hui: '+(err.code||'error')+' — '+(err.message||'Please try again.');
+    st.textContent='❌ Inquiry submit nahi ho saki. Please try again.';
     st.style.color='#a63d3d';
     st.style.background='#fff5f5';
     st.style.borderColor='#f2cccc';
@@ -802,7 +576,66 @@ commentForm.addEventListener('submit',async e=>{e.preventDefault();const btn=doc
 </script>
 
 
+<script type="module">
+import { initializeApp, getApps, getApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
+import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
 
+const inquiryFirebaseConfig = {
+  apiKey:"AIzaSyCh20UGNM3-tWZiB6pkNUXcbWK-lwkc-sU",
+  authDomain:"india-jobs-portal.firebaseapp.com",
+  projectId:"india-jobs-portal",
+  storageBucket:"india-jobs-portal.firebasestorage.app",
+  messagingSenderId:"1035209974762",
+  appId:"1:1035209974762:web:622a242e1a291c4b604893"
+};
+
+const existingInquiryApp = getApps().find(a => a.name === "public-home");
+const inquiryApp = existingInquiryApp || initializeApp(inquiryFirebaseConfig, "inquiry-fallback");
+const inquiryDb = getFirestore(inquiryApp);
+
+const inquiryFormFallback = document.getElementById("inquiryForm");
+if(inquiryFormFallback){
+  inquiryFormFallback.addEventListener("submit", async function(e){
+    // The main handler normally handles this. This listener is only a safety net.
+    if(this.dataset.firebaseSubmitted === "yes") return;
+    e.preventDefault();
+    e.stopImmediatePropagation();
+
+    const btn=document.getElementById("inqBtn");
+    const st=document.getElementById("inqStatus");
+    const name=document.getElementById("inqName").value.trim();
+    const mobile=document.getElementById("inqMobile").value.trim();
+    const email=document.getElementById("inqEmail").value.trim();
+    const service=document.getElementById("inqService").value;
+    const message=document.getElementById("inqMessage").value.trim();
+
+    if(!name || !message || !/^\d{10}$/.test(mobile)){
+      st.style.display="block";
+      st.textContent="❌ Name, 10-digit mobile aur requirement sahi se fill karein.";
+      return;
+    }
+
+    btn.disabled=true;
+    btn.textContent="⏳ Sending...";
+    try{
+      await addDoc(collection(inquiryDb,"inquiries"),{
+        name,mobile,email,service,message,status:"new",
+        createdAt:serverTimestamp(),updatedAt:serverTimestamp()
+      });
+      st.style.display="block";
+      st.textContent="✅ Inquiry submitted successfully. India Jobs Portal admin ise review karega.";
+      inquiryFormFallback.reset();
+    }catch(err){
+      console.error(err);
+      st.style.display="block";
+      st.textContent="❌ Inquiry submit nahi ho saki. Please try again.";
+    }finally{
+      btn.disabled=false;
+      btn.textContent="📩 Submit Inquiry";
+    }
+  }, true);
+}
+</script>
 
 
 <!-- HR / COMPANY CHAT MODAL -->
@@ -829,7 +662,107 @@ commentForm.addEventListener('submit',async e=>{e.preventDefault();const btn=doc
   </div>
 </div>
 
+<script type="module">
+import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
+import { getFirestore, collection, addDoc, doc, getDoc, setDoc, updateDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
+import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
 
+const employerChatConfig={
+  apiKey:"AIzaSyCh20UGNM3-tWZiB6pkNUXcbWK-lwkc-sU",
+  authDomain:"india-jobs-portal.firebaseapp.com",
+  projectId:"india-jobs-portal",
+  storageBucket:"india-jobs-portal.firebasestorage.app",
+  messagingSenderId:"1035209974762",
+  appId:"1:1035209974762:web:622a242e1a291c4b604893"
+};
+const employerChatApp=getApps().find(a=>a.name==="public-home")||initializeApp(employerChatConfig,"employer-chat-public");
+const employerChatDb=getFirestore(employerChatApp);
+
+// Anonymous Firebase Auth lets Firestore rules scope each chat to its owner UID.
+const employerChatAuth=getAuth(employerChatApp);
+async function ensureEmployerChatUser(){
+  if(employerChatAuth.currentUser) return employerChatAuth.currentUser;
+  const credential=await signInAnonymously(employerChatAuth);
+  return credential.user;
+}
+const chatOverlay=document.getElementById("employerChatOverlay");
+const chatForm=document.getElementById("employerChatForm");
+const chatStatus=document.getElementById("employerChatStatus");
+const chatOpen=document.getElementById("openEmployerChat");
+const chatClose=document.getElementById("closeEmployerChat");
+
+chatOpen?.addEventListener("click",()=>{chatOverlay.classList.add("open");document.body.style.overflow="hidden";});
+function closeEmployerChat(){chatOverlay.classList.remove("open");document.body.style.overflow="";}
+chatClose?.addEventListener("click",closeEmployerChat);
+chatOverlay?.addEventListener("click",e=>{if(e.target===chatOverlay)closeEmployerChat();});
+document.addEventListener("keydown",e=>{if(e.key==="Escape")closeEmployerChat();});
+
+chatForm?.addEventListener("submit",async e=>{
+  e.preventDefault();
+  const name=document.getElementById("employerChatName").value.trim();
+  const companyName=document.getElementById("employerChatCompany").value.trim();
+  const email=document.getElementById("employerChatEmail").value.trim().toLowerCase();
+  const phone=document.getElementById("employerChatPhone").value.trim();
+  const message=document.getElementById("employerChatMessage").value.trim();
+  const sendBtn=document.getElementById("employerChatSend");
+  if(!name||!companyName||!email||!message)return;
+  if(phone && !/^\d{10}$/.test(phone)){
+    chatStatus.style.display="block";chatStatus.style.color="#a63d3d";chatStatus.style.background="#fff5f5";chatStatus.style.borderColor="#f2cccc";
+    chatStatus.textContent="Mobile number 10 digits ka hona chahiye.";return;
+  }
+  sendBtn.disabled=true;sendBtn.textContent="Sending…";
+  chatStatus.style.display="block";chatStatus.style.color="#1769aa";chatStatus.style.background="#eef6ff";chatStatus.style.borderColor="#cfe4fb";
+  chatStatus.textContent="Secure connection ban raha hai aur message send ho raha hai…";
+  try{
+    const user=await ensureEmployerChatUser();
+    const storageKey="rj_employer_chat_thread_v2_"+user.uid;
+    let threadId="";
+    try{threadId=localStorage.getItem(storageKey)||"";}catch(_){}
+    let threadRef=null;
+    let existingThread=false;
+
+    if(threadId){
+      threadRef=doc(employerChatDb,"employerChats",threadId);
+      try{
+        const existing=await getDoc(threadRef);
+        existingThread=existing.exists() && existing.data().ownerUid===user.uid;
+      }catch(readErr){
+        // Old or inaccessible thread: start a new private thread.
+        existingThread=false;
+      }
+    }
+
+    if(!existingThread){
+      threadRef=doc(collection(employerChatDb,"employerChats"));
+      threadId=threadRef.id;
+      await setDoc(threadRef,{
+        ownerUid:user.uid,
+        employerName:name,companyName,email,phone,
+        latestMessage:message,latestSender:"employer",
+        createdAt:serverTimestamp(),updatedAt:serverTimestamp(),
+        unreadForAdmin:true,unreadForEmployer:false
+      });
+      try{localStorage.setItem(storageKey,threadId);}catch(_){}
+    }else{
+      await updateDoc(threadRef,{
+        employerName:name,companyName,email,phone,
+        latestMessage:message,latestSender:"employer",
+        updatedAt:serverTimestamp(),unreadForAdmin:true
+      });
+    }
+    await addDoc(collection(employerChatDb,"employerChats",threadId,"messages"),{
+      text:message,sender:"employer",senderName:name,ownerUid:user.uid,createdAt:serverTimestamp()
+    });
+    chatStatus.style.color="#11623f";chatStatus.style.background="#edf8f2";chatStatus.style.borderColor="#c9ead9";
+    chatStatus.textContent="✅ Message submit ho gaya! Aap isi browser se wapas aakar apni conversation continue kar sakte hain. Admin aapke diye gaye email/mobile par bhi contact kar sakta hai.";
+    document.getElementById("employerChatMessage").value="";
+  }catch(err){
+    console.error("Employer chat submit:",err);
+    chatStatus.style.color="#a63d3d";chatStatus.style.background="#fff5f5";chatStatus.style.borderColor="#f2cccc";
+    chatStatus.textContent="❌ Message submit nahi hua. Firebase Console mein Authentication ka Anonymous sign-in enable karein aur secure employerChats Firestore rules publish karein.";
+  }finally{sendBtn.disabled=false;sendBtn.textContent="💬 Send Message";}
+});
+</script>
 
 
 <script type="module">
@@ -849,34 +782,6 @@ const visitorConfig={
 const visitorApp=initializeApp(visitorConfig,"india-visitor-tracker");
 const visitorAuth=getAuth(visitorApp);
 const visitorDb=getFirestore(visitorApp);
-
-// India-only HR chat submission. Anonymous Firebase Auth gives each visitor
-// an owner UID so chat threads can be kept private from other visitors.
-const chatApp=initializeApp(visitorConfig,"india-employer-chat");
-const chatAuth=getAuth(chatApp);
-const chatDb=getFirestore(chatApp);
-const employerChatForm=document.getElementById("employerChatForm");
-if(employerChatForm){
- employerChatForm.addEventListener("submit",async e=>{
-  e.preventDefault();
-  const val=id=>document.getElementById(id).value.trim();
-  const name=val("employerChatName"), company=val("employerChatCompany"), email=val("employerChatEmail"), phone=val("employerChatPhone"), message=val("employerChatMessage");
-  const status=document.getElementById("employerChatStatus"), button=document.getElementById("employerChatSend");
-  const show=(text,ok=false)=>{status.style.display="block";status.textContent=text;status.style.background=ok?"#edf8f2":"#fff0f0";status.style.color=ok?"#11623f":"#a63d3d";};
-  if(name.length<2||company.length<2||!email||message.length<2){show("Name, company, email aur message sahi se fill karein.");return;}
-  if(phone&&!/^\d{10}$/.test(phone)){show("Mobile number 10 digits ka hona chahiye.");return;}
-  button.disabled=true;button.textContent="Sending…";
-  try{
-   let user=chatAuth.currentUser;if(!user)user=(await signInAnonymously(chatAuth)).user;
-   const thread=doc(collection(chatDb,"employerChats"));
-   await setDoc(thread,{ownerUid:user.uid,portal:"india",employerName:name,companyName:company,email,phone,status:"open",latestMessage:message,latestSender:"employer",unreadForAdmin:true,unreadForEmployer:false,createdAt:serverTimestamp(),updatedAt:serverTimestamp()});
-   await addDoc(collection(chatDb,"employerChats",thread.id,"messages"),{ownerUid:user.uid,text:message,sender:"employer",senderName:name,createdAt:serverTimestamp()});
-   show("Message India Jobs Portal HR team ko bhej diya gaya. Admin dashboard se review hoga.",true);employerChatForm.reset();
-  }catch(err){console.error("India HR chat submit:",err);show("Chat send nahi hua: "+(err.code||err.message||"Please retry"));}
-  finally{button.disabled=false;button.textContent="💬 Send Message";}
- });
-}
-
 
 (async()=>{
  try{
@@ -959,69 +864,6 @@ if(employerChatForm){
      }catch(e){}
    });
  }catch(e){console.warn("Visitor analytics tracker:",e)}
-})();
-</script>
-
-
-<!-- DONATION MODAL: works on desktop and mobile; UPI app launch is optional -->
-<div id="donateModal" role="dialog" aria-modal="true" aria-labelledby="donateTitle"
- style="display:none;position:fixed;inset:0;background:rgba(8,25,45,.58);z-index:10030;align-items:center;justify-content:center;padding:16px">
- <div style="background:#fff;width:min(420px,100%);border-radius:18px;padding:24px;box-shadow:0 25px 80px #0004;text-align:center;position:relative">
-  <button type="button" id="closeDonateModal" aria-label="Close" style="position:absolute;right:12px;top:10px;border:0;background:#eef2f7;border-radius:50%;width:32px;height:32px;font-size:20px;cursor:pointer">×</button>
-  <div style="font-size:34px">❤️</div>
-  <h2 id="donateTitle" style="margin:8px 0;color:#102a43;font-size:23px">Support India Jobs Portal</h2>
-  <p style="color:#64748b;font-size:14px">Aap apni marzi se UPI ke through support kar sakte hain.</p>
-  <div style="background:#f7faff;border:1px solid #dce5ef;border-radius:12px;padding:13px;margin:16px 0">
-   <small style="display:block;color:#64748b">UPI ID</small><strong id="donateUpiId" style="font-size:18px;color:#102a43">6350566010@ybl</strong>
-  </div>
-  <button type="button" id="copyDonateUpi" class="btn light" style="width:100%;margin-bottom:9px">📋 Copy UPI ID</button>
-  <a id="launchDonateUpi" class="btn primary" style="width:100%" href="upi://pay?pa=6350566010%40ybl&amp;pn=India%20Jobs%20Portal&amp;cu=INR">Open UPI App</a>
-  <p id="donateStatus" style="font-size:12px;color:#64748b;margin-bottom:0" aria-live="polite">Desktop par UPI ID copy karke apne UPI app mein pay karein.</p>
- </div>
-</div>
-<script>
-(function(){
-  const chatModal=document.getElementById('employerChatOverlay');
-  const chatOpenBtn=document.getElementById('openEmployerChat');
-  const chatCloseBtn=document.getElementById('closeEmployerChat');
-  // Non-module fallback makes the chat window open even if a Firebase module fails to load.
-  if(chatOpenBtn && chatModal){
-    chatOpenBtn.addEventListener('click',function(){
-      chatModal.classList.add('open');
-      chatModal.style.display='flex';
-      document.body.style.overflow='hidden';
-    });
-  }
-  function closeChatFallback(){
-    if(chatModal){chatModal.classList.remove('open');chatModal.style.display='none';}
-    document.body.style.overflow='';
-  }
-  chatCloseBtn?.addEventListener('click',closeChatFallback);
-  chatModal?.addEventListener('click',function(e){if(e.target===chatModal)closeChatFallback();});
-  document.addEventListener('keydown',function(e){if(e.key==='Escape'){closeChatFallback();closeDonate();}});
-
-  const donateModal=document.getElementById('donateModal');
-  const donateOpen=document.getElementById('openDonateModal');
-  const donateClose=document.getElementById('closeDonateModal');
-  const donateStatus=document.getElementById('donateStatus');
-  function openDonate(){if(donateModal){donateModal.style.display='flex';document.body.style.overflow='hidden';}}
-  function closeDonate(){if(donateModal){donateModal.style.display='none';document.body.style.overflow='';}}
-  donateOpen?.addEventListener('click',openDonate);
-  donateClose?.addEventListener('click',closeDonate);
-  donateModal?.addEventListener('click',function(e){if(e.target===donateModal)closeDonate();});
-  document.getElementById('copyDonateUpi')?.addEventListener('click',async function(){
-    try{
-      await navigator.clipboard.writeText('6350566010@ybl');
-      donateStatus.textContent='✅ UPI ID copied. Ab apne UPI app mein paste karke payment karein.';
-    }catch(e){
-      donateStatus.textContent='UPI ID: 6350566010@ybl — ise manually copy karke apne UPI app mein paste karein.';
-    }
-  });
-  // Inquiry button should scroll to the actual inquiry form on this homepage.
-  document.getElementById('navInquiryButton')?.addEventListener('click',function(e){
-    const target=document.getElementById('contact');
-    if(target){e.preventDefault();target.scrollIntoView({behavior:'smooth',block:'start'});history.replaceState(null,'','#contact');}
-  });
 })();
 </script>
 

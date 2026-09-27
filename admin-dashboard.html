@@ -88,6 +88,15 @@ th{background:#f2f6fa;color:var(--navy);position:sticky;top:0}
       <div class="stat"><b id="noticeCount">0</b><span>NOTIFICATIONS</span></div>
     </div>
 
+    <section class="card" id="activityCard" style="margin-top:18px;border:1px solid #cfe0f5">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
+        <div><h2 style="margin:0 0 5px">🔔 Live Activity & Notifications</h2><p class="muted" style="margin:0">Website par visitors, job seekers aur HR ki recent activities yahan live dikhenगी.</p></div>
+        <button id="clearActivityView" class="btn light" type="button">Clear view</button>
+      </div>
+      <div id="activityToast" role="status" style="display:none;margin:12px 0;padding:12px 14px;background:#eaf7ee;border:1px solid #bde5c8;border-radius:12px;color:#14532d;font-weight:700"></div>
+      <div id="activityFeed" style="display:grid;gap:9px;margin-top:14px"><div class="muted">Loading activity history…</div></div>
+    </section>
+
     <section class="card" style="margin-top:18px">
       <div class="tabs">
         <button class="tab active" data-tab="jobsTab">💼 Jobs</button>
@@ -102,7 +111,6 @@ th{background:#f2f6fa;color:var(--navy);position:sticky;top:0}
           <a class="btn light" href="candidate-manager.html">👤 Candidate Manager</a>
           <a class="btn light" href="notification-manager.html">🔔 Notifications</a>
           <a class="btn light" href="enquiry-manager.html">📩 Enquiries</a>
-          <a class="btn light" href="comment-manager.html">💬 Comment Moderation</a>
           <a class="btn bulk" href="private-job-import.html">📥 Bulk Private Job Import</a>
         <a class="light" href="visitor-analytics.html" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;text-decoration:none">📈 Website Visitor Analytics</a></div>
       </div>
@@ -330,10 +338,45 @@ onAuthStateChanged(auth,async user=>{
   await loadAll();
 });
 
+let activityItems=[], activityInitialized=new Set(), activityUnsubs=[], activitySeen=new Set(), activityToastTimer=null;
+const activitySources=[
+  {key:"jobs",label:"Job post",icon:"💼",title:d=>d.title||d.jobTitle||"New job submitted",detail:d=>[d.company,d.location,d.email].filter(Boolean).join(" • ")},
+  {key:"candidates",label:"Job seeker",icon:"👤",title:d=>d.name||d.fullName||d.candidateName||"New candidate registered",detail:d=>[d.email,d.phone,d.skills].filter(Boolean).join(" • ")},
+  {key:"inquiries",label:"Inquiry",icon:"📩",title:d=>d.name||d.fullName||"New inquiry received",detail:d=>[d.subject,d.email,d.phone,d.message].filter(Boolean).join(" • ")},
+  {key:"comments",label:"Comment",icon:"💬",title:d=>d.name||"New comment",detail:d=>d.comment||d.message||"Comment submitted"},
+  {key:"employerChats",label:"HR / Company",icon:"🏢",title:d=>d.companyName||d.employerName||"HR sent a message",detail:d=>d.latestMessage||d.email||d.phone||"New HR conversation"},
+  {key:"announcements",label:"Announcement",icon:"📢",title:d=>d.title||"Announcement update",detail:d=>d.message||""},
+  {key:"notifications",label:"Notification",icon:"🔔",title:d=>d.title||"New notification",detail:d=>d.message||""},
+  {key:"webAnalyticsEvents",label:"Website visit / click",icon:"🌐",title:d=>d.eventType||"Visitor activity",detail:d=>[d.page,d.device,d.city,d.region,d.source].filter(Boolean).join(" • ")},
+  {key:"webAnalyticsSessions",label:"Visitor session",icon:"👀",title:d=>"Visitor session started",detail:d=>[d.device,d.city,d.region,d.source,d.landingPage].filter(Boolean).join(" • ")}
+];
+function activityDate(v){try{const d=v?.toDate?v.toDate():new Date(v||Date.now());return isNaN(d.getTime())?new Date():d;}catch(_){return new Date();}}
+function renderActivity(){
+ const box=$("activityFeed"); if(!activityItems.length){box.innerHTML='<div class="muted">Abhi koi activity record nahi hai. New activity yahan live aayegi.</div>';return;}
+ box.innerHTML=activityItems.slice().sort((a,b)=>b.when-a.when).slice(0,60).map(a=>`<div style="display:flex;gap:12px;padding:12px;border:1px solid #e3ebf5;border-radius:12px;background:#fff"><div style="font-size:22px">${a.icon}</div><div style="min-width:0;flex:1"><div style="font-weight:800;color:#12355b">${esc(a.label)}: ${esc(a.title)}</div><div style="font-size:13px;color:#526579;overflow-wrap:anywhere;margin-top:3px">${esc(a.detail||"")}</div><div style="font-size:11px;color:#8492a6;margin-top:5px">${esc(a.when.toLocaleString("en-IN"))}</div></div></div>`).join('');
+ $("noticeCount").textContent=String(activityItems.length);
+}
+function showActivityToast(item){const t=$("activityToast");t.textContent=`${item.icon} ${item.label}: ${item.title}${item.detail?" — "+item.detail:""}`;t.style.display="block";clearTimeout(activityToastTimer);activityToastTimer=setTimeout(()=>t.style.display="none",10000);}
+function startActivityTracking(){
+ activityUnsubs.forEach(fn=>{try{fn()}catch(_){}});activityUnsubs=[];activityInitialized.clear();
+ activitySources.forEach(src=>{
+  try{const unsub=onSnapshot(query(collection(db,src.key)),snap=>{
+   const first=!activityInitialized.has(src.key); if(first)activityInitialized.add(src.key);
+   snap.docChanges().forEach(ch=>{if(ch.type!=="added"&&ch.type!=="modified")return;const d=ch.doc.data()||{};const id=src.key+":"+ch.doc.id;const item={id,source:src.key,label:src.label,icon:src.icon,title:String(src.title(d)||"Activity"),detail:String(src.detail(d)||""),when:activityDate(d.createdAt||d.updatedAt)};
+    const ix=activityItems.findIndex(x=>x.id===id);if(ix>=0)activityItems.splice(ix,1);activityItems.push(item);
+    if(!first&&!activitySeen.has(id)){activitySeen.add(id);showActivityToast(item);}
+   });
+   activityItems=activityItems.sort((a,b)=>b.when-a.when).slice(0,120);renderActivity();
+  },err=>console.warn("Activity listener "+src.key,err));activityUnsubs.push(unsub);}catch(err){console.warn("Activity setup "+src.key,err);}
+ });
+}
+$("clearActivityView")?.addEventListener("click",()=>{activityItems=[];renderActivity();$("activityToast").style.display="none";});
+
 async function loadAll(){
   await Promise.all([loadJobs(),loadCandidates(),loadNoticeCount()]);
   renderAnalytics();
   startChatThreadsListener();
+  startActivityTracking();
 }
 
 async function loadJobs(){
@@ -507,7 +550,7 @@ $("chatReplyForm").addEventListener("submit",async e=>{
   btn.disabled=true;
   try{
     await addDoc(collection(db,"employerChats",selectedChatId,"messages"),{
-      text, sender:"admin", senderName:"India Jobs Portal Admin",
+      text, sender:"admin", senderName:"Rajasthan Career Hub Admin",
       createdAt:serverTimestamp()
     });
     await updateDoc(doc(db,"employerChats",selectedChatId),{
