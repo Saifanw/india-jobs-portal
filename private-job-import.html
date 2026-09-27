@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>India Jobs Portal | Bulk Job Import</title>
+<style>
+:root{--navy:#102a43;--blue:#1769e8;--bg:#f4f7fb;--line:#dce5ef;--muted:#64748b}
+*{box-sizing:border-box}body{margin:0;font-family:Arial,Segoe UI,sans-serif;background:var(--bg);color:#182536}
+header{background:linear-gradient(135deg,#102a43,#1769e8);color:#fff;padding:22px 18px}
+.wrap{width:min(1100px,94%);margin:auto}h1{margin:0 0 8px;font-size:25px}header p{margin:0;color:#e4efff}
+.card{background:#fff;border:1px solid var(--line);border-radius:15px;padding:22px;margin:22px 0;box-shadow:0 8px 24px #102a430b}
+h2{font-size:19px;color:var(--navy);margin:0 0 15px}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+label{display:block;font-weight:700;font-size:13px;margin-bottom:6px}
+input,select{width:100%;padding:11px;border:1px solid #cbd8e7;border-radius:8px;font:inherit}
+button,.button{border:0;border-radius:9px;padding:12px 17px;background:var(--blue);color:#fff;font-weight:800;cursor:pointer;text-decoration:none;display:inline-block}
+button:disabled{opacity:.55;cursor:not-allowed}.secondary{background:#eaf1f8;color:var(--navy)}.warning{background:#fff7e8;border:1px solid #f4d39a;color:#825400;padding:12px;border-radius:9px;line-height:1.5;font-size:14px}
+.msg{display:none;padding:12px;border-radius:9px;margin-top:12px;white-space:pre-wrap}.ok{display:block;background:#eaf8f0;color:#11623f}.err{display:block;background:#fff0f0;color:#a32626}
+small,.muted{color:var(--muted)}.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:15px}
+.tablewrap{overflow:auto;margin-top:15px}table{border-collapse:collapse;width:100%;min-width:850px;font-size:13px}th,td{padding:9px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}th{background:#f1f6fb}
+#previewCount{font-weight:800;color:var(--navy)}.hidden{display:none!important}
+@media(max-width:650px){.grid{grid-template-columns:1fr}.card{padding:16px}h1{font-size:21px}}
+</style>
+</head>
+<body>
+<header><div class="wrap">
+<h1>📥 India Jobs Portal — Bulk Job Import</h1>
+<p>Upload multiple job vacancies from an Excel (.xlsx) or CSV file into the India Jobs Portal.</p>
+</div></header>
+<main class="wrap">
+<section class="card">
+<div class="warning"><b>Important:</b> Sign in with the portal administrator account. Imported jobs will be saved with <b>Pending</b> status by default, so they will not appear publicly until approved from the admin dashboard. Do not upload candidate personal data in this tool.</div>
+</section>
+
+<section class="card" id="loginCard">
+<h2>🔐 Admin Sign In</h2>
+<div class="grid">
+<div><label>Admin email</label><input id="email" type="email" autocomplete="username" placeholder="Admin email"></div>
+<div><label>Password</label><input id="password" type="password" autocomplete="current-password" placeholder="Firebase Authentication password"></div>
+</div>
+<div class="actions"><button id="loginBtn">Sign In</button><button class="secondary hidden" id="logoutBtn">Sign Out</button></div>
+<div id="authMsg" class="msg"></div>
+<p class="muted" id="signedIn"></p>
+</section>
+
+<section class="card" id="importCard">
+<h2>📄 Choose Excel or CSV File</h2>
+<p class="muted">Recommended headers: Job Title, Company, Location, Category, Experience, Job Type, Salary, Qualification, Last Date, Description, Apply Link, Contact Email, Phone, Notes.</p>
+<input id="file" type="file" accept=".xlsx,.xls,.csv">
+<div class="actions">
+<button class="secondary" id="downloadTemplate">Download CSV Template</button>
+<button id="previewBtn" disabled>Preview File</button>
+</div>
+<div id="fileMsg" class="msg"></div>
+<p id="previewCount"></p>
+<div class="tablewrap hidden" id="tableWrap"><table id="previewTable"></table></div>
+<div class="actions hidden" id="uploadActions"><button id="uploadBtn">Import as Pending Jobs</button></div>
+<div id="uploadMsg" class="msg"></div>
+</section>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script type="module">
+import {initializeApp} from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
+import {getAuth,onAuthStateChanged,signInWithEmailAndPassword,signOut} from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
+import {getFirestore,collection,addDoc,serverTimestamp} from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
+
+const firebaseConfig={
+ apiKey:"AIzaSyDO75-iuVlRP9emqnR-d1T4g66akuQS328",
+ authDomain:"rajasthan-job.firebaseapp.com",
+ projectId:"rajasthan-job",
+ storageBucket:"rajasthan-job.firebasestorage.app",
+ messagingSenderId:"894888753938",
+ appId:"1:894888753938:web:92e66d7a7237be1fd9d1cb",
+ measurementId:"G-15S2XJQK80"
+};
+const app=initializeApp(firebaseConfig,"india-bulk-import");
+const auth=getAuth(app),db=getFirestore(app);
+const $=id=>document.getElementById(id);
+let parsedRows=[];
+let currentUser=null;
+
+function show(id,text,type){const el=$(id);el.textContent=text;el.className="msg "+type}
+function norm(v){return String(v??"").trim().toLowerCase().replace(/[\s_\-\/()]+/g,"")}
+function get(row,aliases){
+ const keys=Object.keys(row);
+ for(const alias of aliases){const target=norm(alias);const key=keys.find(k=>norm(k)===target);if(key!==undefined&&row[key]!==undefined&&String(row[key]).trim()!=="")return String(row[key]).trim()}
+ return "";
+}
+function mapRow(row){
+ const title=get(row,["Job Title","Title","Job","Position","Role"]);
+ const company=get(row,["Company","Company Name","Employer"]);
+ const location=get(row,["Location","City","Job Location"]);
+ const category=get(row,["Category","Department","Industry"])||"Other";
+ const experience=get(row,["Experience","Experience Required"])||"Not specified";
+ const type=get(row,["Job Type","Type","Employment Type"])||"Full Time";
+ const salary=get(row,["Salary","Pay","CTC"])||"Not specified";
+ const qualification=get(row,["Qualification","Education","Required Qualification"])||"Not specified";
+ const deadline=get(row,["Last Date","Deadline","Apply By","Application Deadline"]);
+ const description=get(row,["Description","Job Description","Details"]);
+ const apply=get(row,["Apply Link","Apply URL","Official Link","Application Link","URL"]);
+ const contactEmail=get(row,["Contact Email","Email","HR Email"]);
+ const phone=get(row,["Phone","Contact Number","Mobile"]);
+ const notes=get(row,["Notes","Additional Notes"]);
+ return {title,company,location,category,experience,type,salary,qualification,deadline,description,apply,contactEmail,phone,notes};
+}
+function escapeHtml(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+onAuthStateChanged(auth,user=>{
+ currentUser=user;
+ $("signedIn").textContent=user?("Signed in as: "+user.email):"Not signed in.";
+ $("loginBtn").classList.toggle("hidden",!!user);
+ $("logoutBtn").classList.toggle("hidden",!user);
+ $("importCard").classList.toggle("hidden",!user);
+});
+$("loginBtn").onclick=async()=>{
+ const email=$("email").value.trim(),password=$("password").value;
+ if(!email||!password)return show("authMsg","Email aur password enter karein.","err");
+ $("loginBtn").disabled=true;
+ try{await signInWithEmailAndPassword(auth,email,password);show("authMsg","Admin sign-in successful.","ok")}
+ catch(e){show("authMsg","Sign in failed: "+e.message,"err")}
+ finally{$("loginBtn").disabled=false}
+};
+$("logoutBtn").onclick=async()=>{await signOut(auth);show("authMsg","Signed out.","ok")};
+$("file").onchange=()=>{$("previewBtn").disabled=!$("file").files.length;parsedRows=[];$("tableWrap").classList.add("hidden");$("uploadActions").classList.add("hidden");$("previewCount").textContent=""};
+$("previewBtn").onclick=async()=>{
+ const file=$("file").files[0];if(!file)return;
+ try{
+  const data=await file.arrayBuffer();
+  const wb=XLSX.read(data,{type:"array",cellDates:true});
+  const sheet=wb.Sheets[wb.SheetNames[0]];
+  const raw=XLSX.utils.sheet_to_json(sheet,{defval:"",raw:false});
+  parsedRows=raw.map(mapRow).filter(r=>r.title&&r.company&&r.location);
+  if(!parsedRows.length){show("fileMsg","Valid rows nahi mile. First sheet mein Job Title, Company aur Location columns zaroor hon.","err");return}
+  const invalid=raw.length-parsedRows.length;
+  $("previewCount").textContent=`${parsedRows.length} valid job rows found${invalid?`; ${invalid} rows skipped (missing Job Title, Company, or Location)`:''}.`;
+  const cols=["title","company","location","category","experience","type","salary","deadline","apply"];
+  $("previewTable").innerHTML="<thead><tr>"+cols.map(c=>`<th>${escapeHtml(c)}</th>`).join("")+"</tr></thead><tbody>"+
+   parsedRows.slice(0,20).map(r=>"<tr>"+cols.map(c=>`<td>${escapeHtml(r[c])}</td>`).join("")+"</tr>").join("")+"</tbody>";
+  $("tableWrap").classList.remove("hidden");$("uploadActions").classList.remove("hidden");
+  show("fileMsg","Preview ready. Neeche import button dabane se pehle rows check kar lein.","ok");
+ }catch(e){show("fileMsg","File read nahi ho payi: "+e.message,"err")}
+};
+$("uploadBtn").onclick=async()=>{
+ if(!currentUser){show("uploadMsg","Pehle admin sign in karein.","err");return}
+ if(!parsedRows.length){show("uploadMsg","Pehle valid Excel/CSV file preview karein.","err");return}
+ if(!confirm(`${parsedRows.length} jobs ko Pending status mein Firebase par import karna hai?`))return;
+ $("uploadBtn").disabled=true;let success=0,failed=0;
+ for(let i=0;i<parsedRows.length;i++){
+  const r=parsedRows[i];
+  try{
+   await addDoc(collection(db,"jobs"),{
+    title:r.title,company:r.company,location:r.location,category:r.category,
+    experience:r.experience,type:r.type,jobType:r.type,salary:r.salary,
+    qualification:r.qualification,deadline:r.deadline,lastDate:r.deadline,
+    description:r.description,apply:r.apply,applyLink:r.apply,
+    contactEmail:r.contactEmail,phone:r.phone,notes:r.notes,
+    status:"pending",portal:"india",source:"bulk-import",
+    createdAt:serverTimestamp(),updatedAt:serverTimestamp()
+   });success++;
+  }catch(e){failed++;console.error("Import row failed",i+2,e)}
+  $("uploadMsg").textContent=`Importing... ${i+1}/${parsedRows.length} | Added: ${success} | Failed: ${failed}`;
+  $("uploadMsg").className="msg ok";
+ }
+ show("uploadMsg",`Import finished.\nSuccessfully added: ${success}\nFailed: ${failed}\nAll imported jobs have Pending status. Admin dashboard se review/approve karein.`,failed?"err":"ok");
+ $("uploadBtn").disabled=false;
+};
+$("downloadTemplate").onclick=()=>{
+ const csv="Job Title,Company,Location,Category,Experience,Job Type,Salary,Qualification,Last Date,Description,Apply Link,Contact Email,Phone,Notes\n"+
+ '"MIS Executive","ABC Company","Jaipur, Rajasthan","Data & MIS","Fresher","Full Time","₹15,000 - ₹22,000","Graduate","2026-10-15","Enter job description","https://example.com/apply","hr@example.com","9876543210","Official company vacancy"\n';
+ const blob=new Blob(["\ufeff"+csv],{type:"text/csv;charset=utf-8;"});
+ const url=URL.createObjectURL(blob);const a=document.createElement("a");a.href=url;a.download="india-jobs-bulk-import-template.csv";a.click();URL.revokeObjectURL(url);
+};
+</script>
+</body>
+</html>
