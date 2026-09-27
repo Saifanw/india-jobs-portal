@@ -54,7 +54,7 @@ h1{margin:0;color:var(--navy)}.muted{font-size:13px;color:var(--muted)}
 
 <div class="card tableWrap">
 <table class="table">
-<thead><tr><th>Name</th><th>Contact</th><th>Location</th><th>Role</th><th>Experience</th><th>Skills</th><th>Qualification</th><th>Salary</th><th>Status</th><th>Registered</th><th>Action</th></tr></thead>
+<thead><tr><th>Name</th><th>Contact</th><th>Location</th><th>Role</th><th>Experience</th><th>Skills</th><th>Qualification</th><th>Salary</th><th>Status</th><th>Registered</th><th>Actions</th></tr></thead>
 <tbody id="rows"></tbody>
 </table>
 <div id="empty" class="empty" style="display:none">No candidates found.</div>
@@ -66,7 +66,7 @@ h1{margin:0;color:var(--navy)}.muted{font-size:13px;color:var(--muted)}
 <script type="module">
 import {initializeApp} from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
 import {getAuth,GoogleAuthProvider,signInWithPopup,onAuthStateChanged,signOut} from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
-import {getFirestore,collection,getDocs,updateDoc,doc} from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
+import {getFirestore,collection,getDocs,updateDoc,deleteDoc,doc} from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
 
 const firebaseConfig={apiKey:"AIzaSyDO75-iuVlRP9emqnR-d1T4g66akuQS328",authDomain:"rajasthan-job.firebaseapp.com",projectId:"rajasthan-job",storageBucket:"rajasthan-job.firebasestorage.app",messagingSenderId:"894888753938",appId:"1:894888753938:web:92e66d7a7237be1fd9d1cb",measurementId:"G-15S2XJQK80"};
 const app=initializeApp(firebaseConfig,"candidate-manager"),auth=getAuth(app),db=getFirestore(app);
@@ -121,10 +121,27 @@ function render(){
   <td>${escapeHtml(x.salary)}</td>
   <td><span class="pill ${status==="shortlisted"?"green":status==="contacted"?"orange":status==="closed"?"red":""}">${escapeHtml(status)}</span></td>
   <td>${dt}</td>
-  <td><select class="small" onchange="window.changeStatus('${x.id}',this.value)"><option ${status==="new"?"selected":""}>new</option><option ${status==="contacted"?"selected":""}>contacted</option><option ${status==="shortlisted"?"selected":""}>shortlisted</option><option ${status==="closed"?"selected":""}>closed</option></select></td>
+  <td><select class="small" onchange="window.changeStatus('${x.id}',this.value)"><option ${status==="new"?"selected":""}>new</option><option ${status==="contacted"?"selected":""}>contacted</option><option ${status==="shortlisted"?"selected":""}>shortlisted</option><option ${status==="closed"?"selected":""}>closed</option></select><br><button class="btn primary small" style="margin-top:6px" onclick="window.matchJobs('${x.id}')">🎯 Match Jobs</button><br><button class="btn danger small" style="margin-top:6px" onclick="window.deleteCandidate('${x.id}')">🗑 Delete</button></td>
   </tr>`;
  }).join("");
 }
+window.deleteCandidate=async(id)=>{
+ const candidate=all.find(x=>x.id===id);if(!candidate)return;
+ if(!confirm(`Permanently delete candidate ${candidate.name||"this record"}? This cannot be undone.`))return;
+ try{await deleteDoc(doc(db,"candidates",id));all=all.filter(x=>x.id!==id);updateStats();populateLocations();render();alert("Candidate deleted.")}
+ catch(e){alert("Delete failed: "+e.message)}
+};
+window.matchJobs=async(id)=>{
+ const c=all.find(x=>x.id===id);if(!c)return;
+ try{
+  const snap=await getDocs(collection(db,"jobs"));
+  const jobs=snap.docs.map(d=>({id:d.id,...d.data()})).filter(j=>String(j.status||"").toLowerCase()==="approved");
+  const terms=[c.role,c.preferredLocation,c.city,c.district,...(c.skills||[]),c.otherSkills,c.qualification].filter(Boolean).join(" ").toLowerCase().split(/[^a-z0-9+#.]+/).filter(t=>t.length>2);
+  const matches=jobs.map(j=>{const hay=[j.title,j.company,j.location,j.category,j.type,j.experience,j.qualification,j.description,j.salary].filter(Boolean).join(" ").toLowerCase();let score=0;for(const term of new Set(terms)){if(hay.includes(term))score+=1}return {j,score}}).filter(x=>x.score>0).sort((a,b)=>b.score-a.score).slice(0,10);
+  if(!matches.length){alert(`No approved jobs matched for ${c.name}. Add/approve jobs in India Jobs Portal first.`);return}
+  alert(`Suggested approved jobs for ${c.name}:\n\n`+matches.map((x,i)=>`${i+1}. ${x.j.title||"Untitled"} — ${x.j.company||"Company not specified"} | ${x.j.location||"Location not specified"} | Match terms: ${x.score}`).join("\n"));
+ }catch(e){alert("Job matching failed: "+e.message)}
+};
 window.changeStatus=async(id,status)=>{
  try{await updateDoc(doc(db,"candidates",id),{status,updatedAt:new Date()});const x=all.find(a=>a.id===id);if(x)x.status=status;updateStats();render()}catch(e){alert("Status update failed: "+e.message)}
 };
