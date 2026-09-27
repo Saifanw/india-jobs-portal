@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Find a Job | India Jobs Portal</title>
+<meta name="description" content="Register your job seeker profile with India Jobs Portal for private jobs, government jobs, fresher opportunities and career support across India.">
+<style>
+:root{--navy:#102a43;--blue:#1769e8;--bg:#f5f8fc;--line:#dce5ef;--muted:#64748b}
+*{box-sizing:border-box}body{margin:0;font-family:Inter,Segoe UI,Arial,sans-serif;background:var(--bg);color:#182536}
+header{background:linear-gradient(135deg,#102a43,#1769e8);color:#fff;padding:28px 18px}
+.wrap{max-width:900px;width:92%;margin:auto}header h1{margin:0 0 8px;font-size:30px}header p{margin:0;color:#e4efff}
+.card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:24px;margin:24px auto;box-shadow:0 8px 25px #102a430b}
+.section-title{font-size:18px;font-weight:900;color:var(--navy);margin:4px 0 14px}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+label{display:block;font-weight:800;font-size:13px;margin-bottom:6px}
+input,select,textarea{width:100%;padding:11px 12px;border:1px solid #cbd8e7;border-radius:9px;font:inherit;background:#fff}
+textarea{min-height:90px;resize:vertical}.full{grid-column:1/-1}
+.skills{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.skill{border:1px solid var(--line);border-radius:9px;padding:9px;background:#fafcff;font-size:13px}
+.skill input{width:auto;margin-right:5px}
+.consent{margin-top:16px;padding:12px;background:#f2f7ff;border:1px solid #d4e5ff;border-radius:10px;font-size:13px;line-height:1.5}
+.btn{margin-top:18px;border:0;border-radius:9px;padding:12px 18px;background:var(--blue);color:#fff;font-weight:900;cursor:pointer}
+.btn:disabled{opacity:.65}.msg{display:none;margin-top:14px;padding:12px;border-radius:9px;font-size:13px}.ok{display:block;background:#edf8f2;color:#11623f}.err{display:block;background:#fff0f0;color:#a63d3d}
+a{color:var(--blue);font-weight:800}
+@media(max-width:650px){.grid{grid-template-columns:1fr}.skills{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+<header><div class="wrap">
+<h1>👤 Find a Job</h1>
+<p>India Jobs Portal par apni job profile register karein. Suitable opportunities ke liye India Jobs Portal team aapse contact kar sakti hai.</p>
+</div></header>
+
+<main class="wrap">
+<div class="card">
+<div class="section-title">👤 Personal Information</div>
+<div class="grid">
+<div><label>Full Name *</label><input id="name" maxlength="80" placeholder="Your full name"></div>
+<div><label>Mobile Number *</label><input id="mobile" maxlength="10" inputmode="numeric" placeholder="10-digit mobile"></div>
+<div><label>WhatsApp Number</label><input id="whatsapp" maxlength="10" inputmode="numeric" placeholder="If different"></div>
+<div><label>Email *</label><input id="email" type="email" maxlength="120" placeholder="your@email.com"></div>
+<div><label>City *</label><input id="city" maxlength="60" placeholder="Jaipur"></div>
+<div><label>State</label><input id="district" maxlength="60" placeholder="Rajasthan"></div>
+</div>
+
+<div class="section-title" style="margin-top:25px">💼 Job Preference</div>
+<div class="grid">
+<div><label>Preferred Job Role *</label><input id="role" maxlength="100" placeholder="MIS Executive, Sales Executive, Data Analyst..."></div>
+<div><label>Job Type *</label><select id="jobType"><option value="">Select</option><option>Private</option><option>Government</option><option>Both</option></select></div>
+<div><label>Preferred Location</label><input id="preferredLocation" maxlength="100" placeholder="Jaipur / Delhi / Anywhere in India"></div>
+<div><label>Expected Salary</label><input id="salary" maxlength="50" placeholder="e.g. ₹15,000 - ₹25,000"></div>
+<div><label>Experience *</label><select id="experience"><option value="">Select</option><option>Fresher</option><option>0-1 Year</option><option>1-2 Years</option><option>2-5 Years</option><option>5+ Years</option></select></div>
+<div><label>Availability *</label><select id="availability"><option value="">Select</option><option>Immediate Joiner</option><option>Within 15 Days</option><option>Within 30 Days</option><option>Not Sure</option></select></div>
+</div>
+
+<div class="section-title" style="margin-top:25px">🎓 Education</div>
+<div class="grid">
+<div><label>Highest Qualification *</label><input id="qualification" maxlength="100" placeholder="B.Tech / B.Com / 12th / MBA..."></div>
+<div><label>Branch / Course</label><input id="course" maxlength="100" placeholder="Mechanical / Commerce / Computer..."></div>
+<div><label>Passing Year</label><input id="passingYear" maxlength="4" inputmode="numeric" placeholder="2026"></div>
+<div><label>Previous Company</label><input id="company" maxlength="120" placeholder="If experienced"></div>
+</div>
+
+<div class="section-title" style="margin-top:25px">🛠️ Skills</div>
+<div class="skills">
+<label class="skill"><input type="checkbox" value="MS Excel"> MS Excel</label>
+<label class="skill"><input type="checkbox" value="MIS"> MIS</label>
+<label class="skill"><input type="checkbox" value="Power BI"> Power BI</label>
+<label class="skill"><input type="checkbox" value="SQL"> SQL</label>
+<label class="skill"><input type="checkbox" value="Python"> Python</label>
+<label class="skill"><input type="checkbox" value="AutoCAD"> AutoCAD</label>
+<label class="skill"><input type="checkbox" value="Sales"> Sales</label>
+<label class="skill"><input type="checkbox" value="Computer"> Computer</label>
+<label class="skill"><input type="checkbox" value="Other"> Other</label>
+</div>
+
+<label style="margin-top:18px">Other Skills</label>
+<textarea id="otherSkills" maxlength="500" placeholder="Any other skills, certifications or relevant information"></textarea>
+
+<div class="consent">
+<label style="display:flex;gap:8px;align-items:flex-start;font-weight:700">
+<input id="consent" type="checkbox" style="width:auto;margin-top:3px">
+<span>I agree that India Jobs Portal may contact me regarding suitable job opportunities and may share my profile with relevant employers for recruitment purposes.</span>
+</label>
+</div>
+
+<button id="submit" class="btn">🚀 Register for Jobs</button>
+<div id="msg" class="msg"></div>
+<p style="margin-top:18px"><a href="jobs.html">🔎 View Jobs</a> &nbsp;|&nbsp; <a href="index.html">🏠 Home</a></p>
+</div>
+</main>
+
+<script type="module">
+import {initializeApp} from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
+import {getFirestore,collection,addDoc,serverTimestamp} from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
+
+const firebaseConfig={
+ apiKey:"AIzaSyCh20UGNM3-tWZiB6pkNUXcbWK-lwkc-sU",
+ authDomain:"india-jobs-portal.firebaseapp.com",
+ projectId:"india-jobs-portal",
+ storageBucket:"india-jobs-portal.firebasestorage.app",
+ messagingSenderId:"1035209974762",
+ appId:"1:1035209974762:web:622a242e1a291c4b604893",
+ measurementId:"G-XSH6QC1PG4"
+};
+const app=initializeApp(firebaseConfig,"india-job-seeker-form");
+const db=getFirestore(app);
+const $=id=>document.getElementById(id);
+function message(t,c){$("msg").textContent=t;$("msg").className="msg "+c}
+
+$("submit").onclick=async()=>{
+ const name=$("name").value.trim(),mobile=$("mobile").value.trim(),whatsapp=$("whatsapp").value.trim();
+ const email=$("email").value.trim(),city=$("city").value.trim(),district=$("district").value.trim();
+ const role=$("role").value.trim(),jobType=$("jobType").value,preferredLocation=$("preferredLocation").value.trim();
+ const salary=$("salary").value.trim(),experience=$("experience").value,availability=$("availability").value;
+ const qualification=$("qualification").value.trim(),course=$("course").value.trim(),passingYear=$("passingYear").value.trim();
+ const company=$("company").value.trim(),otherSkills=$("otherSkills").value.trim();
+ const skills=[...document.querySelectorAll('.skill input:checked')].map(x=>x.value);
+
+ if(!name||!mobile||!email||!city||!role||!jobType||!experience||!availability||!qualification||!$("consent").checked){
+   return message("Please fill all required fields and accept the consent.","err");
+ }
+ if(!/^\d{10}$/.test(mobile))return message("Please enter a valid 10-digit mobile number.","err");
+ if(whatsapp&&!/^\d{10}$/.test(whatsapp))return message("WhatsApp number must be 10 digits.","err");
+ if(!$("email").checkValidity())return message("Please enter a valid email.","err");
+ if(passingYear && !/^\d{4}$/.test(passingYear))return message("Passing year should be 4 digits.","err");
+
+ const btn=$("submit");btn.disabled=true;btn.textContent="Submitting...";
+ try{
+   await addDoc(collection(db,"candidates"),{
+     portal:"india",
+     name,mobile,whatsapp,email,city,district,role,jobType,preferredLocation,salary,
+     experience,availability,qualification,course,passingYear,company,skills,otherSkills,
+     status:"new",consent:true,createdAt:serverTimestamp(),updatedAt:serverTimestamp()
+   });
+   message("✅ Registration successful. India Jobs Portal team suitable opportunity ke liye contact kar sakti hai.","ok");
+   ["name","mobile","whatsapp","email","city","district","role","preferredLocation","salary","qualification","course","passingYear","company","otherSkills"].forEach(id=>$(id).value="");
+   $("jobType").value="";$("experience").value="";$("availability").value="";$("consent").checked=false;
+   document.querySelectorAll('.skill input').forEach(x=>x.checked=false);
+ }catch(e){
+   console.error(e);message("❌ Registration failed: "+e.message,"err");
+ }finally{btn.disabled=false;btn.textContent="🚀 Register for Jobs"}
+};
+</script>
+</body>
+</html>
