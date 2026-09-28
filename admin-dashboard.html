@@ -90,7 +90,7 @@ th{background:#f2f6fa;color:var(--navy);position:sticky;top:0}
 
     <section class="card" id="activityCard" style="margin-top:18px;border:1px solid #cfe0f5">
       <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
-        <div><h2 style="margin:0 0 5px">🔔 Live Activity & Notifications</h2><p class="muted" style="margin:0">Website par visitors, job seekers aur HR ki recent activities yahan live dikhenगी.</p></div>
+        <div><h2 style="margin:0 0 5px">🔔 Live Activity & Notifications</h2><p class="muted" style="margin:0">Sirf naye job submissions, job seekers, inquiries, comments aur HR messages. Aapki admin visits aur routine page views yahan nahi dikhenge.</p></div>
         <button id="clearActivityView" class="btn light" type="button">Clear view</button>
       </div>
       <div id="activityToast" role="status" style="display:none;margin:12px 0;padding:12px 14px;background:#eaf7ee;border:1px solid #bde5c8;border-radius:12px;color:#14532d;font-weight:700"></div>
@@ -346,9 +346,7 @@ const activitySources=[
   {key:"comments",label:"Comment",icon:"💬",title:d=>d.name||"New comment",detail:d=>d.comment||d.message||"Comment submitted"},
   {key:"employerChats",label:"HR / Company",icon:"🏢",title:d=>d.companyName||d.employerName||"HR sent a message",detail:d=>d.latestMessage||d.email||d.phone||"New HR conversation"},
   {key:"announcements",label:"Announcement",icon:"📢",title:d=>d.title||"Announcement update",detail:d=>d.message||""},
-  {key:"notifications",label:"Notification",icon:"🔔",title:d=>d.title||"New notification",detail:d=>d.message||""},
-  {key:"webAnalyticsEvents",label:"Website visit / click",icon:"🌐",title:d=>d.eventType||"Visitor activity",detail:d=>[d.page,d.device,d.city,d.region,d.source].filter(Boolean).join(" • ")},
-  {key:"webAnalyticsSessions",label:"Visitor session",icon:"👀",title:d=>"Visitor session started",detail:d=>[d.device,d.city,d.region,d.source,d.landingPage].filter(Boolean).join(" • ")}
+  {key:"notifications",label:"Notification",icon:"🔔",title:d=>d.title||"New notification",detail:d=>d.message||""}
 ];
 function activityDate(v){try{const d=v?.toDate?v.toDate():new Date(v||Date.now());return isNaN(d.getTime())?new Date():d;}catch(_){return new Date();}}
 function renderActivity(){
@@ -357,14 +355,27 @@ function renderActivity(){
  $("noticeCount").textContent=String(activityItems.length);
 }
 function showActivityToast(item){const t=$("activityToast");t.textContent=`${item.icon} ${item.label}: ${item.title}${item.detail?" — "+item.detail:""}`;t.style.display="block";clearTimeout(activityToastTimer);activityToastTimer=setTimeout(()=>t.style.display="none",10000);}
+function isAdminGeneratedActivity(d){
+ const adminEmail=(auth.currentUser?.email||"").toLowerCase().trim();
+ if(!adminEmail) return false;
+ const actorFields=["createdBy","createdByEmail","submittedBy","submittedByEmail","userEmail","actorEmail","adminEmail","email"];
+ return actorFields.some(k=>typeof d?.[k]==="string" && d[k].toLowerCase().trim()===adminEmail);
+}
 function startActivityTracking(){
  activityUnsubs.forEach(fn=>{try{fn()}catch(_){}});activityUnsubs=[];activityInitialized.clear();
  activitySources.forEach(src=>{
   try{const unsub=onSnapshot(query(collection(db,src.key)),snap=>{
    const first=!activityInitialized.has(src.key); if(first)activityInitialized.add(src.key);
-   snap.docChanges().forEach(ch=>{if(ch.type!=="added"&&ch.type!=="modified")return;const d=ch.doc.data()||{};const id=src.key+":"+ch.doc.id;const item={id,source:src.key,label:src.label,icon:src.icon,title:String(src.title(d)||"Activity"),detail:String(src.detail(d)||""),when:activityDate(d.createdAt||d.updatedAt)};
+   snap.docChanges().forEach(ch=>{
+    if(ch.type!=="added"&&ch.type!=="modified")return;
+    const d=ch.doc.data()||{};
+    // Suppress actions explicitly attributed to the signed-in admin.
+    if(isAdminGeneratedActivity(d)) return;
+    const id=src.key+":"+ch.doc.id;
+    const item={id,source:src.key,label:src.label,icon:src.icon,title:String(src.title(d)||"Activity"),detail:String(src.detail(d)||""),when:activityDate(d.createdAt||d.updatedAt)};
     const ix=activityItems.findIndex(x=>x.id===id);if(ix>=0)activityItems.splice(ix,1);activityItems.push(item);
-    if(!first&&!activitySeen.has(id)){activitySeen.add(id);showActivityToast(item);}
+    // Initial historical load should not create popups. Only new records after listener start do.
+    if(!first&&ch.type==="added"&&!activitySeen.has(id)){activitySeen.add(id);showActivityToast(item);}
    });
    activityItems=activityItems.sort((a,b)=>b.when-a.when).slice(0,120);renderActivity();
   },err=>console.warn("Activity listener "+src.key,err));activityUnsubs.push(unsub);}catch(err){console.warn("Activity setup "+src.key,err);}
