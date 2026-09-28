@@ -369,63 +369,6 @@ a[href="#donate"]:hover{background:#a71919!important}
  .heroCompact{padding-top:14px!important;padding-bottom:14px!important}
 }
 </style>
-<style id="minimal-nav-compact-fix">
-/* Minimal requested adjustment only: preserve the original homepage and both scrolling strips */
-nav .navin{height:52px!important;min-height:52px!important;gap:12px!important}
-nav .logo{width:36px!important;height:36px!important;border-radius:11px!important}
-nav .menu{gap:11px!important;font-size:12px!important}
-nav .menu>a,nav .menu>button{padding:8px 10px!important;white-space:nowrap!important}
-nav .menu .btn{padding:9px 12px!important;font-size:12px!important}
-nav .brand{gap:9px!important;font-size:15px!important}
-nav .brand small{font-size:9px!important}
-.latestHeroJobs{max-width:440px!important;justify-self:end!important}
-.heroPanelCompact{padding:13px!important}
-@media(max-width:900px){
- nav .navin{height:auto!important;min-height:52px!important}
- .latestHeroJobs{max-width:100%!important;justify-self:stretch!important}
-}
-</style>
-<style id="red-marked-area-fixes">
-/* Surgical homepage cleanup requested: preserve original design and Hindi dynamic ticker */
-.latestHeroJobs{
-  width:100%!important;
-  max-width:315px!important;
-  min-width:0!important;
-  justify-self:center!important;
-  margin-right:62px!important;
-  padding:12px!important;
-  box-sizing:border-box!important;
-}
-.latestHeroJobs .heroJobsHead{margin-bottom:7px!important;gap:6px!important}
-.latestHeroJobs .heroJobsHead .heroPanelTitle{font-size:15px!important}
-.latestHeroJobs .heroJobsHead small{font-size:9px!important}
-.latestHeroJobs .heroLatestJobsList{gap:6px!important;max-height:150px;overflow-y:auto}
-.latestHeroJobs .heroJobLoading{min-height:42px!important;padding:10px 6px!important;font-size:11px!important}
-.latestHeroJobs .heroAllJobs{margin-top:8px!important;padding:9px!important;font-size:11px!important}
-@media(max-width:900px){
- .latestHeroJobs{max-width:100%!important;margin-right:0!important;justify-self:stretch!important}
-}
-</style>
-
-<style id="user-final-homepage-tuning">
-/* Keep the original header and Hindi dynamic ticker; remove only the separate updates ticker */
-.hero.heroCompact .wrap.heroGrid{grid-template-columns:minmax(0,1.6fr) minmax(300px,.9fr)!important;gap:44px!important;align-items:center!important}
-.hero.heroCompact .heroCopy{max-width:none!important;width:100%!important}
-.hero.heroCompact .heroCopy h1,.hero.heroCompact .heroCopy h2{font-size:clamp(38px,3.35vw,48px)!important;line-height:1.08!important;max-width:760px!important}
-.latestHeroJobs{max-width:100%!important;width:100%!important;justify-self:stretch!important;margin-right:0!important}
-.job-float-actions{right:16px!important;max-width:220px!important;gap:12px!important}
-.job-float-actions a{min-width:185px!important;padding:15px 19px!important;font-size:14px!important;min-height:54px!important;box-sizing:border-box!important}
-@media(max-width:900px){
- .hero.heroCompact .wrap.heroGrid{grid-template-columns:1fr!important;gap:24px!important}
- .hero.heroCompact .heroCopy h1,.hero.heroCompact .heroCopy h2{font-size:clamp(32px,6vw,42px)!important}
- .latestHeroJobs{max-width:100%!important}
-}
-@media(max-width:650px){
- .job-float-actions{right:8px!important;bottom:16px!important;top:auto!important;gap:8px!important}
- .job-float-actions a{min-width:48px!important;width:52px!important;height:52px!important;min-height:52px!important;padding:0!important}
-}
-</style>
-
 </head>
 <body>
 
@@ -446,6 +389,25 @@ nav .brand small{font-size:9px!important}
 
 <a href="resume-builder.html" class="resume-nav-link">📄 Free Resume Builder</a>
 </div></div></nav>
+<div class="career-ticker" role="region" aria-label="Career updates">
+  <div class="wrap career-ticker-inner">
+    <span class="ticker-live">● UPDATES</span>
+    <a id="careerTickerLink" href="jobs.html">Latest Jobs Across India</a>
+    <span class="ticker-sep">•</span><a href="jobs.html">Fresher & MIS Jobs</a>
+    <span class="ticker-sep">•</span><a href="government-jobs.html">Government Exam Updates</a>
+    <span class="ticker-sep">•</span><a href="resume-builder.html">Free Resume Builder</a>
+  </div>
+</div>
+<style>
+.career-ticker{background:#f2f7ff;border-bottom:1px solid #dce8f7;color:#17324e;font-size:12px;font-weight:800;overflow:hidden}
+.career-ticker-inner{min-height:35px;display:flex;align-items:center;gap:17px;white-space:nowrap;overflow:hidden}
+.career-ticker a:hover{color:#1769e8;text-decoration:underline}
+.ticker-live{font-size:10px;letter-spacing:.6px;color:#1769e8;flex-shrink:0}
+.ticker-sep{color:#f39a2f}
+@media(max-width:720px){.career-ticker-inner{gap:12px;overflow-x:auto;scrollbar-width:none}.career-ticker-inner::-webkit-scrollbar{display:none}}
+</style>
+
+
 <!-- SINGLE DYNAMIC JOB MESSAGE -->
 <div class="dynamic jobMessageStrip">
   <div class="wrap dynamicin">
@@ -469,6 +431,9 @@ nav .brand small{font-size:9px!important}
         <a class="heroBtn primaryHero" href="jobs.html">🔎 Latest Jobs</a>
         <a class="heroBtn secondaryHero" href="job-seeker.html">👤 Job Seeker</a>
       </div>
+      <div class="heroMiniTags">
+        <span>India Jobs</span><span>Private Jobs</span><span>Govt Jobs</span><span>Fresher Jobs</span><span>MIS</span><span>Data Analyst</span>
+      </div>
     </div>
     <div class="heroPanel heroPanelCompact latestHeroJobs">
       <div class="heroJobsHead">
@@ -483,13 +448,61 @@ nav .brand small{font-size:9px!important}
   </div>
 </section>
 
+<section class="quickActions professionalQuick">
+  <div class="wrap">
+    <div class="quickTitle">
+      <div><div class="kick">MOST IMPORTANT</div><h2>What do you need?</h2></div>
+      <p>Ek option choose karein</p>
+    </div>
+    <div class="quickGrid">
+      <a class="quickCard pro blue" href="jobs.html">
+        <span>🔎</span><div><strong>Jobs Dekhein</strong><small>Latest India Jobs</small></div><b>→</b>
+      </a>
+      <a class="quickCard pro navy" href="government-jobs.html">
+        <span>🏛️</span><div><strong>Government Jobs</strong><small>RPSC • RSSB • CET</small></div><b>→</b>
+      </a>
+      <a class="quickCard pro green" href="job-seeker.html">
+        <span>👤</span><div><strong>Find a Job</strong><small>Job chahiye? Yahan se milegi</small></div><b>→</b>
+      </a>
+      <a class="quickCard pro orange" href="#contact">
+        <span>💬</span><div><strong>Inquiry Karein</strong><small>Job & Career Support</small></div><b>→</b>
+      </a>
+    </div>
+  </div>
+</section>
 
+<section class="wrap" aria-labelledby="popularJobsTitle" style="padding:20px 0 8px">
+  <div class="quickTitle" style="margin-bottom:14px">
+    <div><div class="kick">POPULAR JOB SEARCHES</div><h2 id="popularJobsTitle">Search jobs by role</h2></div>
+    <p>Popular categories across India</p>
+  </div>
+  <div class="popularJobLinks" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:10px">
+    <a href="jobs.html?search=MIS" class="popularJobBtn">📊 MIS Jobs</a>
+    <a href="jobs.html?search=Data%20Analyst" class="popularJobBtn">📈 Data Analyst</a>
+    <a href="jobs.html?search=Fresher" class="popularJobBtn">🎓 Fresher Jobs</a>
+    <a href="jobs.html?search=Work%20from%20Home" class="popularJobBtn">🏠 Work From Home</a>
+    <a href="jobs.html?search=Sales" class="popularJobBtn">🤝 Sales Jobs</a>
+    <a href="jobs.html?search=Bank" class="popularJobBtn">🏦 Banking Jobs</a>
+    <a href="jobs.html?search=IT" class="popularJobBtn">💻 IT Jobs</a>
+    <a href="jobs.html?search=Accountant" class="popularJobBtn">🧾 Accounts Jobs</a>
+    <a href="jobs.html?search=Government" class="popularJobBtn">🏛️ Govt Jobs</a>
+  </div>
+</section>
 <style>
 .popularJobBtn{display:flex;align-items:center;justify-content:center;gap:8px;padding:13px 12px;border:1px solid #cfe0f5;border-radius:12px;background:#fff;color:#12355b;font-weight:800;box-shadow:0 5px 18px rgba(16,42,67,.05);transition:transform .18s,background .18s,border-color .18s}
 .popularJobBtn:hover{transform:translateY(-2px);background:#edf5ff;border-color:#1769e8;color:#1769e8}
 @media(max-width:600px){.popularJobBtn{padding:12px 8px;font-size:13px}}
 </style>
 
+<section class="noticeSection compactNotice professionalNotice" id="updates">
+  <div class="wrap">
+    <div class="noticeHeader">
+      <div><div class="kick">LATEST UPDATES</div><h2>🔔 Notifications</h2></div>
+      <a class="updateLink" href="#updates">View all</a>
+    </div>
+    <div id="announcementList" class="announcementList"><div class="announcement loadingAnn">Loading latest update…</div></div>
+  </div>
+</section>
 <section class="categoryStrip"><div class="wrap"><div class="categoryInner"><strong>Quick Search:</strong><a href="jobs.html">Jobs in India</a><a href="jobs.html">Fresher Jobs</a><a href="jobs.html">MIS Jobs</a><a href="jobs.html">Data Analyst</a><a href="jobs.html">Sales Jobs</a><a href="#govt">Govt Jobs</a></div></div></section>
 
 

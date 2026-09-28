@@ -30,6 +30,8 @@ footer{text-align:center;color:var(--muted);font-size:11px;padding:20px}
 @media(max-width:850px){.layout{grid-template-columns:1fr}.formPanel{grid-column:1;grid-row:1}.previewWrap{grid-column:1;grid-row:2;position:static}.resume{padding:25px;min-height:600px}}
 @media(max-width:520px){form{grid-template-columns:1fr}.field.full{grid-column:auto}.panel{padding:14px}.resume{padding:20px}.r-name{font-size:23px}.nav{height:auto;min-height:60px}}
 @media print{body{background:#fff}.no-print,header,.hero,.formPanel,footer{display:none!important}.wrap{width:100%;margin:0}.layout{display:block;padding:0}.previewWrap{position:static}.previewHead{display:none}.resume{border:0;box-shadow:none;min-height:0;padding:0;margin:0;width:100%;color:#111}.r-name{color:#111}.r-target,.r-section h3{color:#111}.r-contact{border-color:#555;color:#333}@page{size:A4;margin:16mm}}
+
+.toolGrid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:14px}.toolCard{background:#f8fbff;border:1px solid var(--line);border-radius:13px;padding:16px;min-width:0}.toolCard h3{margin:0 0 6px;color:var(--navy)}.toolCard textarea{width:100%;min-height:160px;border:1px solid var(--line);border-radius:10px;padding:12px;font:14px/1.5 inherit;resize:vertical;background:#fff;color:var(--ink)}.atsResults{margin-top:12px;padding:12px;background:#fff;border:1px solid var(--line);border-radius:10px;font-size:14px}.atsResults ul{margin:8px 0;padding-left:20px}.ats-good{color:#16865b;font-weight:800}.ats-warn{color:#b45309;font-weight:800}@media(max-width:760px){.toolGrid{grid-template-columns:1fr}.layout{grid-template-columns:1fr}.formPanel,.previewWrap{grid-column:1;grid-row:auto}}
 </style>
 </head>
 <body>
@@ -45,10 +47,7 @@ footer{text-align:center;color:var(--muted);font-size:11px;padding:20px}
 <div class="field"><label for="email">Email</label><input id="email" type="email" placeholder="name@example.com"></div>
 <div class="field full"><label for="location">City, State</label><input id="location" placeholder="Jaipur, Rajasthan"></div>
 <div class="field full"><label for="summary">Professional Summary / Career Objective</label><textarea id="summary" placeholder="2–4 lines about your genuine skills, education and career goal."></textarea><span class="hint">Fresher ho to education, skills aur target role par focus karo.</span></div>
-<div class="field full"><label for="education">Education</label><textarea id="education" placeholder="10th: School | Board | Year | %/CGPA
-12th: School | Board | Stream | Year | %/CGPA
-Graduation: Degree | College | University | Year | %/CGPA
-Postgraduation / Diploma (if applicable)"></textarea></div>
+<div class="field full"><label for="education">Education (add each qualification on a new line)</label><textarea id="education" placeholder="10th | School | Board | Passing year | Percentage/CGPA&#10;12th | School | Board/Stream | Passing year | Percentage/CGPA&#10;Diploma | Institute | Branch | Year | Percentage/CGPA&#10;B.Tech / Graduation | College | University | Year | CGPA&#10;M.Tech / Postgraduation | College | University | Year | CGPA"></textarea><span class="hint">10th, 12th, ITI, Diploma, Graduation aur Post-graduation jitni applicable hon, add karein.</span></div>
 <div class="field full"><label for="skills">Skills</label><textarea id="skills" placeholder="Excel, SQL, Power BI, Communication"></textarea></div>
 <div class="field full"><label for="experience">Experience / Internship</label><textarea id="experience" placeholder="Role | Company | Dates&#10;Your real responsibilities and achievements"></textarea></div>
 <div class="field full"><label for="projects">Projects</label><textarea id="projects" placeholder="Project name — tools used, what you built, real outcome"></textarea></div>
@@ -62,6 +61,7 @@ Postgraduation / Diploma (if applicable)"></textarea></div>
 <div class="field full"><label for="achievements">Achievements / Awards (optional)</label><textarea id="achievements" placeholder="Awards, academic achievements, competition results, measurable accomplishments"></textarea></div>
 <div class="field full"><label for="hobbies">Hobbies / Interests (optional)</label><input id="hobbies" placeholder="Reading, volunteering, cricket (optional)"></div>
 <div class="field full"><label for="extra">Additional Information (optional)</label><textarea id="extra" placeholder="Volunteer work, professional memberships, publications, relevant details"></textarea></div>
+<div class="field full"><label for="jobDescription">Target Job Description (optional — for ATS keyword check)</label><textarea id="jobDescription" placeholder="Paste the job description here to compare relevant keywords with your resume."></textarea><span class="hint">This text is used only in your browser for a basic keyword comparison.</span></div>
 </form>
 <div class="actions"><button class="btn primary" type="button" onclick="window.print()">⬇ Download / Save as PDF</button><button class="btn secondary" type="button" id="clearBtn">Clear Form</button></div>
 <p class="hint">PDF ke liye print window mein “Save as PDF” select karein. A4 paper aur default margins use karein.</p>
@@ -87,41 +87,40 @@ Postgraduation / Diploma (if applicable)"></textarea></div>
 </article>
 </section>
 </main>
+
+<section class="wrap panel career-tools no-print" id="resumeTools" style="margin:0 auto 28px;max-width:1180px">
+ <h2>3. Free Resume Check & Writing Assistant</h2>
+ <p class="sub">No paid API or account required. Basic checks run in your browser. AI writing is optional: copy the prompt into an AI assistant yourself and review every suggestion.</p>
+ <div class="toolGrid">
+  <div class="toolCard"><h3>🔎 Basic ATS & Keyword Check</h3><p class="hint">Checks common resume sections and compares keywords with the job description you paste. It is guidance, not an employer ATS score or hiring guarantee.</p><button class="btn primary" type="button" id="runAts">Check My Resume</button><div id="atsResults" class="atsResults" aria-live="polite">Fill in your resume and optionally paste a job description, then run the check.</div></div>
+  <div class="toolCard"><h3>✨ Optional AI Writing Prompt</h3><p class="hint">Creates a prompt using your resume fields. Review/remove personal contact details before sharing it with any external AI service.</p><textarea id="aiPrompt" rows="9" readonly></textarea><div class="actions"><button class="btn primary" type="button" id="copyAiPrompt">Copy AI Prompt</button><a class="btn secondary" href="https://gemini.google.com/" target="_blank" rel="noopener">Open Gemini ↗</a></div><p id="aiCopyStatus" class="hint" aria-live="polite"></p></div>
+ </div>
+</section>
+
 <footer class="no-print">India Jobs Portal · Free resume creation tool. Review all details before applying.</footer>
 <script>
 const ids=['name','target','phone','email','location','summary','education','skills','experience','projects','certifications','languages','linkedin','github','dob','address','achievements','hobbies','extra'];
-function safeText(s){return String(s||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
+function val(id){const e=document.getElementById(id);return e?e.value.trim():''}
 function updatePreview(){
-  ids.forEach(id=>{const el=document.getElementById(id),out=document.getElementById('p-'+id);if(out)out.textContent=el.value.trim()||'';});
-  document.getElementById('p-name').textContent=document.getElementById('name').value.trim()||'Your Name';
-  document.getElementById('p-target').textContent=document.getElementById('target').value.trim()||'Target Job Title';
-  const contact=['phone','email','location'].map(id=>document.getElementById(id).value.trim()).filter(Boolean);
-  document.getElementById('p-contact').textContent=contact.join('  |  ')||'Phone · Email · City, State';
-  ['summary','education','skills','experience','projects','certifications','languages','achievements','hobbies','extra'].forEach(id=>{
-    const value=document.getElementById(id).value.trim();
-    document.getElementById('sec-'+id).style.display=value?'block':'none';
-  });
-  document.getElementById('sec-linkedin').style.display=(document.getElementById('linkedin').value.trim()||document.getElementById('github').value.trim())?'block':'none';
-  document.getElementById('sec-dob').style.display=(document.getElementById('dob').value.trim()||document.getElementById('address').value.trim())?'block':'none';
+ ids.forEach(id=>{const out=document.getElementById('p-'+id);if(out)out.textContent=val(id)});
+ document.getElementById('p-name').textContent=val('name')||'Your Name';document.getElementById('p-target').textContent=val('target')||'Target Job Title';
+ const contact=['phone','email','location'].map(val).filter(Boolean);if(val('linkedin'))contact.push('LinkedIn: '+val('linkedin'));if(val('github'))contact.push('Portfolio: '+val('github'));
+ document.getElementById('p-contact').textContent=contact.join('  |  ')||'Phone · Email · City, State';
+ ['summary','education','skills','experience','projects','certifications','languages','achievements','hobbies','extra'].forEach(id=>{const el=document.getElementById('sec-'+id);if(el)el.style.display=val(id)?'block':'none'});
+ const li=document.getElementById('sec-linkedin');if(li)li.style.display=(val('linkedin')||val('github'))?'block':'none';const dob=document.getElementById('sec-dob');if(dob)dob.style.display=(val('dob')||val('address'))?'block':'none';
+ refreshAIPrompt();
 }
+function buildAIPrompt(){const labels={target:'Target role',summary:'Current summary/objective',education:'Education',skills:'Skills',experience:'Experience/internship',projects:'Projects',certifications:'Certifications',achievements:'Achievements'};return 'Act as a professional resume writing assistant. Improve only the facts I provide. Do not invent employers, degrees, dates, skills, achievements, metrics, or experience. Ask questions or use placeholders for missing facts. Return an ATS-friendly summary and concise bullet points.\n\n'+Object.keys(labels).map(k=>labels[k]+': '+(val(k)||'Not provided')).join('\n')}
+function refreshAIPrompt(){const el=document.getElementById('aiPrompt');if(el)el.value=buildAIPrompt()}
 document.getElementById('resumeForm').addEventListener('input',updatePreview);
-document.getElementById('clearBtn').addEventListener('click',()=>{if(confirm('Clear all entered details?')){document.getElementById('resumeForm').reset();updatePreview();}});
-updatePreview();
-
-function buildAIPrompt(){
- const fields=['target','summary','education','skills','experience','projects','certifications','achievements'];
- const labels={target:'Target role',summary:'Current summary/objective',education:'Education',skills:'Skills',experience:'Experience/internship',projects:'Projects',certifications:'Certifications',achievements:'Achievements'};
- const lines=fields.map(id=>labels[id]+': '+(document.getElementById(id).value.trim()||'Not provided'));
- return 'Act as a professional resume writing assistant. Improve only the information I provide. Do not invent employers, degrees, dates, skills, achievements, metrics, or experience. If details are missing, use placeholders or ask questions. Return concise ATS-friendly professional summary and truthful bullet points for my resume.\n\n'+lines.join('\n');
-}
-function refreshAIPrompt(){const el=document.getElementById('aiPrompt');if(el)el.value=buildAIPrompt();}
-document.getElementById('resumeForm').addEventListener('input',refreshAIPrompt);
-document.getElementById('copyAiPrompt').addEventListener('click',async()=>{
- const status=document.getElementById('aiCopyStatus');
- try{await navigator.clipboard.writeText(buildAIPrompt());status.textContent='Prompt copied. Open Gemini, paste it, review the suggestions, then paste them into your resume fields.';}
- catch(e){const ta=document.getElementById('aiPrompt');ta.focus();ta.select();status.textContent='Prompt selected. Press Ctrl+C to copy, then paste it into Gemini.';}
+document.getElementById('clearBtn').addEventListener('click',()=>{if(confirm('Clear all entered details?')){document.getElementById('resumeForm').reset();updatePreview();document.getElementById('atsResults').textContent='Fill in your resume and optionally paste a job description, then run the check.'}});
+document.getElementById('copyAiPrompt').addEventListener('click',async()=>{const status=document.getElementById('aiCopyStatus');try{await navigator.clipboard.writeText(buildAIPrompt());status.textContent='Prompt copied. Paste it into Gemini, review suggestions, then manually update your resume.'}catch(e){const t=document.getElementById('aiPrompt');t.focus();t.select();status.textContent='Prompt selected. Press Ctrl+C, then paste into Gemini.'}});
+document.getElementById('runAts').addEventListener('click',()=>{
+ const checks=[['Name',!!val('name')],['Contact information',!!(val('email')||val('phone'))],['Target role',!!val('target')],['Professional summary/objective',!!val('summary')],['Education',!!val('education')],['Skills',!!val('skills')],['Projects or experience',!!(val('projects')||val('experience'))]];
+ const jd=val('jobDescription').toLowerCase();const resumeText=ids.map(val).join(' ').toLowerCase();const words=[...new Set((jd.match(/[a-zA-Z][a-zA-Z+#.-]{2,}/g)||[]).map(x=>x.toLowerCase()).filter(x=>!['and','the','for','with','you','our','will','are','this','that','from','your','have','has','job','work','role','ability','good','strong','years','year','must','preferred','required'].includes(x)))];const matched=words.filter(w=>resumeText.includes(w));const missing=words.filter(w=>!resumeText.includes(w)).slice(0,20);const count=checks.filter(x=>x[1]).length;
+ let html='<b>Resume completeness: '+count+'/'+checks.length+' common checks passed</b><ul>'+checks.map(x=>'<li class="'+(x[1]?'ats-good':'ats-warn')+'">'+(x[1]?'✓ ':'• ')+x[0]+(x[1]?' present':' missing / consider adding')+'</li>').join('')+'</ul>';
+ if(jd){html+='<b>Job description keyword overlap: '+matched.length+' of '+words.length+' extracted terms found</b>';html+='<p><b>Found:</b> '+(matched.slice(0,25).join(', ')||'No exact keyword matches')+'</p><p><b>Review if accurate before adding:</b> '+(missing.join(', ')||'No obvious unmatched terms from this basic scan')+'</p>'}else{html+='<p>Paste a target job description in the form to see a basic keyword comparison.</p>'}html+='<p class="hint">This simple browser-based check does not replicate proprietary ATS software and cannot predict selection.</p>';document.getElementById('atsResults').innerHTML=html;
 });
-refreshAIPrompt();
-
+updatePreview();
 </script>
 </body></html>
