@@ -37,7 +37,7 @@ footer{text-align:center;color:var(--muted);font-size:11px;padding:20px}
 <div class="wrap hero no-print"><h1>Free Resume Builder</h1><p>Apni details bharo, live preview dekho aur professional resume PDF mein save karo. No sign-up, no paid AI, no data sent to an AI service.</p></div>
 <main class="wrap layout">
 <section class="panel formPanel no-print">
-<h2>1. Enter Your Details</h2><p class="sub">Sirf wahi information bharo jo sach hai. Empty sections resume mein nahi dikhenge.</p>
+<h2>1. Enter Your Details</h2><p class="sub">Sirf wahi information bharo jo sach hai. Empty sections resume mein nahi dikhenge. 10th, 12th, diploma, graduation aur postgraduation sab add kar sakte ho.</p>
 <form id="resumeForm">
 <div class="field"><label for="name">Full Name *</label><input id="name" placeholder="e.g. Rahul Sharma" required></div>
 <div class="field"><label for="target">Target Job Title</label><input id="target" placeholder="e.g. MIS Executive"></div>
@@ -45,16 +45,43 @@ footer{text-align:center;color:var(--muted);font-size:11px;padding:20px}
 <div class="field"><label for="email">Email</label><input id="email" type="email" placeholder="name@example.com"></div>
 <div class="field full"><label for="location">City, State</label><input id="location" placeholder="Jaipur, Rajasthan"></div>
 <div class="field full"><label for="summary">Professional Summary / Career Objective</label><textarea id="summary" placeholder="2–4 lines about your genuine skills, education and career goal."></textarea><span class="hint">Fresher ho to education, skills aur target role par focus karo.</span></div>
-<div class="field full"><label for="education">Education</label><textarea id="education" placeholder="Degree | College/University | Year | Marks/CGPA (optional)"></textarea></div>
+<div class="field full"><label for="education">Education</label><textarea id="education" placeholder="10th: School | Board | Year | %/CGPA
+12th: School | Board | Stream | Year | %/CGPA
+Graduation: Degree | College | University | Year | %/CGPA
+Postgraduation / Diploma (if applicable)"></textarea></div>
 <div class="field full"><label for="skills">Skills</label><textarea id="skills" placeholder="Excel, SQL, Power BI, Communication"></textarea></div>
 <div class="field full"><label for="experience">Experience / Internship</label><textarea id="experience" placeholder="Role | Company | Dates&#10;Your real responsibilities and achievements"></textarea></div>
 <div class="field full"><label for="projects">Projects</label><textarea id="projects" placeholder="Project name — tools used, what you built, real outcome"></textarea></div>
 <div class="field full"><label for="certifications">Certifications / Courses</label><textarea id="certifications" placeholder="Course or certificate | Issuer | Year"></textarea></div>
 <div class="field full"><label for="languages">Languages / Additional Information</label><input id="languages" placeholder="Hindi, English"></div>
+
+<div class="field full"><label for="linkedin">LinkedIn Profile URL (optional)</label><input id="linkedin" type="url" placeholder="https://linkedin.com/in/your-profile"></div>
+<div class="field full"><label for="github">GitHub / Portfolio / Website (optional)</label><input id="github" type="url" placeholder="https://github.com/yourname or portfolio URL"></div>
+<div class="field"><label for="dob">Date of Birth (optional)</label><input id="dob" placeholder="DD/MM/YYYY"></div>
+<div class="field"><label for="address">Full Address (optional)</label><input id="address" placeholder="Area, City, State"></div>
+<div class="field full"><label for="achievements">Achievements / Awards (optional)</label><textarea id="achievements" placeholder="Awards, academic achievements, competition results, measurable accomplishments"></textarea></div>
+<div class="field full"><label for="hobbies">Hobbies / Interests (optional)</label><input id="hobbies" placeholder="Reading, volunteering, cricket (optional)"></div>
+<div class="field full"><label for="extra">Additional Information (optional)</label><textarea id="extra" placeholder="Volunteer work, professional memberships, publications, relevant details"></textarea></div>
 </form>
 <div class="actions"><button class="btn primary" type="button" onclick="window.print()">⬇ Download / Save as PDF</button><button class="btn secondary" type="button" id="clearBtn">Clear Form</button></div>
 <p class="hint">PDF ke liye print window mein “Save as PDF” select karein. A4 paper aur default margins use karein.</p>
 </section>
+
+<div class="panel no-print" style="margin-top:14px;background:#f7fbff;border-color:#cfe2ff">
+<h2>✨ Optional AI Writing Assistant</h2>
+<p class="sub">Free manual workflow: copy a prompt, open Gemini, paste your details and its suggestions back into the form. This site does not send your personal data to AI automatically.</p>
+<details>
+<summary style="cursor:pointer;font-weight:850;color:#1769e8">Get AI help for my summary and bullet points</summary>
+<p class="hint">Review and remove private details before sharing anything with an AI service. Never ask AI to invent qualifications or experience.</p>
+<textarea id="aiPrompt" style="width:100%;min-height:145px" readonly></textarea>
+<div class="actions">
+<button class="btn primary" type="button" id="copyAiPrompt">Copy AI Prompt</button>
+<a class="btn secondary" href="https://gemini.google.com/" target="_blank" rel="noopener">Open Gemini ↗</a>
+</div>
+<p class="hint" id="aiCopyStatus" aria-live="polite"></p>
+</details>
+</div>
+
 <section class="previewWrap">
 <div class="previewHead no-print"><h2>2. Live Resume Preview</h2><span class="hint">Updates as you type</span></div>
 <article class="resume" id="resumePreview">
@@ -66,12 +93,18 @@ footer{text-align:center;color:var(--muted);font-size:11px;padding:20px}
 <div class="r-section" id="sec-projects"><h3>Projects</h3><p id="p-projects"></p></div>
 <div class="r-section" id="sec-certifications"><h3>Certifications & Courses</h3><p id="p-certifications"></p></div>
 <div class="r-section" id="sec-languages"><h3>Languages / Additional Information</h3><p id="p-languages"></p></div>
+
+<div class="r-section" id="sec-linkedin"><h3>Professional Links</h3><p id="p-linkedin"></p><p id="p-github"></p></div>
+<div class="r-section" id="sec-dob"><h3>Personal Details</h3><p id="p-dob"></p><p id="p-address"></p></div>
+<div class="r-section" id="sec-achievements"><h3>Achievements & Awards</h3><p id="p-achievements"></p></div>
+<div class="r-section" id="sec-hobbies"><h3>Interests</h3><p id="p-hobbies"></p></div>
+<div class="r-section" id="sec-extra"><h3>Additional Information</h3><p id="p-extra"></p></div>
 </article>
 </section>
 </main>
 <footer class="no-print">India Jobs Portal · Free resume creation tool. Review all details before applying.</footer>
 <script>
-const ids=['name','target','phone','email','location','summary','education','skills','experience','projects','certifications','languages'];
+const ids=['name','target','phone','email','location','summary','education','skills','experience','projects','certifications','languages','linkedin','github','dob','address','achievements','hobbies','extra'];
 function safeText(s){return String(s||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
 function updatePreview(){
   ids.forEach(id=>{const el=document.getElementById(id),out=document.getElementById('p-'+id);if(out)out.textContent=el.value.trim()||'';});
@@ -79,13 +112,31 @@ function updatePreview(){
   document.getElementById('p-target').textContent=document.getElementById('target').value.trim()||'Target Job Title';
   const contact=['phone','email','location'].map(id=>document.getElementById(id).value.trim()).filter(Boolean);
   document.getElementById('p-contact').textContent=contact.join('  |  ')||'Phone · Email · City, State';
-  ['summary','education','skills','experience','projects','certifications','languages'].forEach(id=>{
+  ['summary','education','skills','experience','projects','certifications','languages','achievements','hobbies','extra'].forEach(id=>{
     const value=document.getElementById(id).value.trim();
     document.getElementById('sec-'+id).style.display=value?'block':'none';
   });
+  document.getElementById('sec-linkedin').style.display=(document.getElementById('linkedin').value.trim()||document.getElementById('github').value.trim())?'block':'none';
+  document.getElementById('sec-dob').style.display=(document.getElementById('dob').value.trim()||document.getElementById('address').value.trim())?'block':'none';
 }
 document.getElementById('resumeForm').addEventListener('input',updatePreview);
 document.getElementById('clearBtn').addEventListener('click',()=>{if(confirm('Clear all entered details?')){document.getElementById('resumeForm').reset();updatePreview();}});
 updatePreview();
+
+function buildAIPrompt(){
+ const fields=['target','summary','education','skills','experience','projects','certifications','achievements'];
+ const labels={target:'Target role',summary:'Current summary/objective',education:'Education',skills:'Skills',experience:'Experience/internship',projects:'Projects',certifications:'Certifications',achievements:'Achievements'};
+ const lines=fields.map(id=>labels[id]+': '+(document.getElementById(id).value.trim()||'Not provided'));
+ return 'Act as a professional resume writing assistant. Improve only the information I provide. Do not invent employers, degrees, dates, skills, achievements, metrics, or experience. If details are missing, use placeholders or ask questions. Return concise ATS-friendly professional summary and truthful bullet points for my resume.\\n\\n'+lines.join('\\n');
+}
+function refreshAIPrompt(){const el=document.getElementById('aiPrompt');if(el)el.value=buildAIPrompt();}
+document.getElementById('resumeForm').addEventListener('input',refreshAIPrompt);
+document.getElementById('copyAiPrompt').addEventListener('click',async()=>{
+ const status=document.getElementById('aiCopyStatus');
+ try{await navigator.clipboard.writeText(buildAIPrompt());status.textContent='Prompt copied. Open Gemini, paste it, review the suggestions, then paste them into your resume fields.';}
+ catch(e){const ta=document.getElementById('aiPrompt');ta.focus();ta.select();status.textContent='Prompt selected. Press Ctrl+C to copy, then paste it into Gemini.';}
+});
+refreshAIPrompt();
+
 </script>
 </body></html>

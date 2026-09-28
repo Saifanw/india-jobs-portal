@@ -332,29 +332,23 @@ footer{background:#0d2138;color:#cedbea;padding:45px 0 18px}.foot{display:grid;g
 .job-float-actions a:hover{transform:translateX(-4px);filter:brightness(1.06)}
 .job-float-actions .f-jobs{background:#1769e8}.job-float-actions .f-seeker{background:#0b8068}.job-float-actions .f-govt{background:#a65e00}.job-float-actions .f-post{background:#b42335}
 @media(max-width:650px){.job-float-actions{right:8px;top:auto;bottom:16px;transform:none;gap:7px}.job-float-actions a{padding:10px 12px;font-size:12px;box-shadow:0 4px 15px #102a4333}.job-float-actions a span{display:none}.job-float-actions a{width:48px;height:48px;padding:0;justify-content:center;font-size:19px}.job-float-actions a::first-letter{font-size:20px}}
+
+/* Professional homepage refinements */
+.home-resume-cta{display:none!important}
+.job-float-actions .f-resume{background:#1769e8;color:#fff;box-shadow:0 8px 22px #1769e83b}
+.job-float-actions{gap:10px}
+.dynamictrack a{color:inherit;text-decoration:none}
+.dynamictrack a:hover{color:var(--blue);text-decoration:underline}
+@media(max-width:700px){
+ .job-float-actions{right:10px;bottom:16px;top:auto;gap:8px}
+ .job-float-actions a{min-height:44px}
+ .dynamicin{height:32px}
+}
 </style>
 
 </head>
 <body>
-<section class="home-resume-cta" id="home-resume-cta">
-  <div class="wrap home-resume-inner">
-    <div><span class="resume-mini-label">FREE CAREER TOOL</span>
-      <h2>Build a Professional Resume — Free</h2>
-      <p>Fresher ho ya experienced, apni details bharo, live preview dekho aur resume PDF mein download karo. No sign-up, no AI fee.</p>
-    </div>
-    <a class="btn primary home-resume-btn" href="resume-builder.html">📄 Create My Resume Free →</a>
-  </div>
-</section>
-<style>
-.resume-nav-link{display:inline-flex!important;align-items:center;gap:5px;background:#eaf2ff;color:#145ac4!important;border:1px solid #c9ddff;padding:8px 11px;border-radius:10px;font-weight:900!important;white-space:nowrap}
-.home-resume-cta{background:linear-gradient(110deg,#eaf3ff,#fff 60%,#f1fbf7);border-bottom:1px solid #dce7f3;padding:17px 0}
-.home-resume-inner{display:flex;align-items:center;justify-content:space-between;gap:18px}
-.home-resume-inner h2{margin:3px 0;color:#102a43;font-size:clamp(19px,2.5vw,27px);line-height:1.2}
-.home-resume-inner p{margin:4px 0 0;color:#53657b;font-size:13px}
-.resume-mini-label{font-size:10px;letter-spacing:1px;font-weight:950;color:#1769e8}
-.home-resume-btn{white-space:nowrap;background:#1769e8!important;color:#fff!important;padding:13px 18px!important;border-radius:12px;font-weight:900!important;box-shadow:0 8px 20px #1769e82b}
-@media(max-width:700px){.home-resume-inner{align-items:flex-start;flex-direction:column}.home-resume-btn{width:100%;justify-content:center}.resume-nav-link{font-size:10px!important;padding:6px 8px}}
-</style>
+
 
 <!-- LIVE NOTIFICATION POPUP -->
 <div id="livePopup" class="livePopup" aria-live="polite">
@@ -372,6 +366,24 @@ footer{background:#0d2138;color:#cedbea;padding:45px 0 18px}.foot{display:grid;g
 
 <a href="resume-builder.html" class="resume-nav-link">📄 Free Resume Builder</a>
 </div></div></nav>
+<div class="career-ticker" role="region" aria-label="Career updates">
+  <div class="wrap career-ticker-inner">
+    <span class="ticker-live">● UPDATES</span>
+    <a id="careerTickerLink" href="jobs.html">Latest Jobs Across India</a>
+    <span class="ticker-sep">•</span><a href="jobs.html">Fresher & MIS Jobs</a>
+    <span class="ticker-sep">•</span><a href="government-jobs.html">Government Exam Updates</a>
+    <span class="ticker-sep">•</span><a href="resume-builder.html">Free Resume Builder</a>
+  </div>
+</div>
+<style>
+.career-ticker{background:#f2f7ff;border-bottom:1px solid #dce8f7;color:#17324e;font-size:12px;font-weight:800;overflow:hidden}
+.career-ticker-inner{min-height:35px;display:flex;align-items:center;gap:17px;white-space:nowrap;overflow:hidden}
+.career-ticker a:hover{color:#1769e8;text-decoration:underline}
+.ticker-live{font-size:10px;letter-spacing:.6px;color:#1769e8;flex-shrink:0}
+.ticker-sep{color:#f39a2f}
+@media(max-width:720px){.career-ticker-inner{gap:12px;overflow-x:auto;scrollbar-width:none}.career-ticker-inner::-webkit-scrollbar{display:none}}
+</style>
+
 
 <!-- SINGLE DYNAMIC JOB MESSAGE -->
 <div class="dynamic jobMessageStrip">
@@ -969,6 +981,7 @@ const visitorDb=getFirestore(visitorApp);
 <aside class="job-float-actions" aria-label="Quick job actions">
 <a class="f-jobs" href="jobs.html" title="Browse latest jobs">🔎 <span>Latest Jobs</span></a>
 <a class="f-seeker" href="job-seeker.html" title="Need a job?">👤 <span>Need a Job?</span></a>
+<a class="f-resume" href="resume-builder.html" title="Build a free resume">📄 <span>Resume Builder</span></a>
 <a class="f-govt" href="government-jobs.html" title="Government vacancies">🏛️ <span>Govt Jobs</span></a>
 <a class="f-post" href="post-a-job.html" title="Employers: post a vacancy">➕ <span>Post a Job</span></a>
 </aside>
