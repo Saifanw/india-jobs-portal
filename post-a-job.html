@@ -13,7 +13,7 @@
 <button id="send" type="submit">Submit for Review</button><div id="status" class="status" role="status"></div></form><p><a href="index.html">← Back to Home</a></p></section></main>
 <script type="module">
 import {initializeApp} from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
-import {getFirestore,collection,addDoc,serverTimestamp} from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
+import {getFirestore,collection,addDoc,serverTimestamp,getDocs,query,where,limit} from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
 const firebaseConfig = {
   apiKey: "AIzaSyCh20UGNM3-tWZiB6pkNUXcbWK-lwkc-sU",
   authDomain: "india-jobs-portal.firebaseapp.com",
@@ -30,7 +30,12 @@ form.addEventListener("submit",async e=>{
  const type=v("type"),apply=v("apply");
  const data={title:v("title"),company:v("company"),location:v("location"),type,jobType:type,experience:v("experience"),salary:v("salary"),email:v("email"),apply,applyLink:apply,description:v("description"),status:"pending",portal:"india",source:"employer_submission",createdAt:serverTimestamp(),updatedAt:serverTimestamp()};
  btn.disabled=true;btn.textContent="Submitting...";
- try{await addDoc(collection(db,"jobs"),data);form.reset();st.className="status ok";st.textContent="Vacancy submitted for admin review. It will appear after approval.";st.style.display="block";}
+ try{
+ const norm=x=>String(x||"").toLowerCase().normalize("NFKD").replace(/[^a-z0-9]+/g," ").trim().replace(/\s+/g," ");
+ const snap=await getDocs(query(collection(db,"jobs"),where("status","==","approved"),limit(500)));
+ const dup=snap.docs.map(d=>({id:d.id,...d.data()})).find(j=>norm(j.title)===norm(data.title)&&norm(j.company)===norm(data.company)&&norm(j.location)===norm(data.location));
+ if(dup){st.className="status bad";st.textContent="A similar vacancy from this company and location is already submitted/listed. Please check with the portal admin before submitting again.";st.style.display="block";return;}
+ await addDoc(collection(db,"jobs"),data);form.reset();st.className="status ok";st.textContent="Vacancy submitted for admin review. It will appear after approval.";st.style.display="block";}
  catch(err){console.error(err);st.className="status bad";st.textContent="Submission blocked. India Firestore Rules need to allow validated public pending job submissions.";st.style.display="block";}
  finally{btn.disabled=false;btn.textContent="Submit for Review";}
 });

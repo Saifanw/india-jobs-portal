@@ -324,6 +324,16 @@ footer{background:#0d2138;color:#cedbea;padding:45px 0 18px}.foot{display:grid;g
 @media(max-width:420px){.brand{gap:7px;font-size:14px}.brand small{font-size:8px;max-width:210px;line-height:1.25}.logo{width:35px;height:35px;flex:0 0 35px}.donationCard{padding:14px}.donationSection{padding:28px 0}}
 </style>
 
+
+<style>
+/* Fixed quick actions inspired by the coaching site */
+.job-float-actions{position:fixed;right:18px;top:42%;transform:translateY(-20%);z-index:9990;display:flex;flex-direction:column;gap:10px;max-width:190px}
+.job-float-actions a{display:flex;align-items:center;gap:9px;justify-content:flex-start;padding:12px 16px;border-radius:999px;color:#fff;text-decoration:none;font-size:13px;font-weight:900;box-shadow:0 7px 22px #102a4330;border:1px solid #ffffff55;transition:transform .18s,filter .18s;white-space:nowrap}
+.job-float-actions a:hover{transform:translateX(-4px);filter:brightness(1.06)}
+.job-float-actions .f-jobs{background:#1769e8}.job-float-actions .f-seeker{background:#0b8068}.job-float-actions .f-govt{background:#a65e00}.job-float-actions .f-post{background:#b42335}
+@media(max-width:650px){.job-float-actions{right:8px;top:auto;bottom:16px;transform:none;gap:7px}.job-float-actions a{padding:10px 12px;font-size:12px;box-shadow:0 4px 15px #102a4333}.job-float-actions a span{display:none}.job-float-actions a{width:48px;height:48px;padding:0;justify-content:center;font-size:19px}.job-float-actions a::first-letter{font-size:20px}}
+</style>
+
 </head>
 <body>
 <!-- LIVE NOTIFICATION POPUP -->
@@ -931,6 +941,15 @@ const visitorDb=getFirestore(visitorApp);
 <script>
 (function(){const toggle=document.getElementById('mobileMenuToggle');const menu=document.getElementById('mainMenu');if(!toggle||!menu)return;toggle.addEventListener('click',()=>{const open=menu.classList.toggle('mobile-open');toggle.setAttribute('aria-expanded',String(open));toggle.innerHTML=open?'✕ Close':'☰ Menu';});menu.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>{menu.classList.remove('mobile-open');toggle.setAttribute('aria-expanded','false');toggle.innerHTML='☰ Menu';}));})();
 </script>
+
+
+<!-- Sticky candidate/employer quick links -->
+<aside class="job-float-actions" aria-label="Quick job actions">
+<a class="f-jobs" href="jobs.html" title="Browse latest jobs">🔎 <span>Latest Jobs</span></a>
+<a class="f-seeker" href="job-seeker.html" title="Need a job?">👤 <span>Need a Job?</span></a>
+<a class="f-govt" href="government-jobs.html" title="Government vacancies">🏛️ <span>Govt Jobs</span></a>
+<a class="f-post" href="post-a-job.html" title="Employers: post a vacancy">➕ <span>Post a Job</span></a>
+</aside>
 
 </body>
 </html>
