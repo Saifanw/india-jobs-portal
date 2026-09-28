@@ -231,7 +231,22 @@ footer{background:#0d2138;color:#cedbea;padding:45px 0 18px}.foot{display:grid;g
   <meta name="description" content="Find private jobs, fresher vacancies and government job updates across India. Browse job listings, check details and apply through available company or official links.">
   <meta name="robots" content="index,follow,max-image-preview:large">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="author" content="India Jobs Portal">
+  <meta name="author" content="India Jobs Portal">\n<meta name="keywords" content="latest jobs in India, private jobs, government jobs, fresher jobs, MIS executive jobs, data analyst jobs, work from home jobs, bank jobs, IT jobs, sales jobs, jobs by state, jobs by city">\n
+<script type="application/ld+json">
+{
+  "@context":"https://schema.org",
+  "@type":"WebSite",
+  "name":"India Jobs Portal",
+  "url":"https://saifanw.github.io/india-jobs-portal/",
+  "description":"Search private jobs, government recruitment updates, fresher jobs, MIS, data analyst, sales, banking, IT and work-from-home opportunities across India.",
+  "potentialAction":{
+    "@type":"SearchAction",
+    "target":"https://saifanw.github.io/india-jobs-portal/jobs.html?search={search_term_string}",
+    "query-input":"required name=search_term_string"
+  }
+}
+</script>
+
   <meta name="theme-color" content="#1769e8">
   <link rel="canonical" href="https://saifanw.github.io/india-jobs-portal/">
   <meta property="og:type" content="website">
@@ -388,6 +403,29 @@ footer{background:#0d2138;color:#cedbea;padding:45px 0 18px}.foot{display:grid;g
     </div>
   </div>
 </section>
+
+<section class="wrap" aria-labelledby="popularJobsTitle" style="padding:20px 0 8px">
+  <div class="quickTitle" style="margin-bottom:14px">
+    <div><div class="kick">POPULAR JOB SEARCHES</div><h2 id="popularJobsTitle">Search jobs by role</h2></div>
+    <p>Popular categories across India</p>
+  </div>
+  <div class="popularJobLinks" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:10px">
+    <a href="jobs.html?search=MIS" class="popularJobBtn">📊 MIS Jobs</a>
+    <a href="jobs.html?search=Data%20Analyst" class="popularJobBtn">📈 Data Analyst</a>
+    <a href="jobs.html?search=Fresher" class="popularJobBtn">🎓 Fresher Jobs</a>
+    <a href="jobs.html?search=Work%20from%20Home" class="popularJobBtn">🏠 Work From Home</a>
+    <a href="jobs.html?search=Sales" class="popularJobBtn">🤝 Sales Jobs</a>
+    <a href="jobs.html?search=Bank" class="popularJobBtn">🏦 Banking Jobs</a>
+    <a href="jobs.html?search=IT" class="popularJobBtn">💻 IT Jobs</a>
+    <a href="jobs.html?search=Accountant" class="popularJobBtn">🧾 Accounts Jobs</a>
+    <a href="jobs.html?search=Government" class="popularJobBtn">🏛️ Govt Jobs</a>
+  </div>
+</section>
+<style>
+.popularJobBtn{display:flex;align-items:center;justify-content:center;gap:8px;padding:13px 12px;border:1px solid #cfe0f5;border-radius:12px;background:#fff;color:#12355b;font-weight:800;box-shadow:0 5px 18px rgba(16,42,67,.05);transition:transform .18s,background .18s,border-color .18s}
+.popularJobBtn:hover{transform:translateY(-2px);background:#edf5ff;border-color:#1769e8;color:#1769e8}
+@media(max-width:600px){.popularJobBtn{padding:12px 8px;font-size:13px}}
+</style>
 
 <section class="noticeSection compactNotice professionalNotice" id="updates">
   <div class="wrap">
@@ -799,6 +837,11 @@ const visitorDb=getFirestore(visitorApp);
 
 (async()=>{
  try{
+   // Do not count admin dashboard/analytics tools or sessions marked as admin.
+   const adminPath=/\/(admin-dashboard|visitor-analytics|job-manager|candidate-manager|candidate-manage|comment-manager|enquiry-manager|notification-manager|private-job-import)\.html$/i.test(location.pathname);
+   let adminMode=false;
+   try{adminMode=localStorage.getItem("indiaJobsPortalAdminMode")==="1";}catch(e){}
+   if(adminPath||adminMode) return;
    let user=visitorAuth.currentUser;
    if(!user) user=(await signInAnonymously(visitorAuth)).user;
    const uid=user.uid;
@@ -843,7 +886,10 @@ const visitorDb=getFirestore(visitorApp);
      screen:Math.min(screen.width||0,10000)+"x"+Math.min(screen.height||0,10000),
      createdAt:serverTimestamp(),eventAt:Date.now()
    };
-   await addDoc(collection(visitorDb,"webAnalyticsEvents"),{...common,eventType:"page_view"});
+   const visitKey="ijpv:"+location.pathname+":"+Math.floor(Date.now()/60000);
+   let alreadyCounted=false;
+   try{alreadyCounted=sessionStorage.getItem(visitKey)==="1";if(!alreadyCounted)sessionStorage.setItem(visitKey,"1");}catch(e){}
+   if(!alreadyCounted) await addDoc(collection(visitorDb,"webAnalyticsEvents"),{...common,eventType:"page_view"});
    await setDoc(sessionRef,{
      uid,pagePath:common.pagePath,pageTitle:common.pageTitle,source:common.source,
      referrerHost:common.referrerHost,country,city,region,device,language:common.language,

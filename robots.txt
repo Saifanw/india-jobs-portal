@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+Disallow: /admin-dashboard.html
+Disallow: /visitor-analytics.html
+Disallow: /job-manager.html
+Disallow: /candidate-manager.html
+Disallow: /candidate-manage.html
+Disallow: /enquiry-manager.html
+Disallow: /notification-manager.html
+Sitemap: https://saifanw.github.io/india-jobs-portal/sitemap.xml
