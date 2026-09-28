@@ -14,7 +14,7 @@ header{background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0
 .btn{display:inline-flex;align-items:center;justify-content:center;border:0;border-radius:10px;padding:11px 15px;font-weight:850;cursor:pointer;font-size:14px}
 .primary{background:var(--blue);color:#fff}.secondary{background:#fff;border:1px solid var(--line);color:var(--navy)}
 .hero{padding:22px 0 15px}.hero h1{font-size:clamp(27px,4vw,38px);color:var(--navy);margin:0 0 5px;letter-spacing:-1px}.hero p{margin:0;color:var(--muted)}
-.layout{display:grid;grid-template-columns:minmax(300px,.9fr) minmax(360px,1.1fr);gap:18px;align-items:start;padding-bottom:40px}
+.layout{display:grid;grid-template-columns:minmax(300px,.9fr) minmax(360px,1.1fr);gap:18px;align-items:start;padding-bottom:40px}.formPanel{grid-column:1;grid-row:1}.previewWrap{grid-column:2;grid-row:1;min-width:0}.formPanel .ai-assistant{margin-top:18px!important}
 .panel{background:#fff;border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:0 8px 24px #102a4309}
 .panel h2{font-size:18px;margin:0 0 4px;color:var(--navy)}.sub{font-size:12px;color:var(--muted);margin:0 0 15px}
 form{display:grid;grid-template-columns:1fr 1fr;gap:11px}.field{display:flex;flex-direction:column;gap:5px}.field.full{grid-column:1/-1}label{font-size:12px;font-weight:850;color:#34465b}
@@ -27,7 +27,7 @@ textarea{min-height:75px;resize:vertical}.hint{font-size:11px;color:var(--muted)
 .r-section{margin-top:17px;break-inside:avoid}.r-section h3{font-size:12px;letter-spacing:1px;text-transform:uppercase;color:#1769e8;border-bottom:1px solid #dce5ef;padding-bottom:5px;margin:0 0 7px}
 .r-section p,.r-section li{font-size:12px;line-height:1.55;margin:3px 0;white-space:pre-wrap}.r-section ul{margin:4px 0;padding-left:18px}
 footer{text-align:center;color:var(--muted);font-size:11px;padding:20px}
-@media(max-width:850px){.layout{grid-template-columns:1fr}.previewWrap{position:static}.resume{padding:25px;min-height:600px}}
+@media(max-width:850px){.layout{grid-template-columns:1fr}.formPanel{grid-column:1;grid-row:1}.previewWrap{grid-column:1;grid-row:2;position:static}.resume{padding:25px;min-height:600px}}
 @media(max-width:520px){form{grid-template-columns:1fr}.field.full{grid-column:auto}.panel{padding:14px}.resume{padding:20px}.r-name{font-size:23px}.nav{height:auto;min-height:60px}}
 @media print{body{background:#fff}.no-print,header,.hero,.formPanel,footer{display:none!important}.wrap{width:100%;margin:0}.layout{display:block;padding:0}.previewWrap{position:static}.previewHead{display:none}.resume{border:0;box-shadow:none;min-height:0;padding:0;margin:0;width:100%;color:#111}.r-name{color:#111}.r-target,.r-section h3{color:#111}.r-contact{border-color:#555;color:#333}@page{size:A4;margin:16mm}}
 </style>
@@ -66,21 +66,6 @@ Postgraduation / Diploma (if applicable)"></textarea></div>
 <div class="actions"><button class="btn primary" type="button" onclick="window.print()">⬇ Download / Save as PDF</button><button class="btn secondary" type="button" id="clearBtn">Clear Form</button></div>
 <p class="hint">PDF ke liye print window mein “Save as PDF” select karein. A4 paper aur default margins use karein.</p>
 </section>
-
-<div class="panel no-print" style="margin-top:14px;background:#f7fbff;border-color:#cfe2ff">
-<h2>✨ Optional AI Writing Assistant</h2>
-<p class="sub">Free manual workflow: copy a prompt, open Gemini, paste your details and its suggestions back into the form. This site does not send your personal data to AI automatically.</p>
-<details>
-<summary style="cursor:pointer;font-weight:850;color:#1769e8">Get AI help for my summary and bullet points</summary>
-<p class="hint">Review and remove private details before sharing anything with an AI service. Never ask AI to invent qualifications or experience.</p>
-<textarea id="aiPrompt" style="width:100%;min-height:145px" readonly></textarea>
-<div class="actions">
-<button class="btn primary" type="button" id="copyAiPrompt">Copy AI Prompt</button>
-<a class="btn secondary" href="https://gemini.google.com/" target="_blank" rel="noopener">Open Gemini ↗</a>
-</div>
-<p class="hint" id="aiCopyStatus" aria-live="polite"></p>
-</details>
-</div>
 
 <section class="previewWrap">
 <div class="previewHead no-print"><h2>2. Live Resume Preview</h2><span class="hint">Updates as you type</span></div>
@@ -127,7 +112,7 @@ function buildAIPrompt(){
  const fields=['target','summary','education','skills','experience','projects','certifications','achievements'];
  const labels={target:'Target role',summary:'Current summary/objective',education:'Education',skills:'Skills',experience:'Experience/internship',projects:'Projects',certifications:'Certifications',achievements:'Achievements'};
  const lines=fields.map(id=>labels[id]+': '+(document.getElementById(id).value.trim()||'Not provided'));
- return 'Act as a professional resume writing assistant. Improve only the information I provide. Do not invent employers, degrees, dates, skills, achievements, metrics, or experience. If details are missing, use placeholders or ask questions. Return concise ATS-friendly professional summary and truthful bullet points for my resume.\\n\\n'+lines.join('\\n');
+ return 'Act as a professional resume writing assistant. Improve only the information I provide. Do not invent employers, degrees, dates, skills, achievements, metrics, or experience. If details are missing, use placeholders or ask questions. Return concise ATS-friendly professional summary and truthful bullet points for my resume.\n\n'+lines.join('\n');
 }
 function refreshAIPrompt(){const el=document.getElementById('aiPrompt');if(el)el.value=buildAIPrompt();}
 document.getElementById('resumeForm').addEventListener('input',refreshAIPrompt);
