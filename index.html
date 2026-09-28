@@ -369,6 +369,35 @@ a[href="#donate"]:hover{background:#a71919!important}
  .heroCompact{padding-top:14px!important;padding-bottom:14px!important}
 }
 </style>
+
+<style id="india-portal-precision-fixes">
+/* Restore the existing clean nav; keep the Hindi vacancy ticker below it. */
+.career-ticker{display:none!important}
+nav .menu a[href="#donate"]{
+  background:transparent!important;color:var(--ink,#102a43)!important;
+  border:0!important;border-radius:8px!important;padding:9px 12px!important;
+  min-height:38px!important;font-weight:800!important;box-shadow:none!important;
+}
+nav .menu a[href="#donate"]:hover{background:#f1f5f9!important;color:#1769e8!important}
+/* Give the original hero more room and keep the vacancy card in its column. */
+.hero.heroCompact{padding:28px 0 26px!important}
+.hero.heroCompact .heroGrid{grid-template-columns:minmax(0,1.6fr) minmax(340px,1fr)!important;gap:36px!important;align-items:center!important}
+.hero.heroCompact .heroCopy h1{font-size:clamp(36px,4.2vw,50px)!important;line-height:1.12!important}
+.hero.heroCompact .latestHeroJobs{width:100%!important;max-width:100%!important;min-width:0!important;justify-self:stretch!important;position:relative!important;right:auto!important;left:auto!important;transform:none!important;margin:0!important}
+.heroLatestJobsList{min-height:68px!important}
+.heroJobLoading{min-height:56px!important;display:flex!important;align-items:center!important;justify-content:center!important}
+@media(max-width:850px){
+ .hero.heroCompact .heroGrid{grid-template-columns:1fr!important;gap:20px!important}
+ .hero.heroCompact .latestHeroJobs{display:block!important}
+ .hero.heroCompact .heroCopy h1{font-size:clamp(31px,7vw,42px)!important}
+}
+/* Keep lower homepage content below the hero; compact cards for a cleaner first screen. */
+.quickActions{padding-top:18px!important;padding-bottom:18px!important}
+.quickActions .quickTitle{margin-bottom:10px!important}
+.quickActions .quickGrid{gap:10px!important}
+.quickActions .quickCard{min-height:60px!important;padding:12px!important}
+</style>
+
 </head>
 <body>
 
@@ -389,23 +418,7 @@ a[href="#donate"]:hover{background:#a71919!important}
 
 <a href="resume-builder.html" class="resume-nav-link">📄 Free Resume Builder</a>
 </div></div></nav>
-<div class="career-ticker" role="region" aria-label="Career updates">
-  <div class="wrap career-ticker-inner">
-    <span class="ticker-live">● UPDATES</span>
-    <a id="careerTickerLink" href="jobs.html">Latest Jobs Across India</a>
-    <span class="ticker-sep">•</span><a href="jobs.html">Fresher & MIS Jobs</a>
-    <span class="ticker-sep">•</span><a href="government-jobs.html">Government Exam Updates</a>
-    <span class="ticker-sep">•</span><a href="resume-builder.html">Free Resume Builder</a>
-  </div>
-</div>
-<style>
-.career-ticker{background:#f2f7ff;border-bottom:1px solid #dce8f7;color:#17324e;font-size:12px;font-weight:800;overflow:hidden}
-.career-ticker-inner{min-height:35px;display:flex;align-items:center;gap:17px;white-space:nowrap;overflow:hidden}
-.career-ticker a:hover{color:#1769e8;text-decoration:underline}
-.ticker-live{font-size:10px;letter-spacing:.6px;color:#1769e8;flex-shrink:0}
-.ticker-sep{color:#f39a2f}
-@media(max-width:720px){.career-ticker-inner{gap:12px;overflow-x:auto;scrollbar-width:none}.career-ticker-inner::-webkit-scrollbar{display:none}}
-</style>
+
 
 
 <!-- SINGLE DYNAMIC JOB MESSAGE -->
@@ -441,7 +454,7 @@ a[href="#donate"]:hover{background:#a71919!important}
         <span class="liveBadge lightLive">LIVE</span>
       </div>
       <div id="heroLatestJobs" class="heroLatestJobsList">
-        <div class="heroJobLoading">Latest jobs loading…</div>
+        <div class="heroJobLoading"><div><strong>Latest vacancies</strong><br><small>Browse current approved listings and apply through the job details.</small><br><a href="jobs.html" style="display:inline-block;margin-top:7px;color:#1769e8;font-weight:800">Browse latest jobs →</a></div></div>
       </div>
       <a class="heroAllJobs" href="jobs.html">View All Jobs →</a>
     </div>
