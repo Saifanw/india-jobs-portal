@@ -1,0 +1,17 @@
+India Jobs Portal - Job Seeker Dashboard V1
+
+New page: job-seeker-dashboard.html
+Homepage: fixed My Dashboard shortcut added.
+
+V1 features:
+- Browser-local profile and profile completion
+- Saved jobs (manually add title and URL)
+- Application tracking and status updates
+- Manually saved practice test results
+- Links to MIS test, resume builder, and jobs
+
+Important limitations:
+- This is a frontend prototype. No login, server database, cross-device sync, or admin-side candidate records.
+- Data is stored in browser localStorage and may be lost if browser data is cleared.
+- Do not store sensitive personal data on shared/public devices.
+- Next phase should connect authentication and database before claiming secure accounts or syncing.

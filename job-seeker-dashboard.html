@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="hi"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Job Seeker Dashboard | India Jobs Portal</title>
+<meta name="description" content="Manage your profile, saved jobs, applications and interview practice tests.">
+<style>
+:root{--navy:#102a43;--blue:#1769e8;--bg:#f4f7fb;--line:#dce5ef;--muted:#64748b;--green:#16865b}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);font-family:Inter,Segoe UI,Arial,sans-serif;color:#182536;line-height:1.55}
+header{background:linear-gradient(125deg,#102a43,#1769e8);color:white;padding:28px 4%}.wrap{width:min(1120px,92%);margin:auto}
+header h1{margin:0 0 5px;font-size:clamp(24px,4vw,36px)}header p{margin:0;color:#e4efff}
+nav{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}nav a,.btn{display:inline-block;border:0;border-radius:10px;padding:10px 15px;background:#fff;color:var(--navy);font-weight:800;text-decoration:none;cursor:pointer}nav a.primary,.btn.primary{background:#ffb84d;color:#182536}
+main{padding:22px 0 45px}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}.card{background:white;border:1px solid var(--line);border-radius:17px;padding:20px;box-shadow:0 8px 25px #102a4309;margin-bottom:16px}
+.stat{font-size:28px;font-weight:900;color:var(--blue)}.muted{color:var(--muted);font-size:13px}.section{font-size:20px;color:var(--navy);margin:0 0 14px}
+label{font-weight:800;font-size:13px;display:block;margin:0 0 5px}input,select,textarea{width:100%;padding:11px;border:1px solid #cbd8e7;border-radius:9px;font:inherit;background:white;margin-bottom:12px}
+.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:0 14px}.full{grid-column:1/-1}.actions{display:flex;gap:9px;flex-wrap:wrap}.btn{background:var(--blue);color:white}.btn.secondary{background:#eaf1fb;color:var(--navy)}.item{border:1px solid var(--line);border-radius:12px;padding:13px;margin:10px 0;background:#fbfdff}.item strong{color:var(--navy)}.empty{padding:18px;background:#f7faff;border:1px dashed #cbd8e7;border-radius:12px;color:var(--muted)}
+.notice{background:#fff8e8;border:1px solid #f6d58b;border-radius:12px;padding:14px;margin:16px 0;font-size:13px}
+.progress{height:10px;background:#e8eef5;border-radius:20px;overflow:hidden}.progress span{display:block;height:100%;background:var(--green);width:0}
+footer{text-align:center;padding:20px;color:var(--muted);font-size:12px}
+@media(max-width:760px){.grid{grid-template-columns:1fr 1fr}.formgrid{grid-template-columns:1fr}.full{grid-column:auto}}
+@media(max-width:480px){.grid{grid-template-columns:1fr}.card{padding:16px}nav a{flex:1;text-align:center}}
+</style></head><body>
+<header><div class="wrap"><h1>Job Seeker Dashboard</h1><p>Apni profile, saved jobs, applications aur test preparation ek jagah manage karein.</p>
+<nav><a href="index.html">← Homepage</a><a href="jobs.html">Browse Jobs</a><a href="resume-builder.html">Resume Builder</a><a href="mis-practice-test.html" class="primary">MIS Practice Test</a></nav></div></header>
+<main class="wrap">
+<div class="notice"><b>V1 Browser Save:</b> Aapka data is browser/device par save hota hai. Abhi account login ya cloud sync nahi hai. Public/shared computer par personal details save na karein.</div>
+<div class="grid">
+<div class="card"><div class="muted">Profile Completion</div><div class="stat" id="completion">0%</div><div class="progress"><span id="bar"></span></div><p class="muted">Profile details bhar kar apni job profile complete karein.</p></div>
+<div class="card"><div class="muted">Saved Jobs</div><div class="stat" id="savedCount">0</div><p class="muted">Yahan aap manually saved job links rakh sakte hain.</p></div>
+<div class="card"><div class="muted">Applications Tracked</div><div class="stat" id="appCount">0</div><p class="muted">Apne job applications ka status update karein.</p></div>
+</div>
+<section class="card"><h2 class="section">My Profile</h2><form id="profileForm"><div class="formgrid">
+<div><label>Full Name</label><input id="name" placeholder="Apna naam"></div>
+<div><label>Email</label><input id="email" type="email" placeholder="name@example.com"></div>
+<div><label>Mobile (optional)</label><input id="phone" type="tel" placeholder="Mobile number"></div>
+<div><label>Preferred Location</label><input id="location" placeholder="Jaipur, Delhi, Remote..."></div>
+<div><label>Education</label><input id="education" placeholder="B.Com, B.Tech, MBA..."></div>
+<div><label>Experience</label><select id="experience"><option value="">Select experience</option><option>Fresher</option><option>0-1 year</option><option>1-3 years</option><option>3-5 years</option><option>5+ years</option></select></div>
+<div class="full"><label>Skills (comma separated)</label><input id="skills" placeholder="Excel, MIS, SQL, Power BI"></div>
+<div class="full"><label>Resume link (optional)</label><input id="resume" type="url" placeholder="Drive/portfolio link"></div>
+</div><div class="actions"><button class="btn primary" type="submit">Save Profile</button><button class="btn secondary" type="button" onclick="clearProfile()">Clear Profile</button></div></form><p class="muted" id="profileMsg" aria-live="polite"></p></section>
+<div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(290px,1fr))">
+<section class="card"><h2 class="section">Saved Jobs</h2><form id="savedForm"><label>Job Title / Company</label><input id="savedTitle" required placeholder="MIS Executive — Company"><label>Job Apply URL</label><input id="savedUrl" type="url" placeholder="https://..."><button class="btn" type="submit">Add Saved Job</button></form><div id="savedList"></div></section>
+<section class="card"><h2 class="section">Track Applications</h2><form id="appForm"><label>Job Title / Company</label><input id="appTitle" required placeholder="Data Analyst — Company"><label>Application Status</label><select id="appStatus"><option>Applied</option><option>Assessment</option><option>Interview Scheduled</option><option>Offer Received</option><option>Rejected</option><option>No Response</option></select><label>Apply link / notes</label><input id="appNote" placeholder="Link or follow-up note"><button class="btn" type="submit">Track Application</button></form><div id="appList"></div></section>
+</div>
+<section class="card"><h2 class="section">My Tests & Practice</h2><p>Practice tests launch karein. Test attempt ke baad agar aapka browser score save nahi karta, to score ka screenshot ya note yahan add kar sakte hain.</p><div class="actions"><a class="btn primary" href="mis-practice-test.html">Start MIS Executive Test</a><a class="btn secondary" href="jobs.html">Find Relevant Jobs</a></div><form id="testForm" style="margin-top:18px"><label>Test Name</label><input id="testName" required placeholder="MIS Executive Practice Test"><label>Score / Result</label><input id="testScore" required placeholder="e.g. 72/100"><label>Attempt date / notes</label><input id="testNote" placeholder="Attempt date, topics to revise"><button class="btn" type="submit">Save Test Result</button></form><div id="testList"></div></section>
+<footer>India Jobs Portal · Job Seeker Dashboard V1 · Browser-local demo</footer></main>
+<script>
+const KEY='ijp_dashboard_v1';
+const defaults={profile:{},saved:[],apps:[],tests:[]};
+function load(){try{return {...defaults,...JSON.parse(localStorage.getItem(KEY)||'{}')}}catch(e){return structuredClone(defaults)}}
+let data=load();
+function save(){localStorage.setItem(KEY,JSON.stringify(data));render()}
+function esc(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function render(){
+ for(const id of ['name','email','phone','location','education','experience','skills','resume'])document.getElementById(id).value=data.profile[id]||'';
+ const fields=['name','email','location','education','experience','skills'];let pct=Math.round(fields.filter(k=>(data.profile[k]||'').trim()).length/fields.length*100);
+ document.getElementById('completion').textContent=pct+'%';document.getElementById('bar').style.width=pct+'%';
+ document.getElementById('savedCount').textContent=data.saved.length;document.getElementById('appCount').textContent=data.apps.length;
+ document.getElementById('savedList').innerHTML=data.saved.length?data.saved.map((x,i)=>`<div class="item"><strong>${esc(x.title)}</strong><div class="muted">${x.url?`<a target="_blank" rel="noopener" href="${esc(x.url)}">Open job link</a>`:'No link added'}</div><button class="btn secondary" onclick="removeItem('saved',${i})">Remove</button></div>`).join(''):'<div class="empty">Abhi koi saved job nahi hai.</div>';
+ document.getElementById('appList').innerHTML=data.apps.length?data.apps.map((x,i)=>`<div class="item"><strong>${esc(x.title)}</strong><div>Status: ${esc(x.status)}</div><div class="muted">${esc(x.note)}</div><button class="btn secondary" onclick="cycleStatus(${i})">Update Status</button> <button class="btn secondary" onclick="removeItem('apps',${i})">Remove</button></div>`).join(''):'<div class="empty">Abhi koi application track nahi ho rahi.</div>';
+ document.getElementById('testList').innerHTML=data.tests.length?data.tests.map((x,i)=>`<div class="item"><strong>${esc(x.name)}</strong> — ${esc(x.score)}<div class="muted">${esc(x.note)}</div><button class="btn secondary" onclick="removeItem('tests',${i})">Remove</button></div>`).join(''):'<div class="empty">Abhi test result add nahi kiya gaya.</div>';
+}
+document.getElementById('profileForm').addEventListener('submit',e=>{e.preventDefault();for(const id of ['name','email','phone','location','education','experience','skills','resume'])data.profile[id]=document.getElementById(id).value.trim();save();document.getElementById('profileMsg').textContent='Profile is browser mein save ho gayi.'});
+document.getElementById('savedForm').addEventListener('submit',e=>{e.preventDefault();data.saved.unshift({title:savedTitle.value.trim(),url:savedUrl.value.trim()});e.target.reset();save()});
+document.getElementById('appForm').addEventListener('submit',e=>{e.preventDefault();data.apps.unshift({title:appTitle.value.trim(),status:appStatus.value,note:appNote.value.trim()});e.target.reset();save()});
+document.getElementById('testForm').addEventListener('submit',e=>{e.preventDefault();data.tests.unshift({name:testName.value.trim(),score:testScore.value.trim(),note:testNote.value.trim()});e.target.reset();save()});
+function removeItem(k,i){data[k].splice(i,1);save()}
+function cycleStatus(i){const s=['Applied','Assessment','Interview Scheduled','Offer Received','Rejected','No Response'];let a=data.apps[i];a.status=s[(s.indexOf(a.status)+1)%s.length];save()}
+function clearProfile(){if(confirm('Profile details clear kar dein?')){data.profile={};save()}}
+render();
+</script></body></html>
