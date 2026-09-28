@@ -61,7 +61,7 @@ small,.muted{color:var(--muted)}.actions{display:flex;gap:10px;flex-wrap:wrap;ma
 <script type="module">
 import {initializeApp} from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
 import {getAuth,onAuthStateChanged,GoogleAuthProvider,signInWithPopup,signOut} from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
-import {getFirestore,collection,addDoc,serverTimestamp} from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
+import {getFirestore,collection,addDoc,getDocs,serverTimestamp} from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
 
 const firebaseConfig={
  apiKey:"AIzaSyCh20UGNM3-tWZiB6pkNUXcbWK-lwkc-sU",
@@ -79,7 +79,8 @@ let parsedRows=[];
 let currentUser=null;
 
 function show(id,text,type){const el=$(id);el.textContent=text;el.className="msg "+type}
-function norm(v){return String(v??"").trim().toLowerCase().replace(/[\s_\-\/()]+/g,"")}
+function norm(v){return String(v??"").normalize("NFKD").replace(/[\u0300-\u036f]/g,"").toLowerCase().replace(/[^a-z0-9]+/g," ").trim().replace(/\s+/g," ")}
+function jobKey(r){return [norm(r.title),norm(r.company),norm(r.location)].join("||")}
 function get(row,aliases){
  const keys=Object.keys(row);
  for(const alias of aliases){const target=norm(alias);const key=keys.find(k=>norm(k)===target);if(key!==undefined&&row[key]!==undefined&&String(row[key]).trim()!=="")return String(row[key]).trim()}
@@ -161,10 +162,15 @@ $("previewBtn").onclick=async()=>{
 $("uploadBtn").onclick=async()=>{
  if(!currentUser){show("uploadMsg","Pehle admin sign in karein.","err");return}
  if(!parsedRows.length){show("uploadMsg","Pehle valid Excel/CSV file preview karein.","err");return}
- if(!confirm(`${parsedRows.length} jobs ko Pending status mein Firebase par import karna hai?`))return;
- $("uploadBtn").disabled=true;let success=0,failed=0;
+ if(!confirm(`${parsedRows.length} jobs ko duplicate-check ke saath Pending status mein import karna hai?`))return;
+ $("uploadBtn").disabled=true;let success=0,failed=0,duplicates=0;
+ try {
+ const existingSnap=await getDocs(collection(db,"jobs"));
+ const seen=new Set(existingSnap.docs.map(d=>jobKey(d.data())));
  for(let i=0;i<parsedRows.length;i++){
   const r=parsedRows[i];
+  const key=jobKey(r);
+  if(seen.has(key)){duplicates++;$("uploadMsg").textContent=`Checking/importing... ${i+1}/${parsedRows.length} | Added: ${success} | Duplicates skipped: ${duplicates}`;continue;}
   try{
    await addDoc(collection(db,"jobs"),{
     title:r.title,company:r.company,location:r.location,category:r.category,
@@ -174,12 +180,13 @@ $("uploadBtn").onclick=async()=>{
     contactEmail:r.contactEmail,phone:r.phone,notes:r.notes,
     status:"pending",portal:"india",source:"bulk-import",
     createdAt:serverTimestamp(),updatedAt:serverTimestamp()
-   });success++;
+   });success++;seen.add(key);
   }catch(e){failed++;console.error("Import row failed",i+2,e)}
   $("uploadMsg").textContent=`Importing... ${i+1}/${parsedRows.length} | Added: ${success} | Failed: ${failed}`;
   $("uploadMsg").className="msg ok";
  }
- show("uploadMsg",`Import finished.\nSuccessfully added: ${success}\nFailed: ${failed}\nAll imported jobs have Pending status. Admin dashboard se review/approve karein.`,failed?"err":"ok");
+ show("uploadMsg",`Import finished.\nAdded: ${success}\nDuplicates skipped: ${duplicates}\nFailed: ${failed}\nImported jobs remain Pending for admin review.`,failed?"err":"ok");
+ }catch(e){console.error(e);show("uploadMsg","Could not read existing jobs for duplicate check. Nothing imported. Check Firestore read rules and retry.","err");}
  $("uploadBtn").disabled=false;
 };
 $("downloadTemplate").onclick=()=>{
