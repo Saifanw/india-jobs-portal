@@ -80,7 +80,7 @@ let currentUser=null;
 
 function show(id,text,type){const el=$(id);el.textContent=text;el.className="msg "+type}
 function norm(v){return String(v??"").normalize("NFKD").replace(/[\u0300-\u036f]/g,"").toLowerCase().replace(/[^a-z0-9]+/g," ").trim().replace(/\s+/g," ")}
-function jobKey(r){return [norm(r.title),norm(r.company),norm(r.location)].join("||")}
+function jobKey(r){return [norm(r.title),norm(r.company)].join("||")}
 function get(row,aliases){
  const keys=Object.keys(row);
  for(const alias of aliases){const target=norm(alias);const key=keys.find(k=>norm(k)===target);if(key!==undefined&&row[key]!==undefined&&String(row[key]).trim()!=="")return String(row[key]).trim()}
