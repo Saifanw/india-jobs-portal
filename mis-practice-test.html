@@ -28,7 +28,7 @@ footer{text-align:center;color:var(--muted);padding:20px;font-size:12px}
 <section class="hero"><span class="eyebrow">FREE CAREER PRACTICE</span><h1>MIS Executive Mock Test</h1><p>Excel, reporting, data accuracy, SQL/Power BI basics and practical workplace scenarios. Attempt the test, get your score, and review explanations.</p>
 <div class="stats"><span class="pill">100 Questions</span><span class="pill">30 Basic</span><span class="pill">30 Medium</span><span class="pill">40 Hard</span><span class="pill">100 Marks</span><span class="pill">90 Minutes</span></div></section>
 <div class="notice"><strong>Practice beta:</strong> This is an independent practice set, not an official employer or certification exam. Questions are in review status and may be improved; use it for learning and preparation.</div>
-<section class="card" id="startCard"><h2 style="margin:0;color:var(--navy)">Ready to begin?</h2><p style="color:var(--muted)">All 100 questions are included in this first MIS practice set. One mark for each correct answer; no negative marking. Your selections stay in this browser tab and are not sent to the portal.</p><div class="row"><button class="btn primary" id="startBtn">Start MIS Test →</button><a class="btn secondary" href="jobs.html?search=MIS">Browse MIS Jobs</a></div></section>
+<section class="card" id="startCard"><h2 style="margin:0;color:var(--navy)">Ready to begin?</h2><p style="color:var(--muted)">Each attempt draws a balanced set of 30 Basic, 30 Medium and 40 Hard questions. Question and option order are randomized. One mark for each correct answer; no negative marking. Your selections stay in this browser tab and are not sent to the portal.</p><div class="row"><button class="btn primary" id="startBtn">Start MIS Test →</button><a class="btn secondary" href="jobs.html?search=MIS">Browse MIS Jobs</a></div></section>
 <section class="card hidden" id="testCard">
 <div class="qtop"><span id="questionCount">Question 1 of 100</span><span>⏱ <strong id="timer">90:00</strong></span><span id="answeredCount">0 answered</span></div><div class="progress"><div id="progressFill"></div></div>
 <div id="questionArea"></div><div class="row" style="justify-content:space-between;margin-top:20px"><button class="btn secondary" id="prevBtn">← Previous</button><div class="row"><button class="btn secondary" id="skipBtn">Clear answer</button><button class="btn primary" id="nextBtn">Next →</button></div></div>
@@ -41,7 +41,15 @@ const BANK=[{"id": "MIS_001", "difficulty": "Basic", "topic": "Excel Basics", "q
 let questions=[],answers={},current=0,remaining=5400,timerInterval=null,submitted=false;
 const $=id=>document.getElementById(id);
 function shuffle(a){for(let i=a.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
-function start(){questions=shuffle([...BANK]).map(q=>({...q,options:q.options.map((text,i)=>({text,key:"ABCD"[i]}))}));answers={};current=0;remaining=5400;submitted=false;
+function start(){
+// Select a balanced blueprint from the approved bank (30 Basic, 30 Medium, 40 Hard).
+const pick=(level,count)=>shuffle(BANK.filter(q=>q.difficulty===level)).slice(0,count);
+questions=shuffle([...pick("Basic",30),...pick("Medium",30),...pick("Hard",40)]).map(q=>{
+  const original=[...q.options].map((text,i)=>({text,isCorrect:"ABCD"[i]===q.answer}));
+  const randomized=shuffle(original).map((o,i)=>({...o,key:"ABCD"[i]}));
+  return {...q,options:randomized.map(({text,key})=>({text,key})),answer:randomized.find(o=>o.isCorrect).key};
+});
+answers={};current=0;remaining=5400;submitted=false;
 $("startCard").classList.add("hidden");$("resultCard").classList.add("hidden");$("testCard").classList.remove("hidden");render();clearInterval(timerInterval);timerInterval=setInterval(()=>{remaining--;updateTimer();if(remaining<=0)submit()},1000)}
 function updateTimer(){let m=Math.floor(remaining/60),s=remaining%60;$("timer").textContent=String(m).padStart(2,"0")+":"+String(s).padStart(2,"0");if(remaining<=300)$("timer").style.color="#b42318"}
 function render(){let q=questions[current];$("questionCount").textContent=`Question ${current+1} of ${questions.length} · ${q.difficulty} · ${q.topic}`;$("answeredCount").textContent=Object.keys(answers).length+" answered";$("progressFill").style.width=(Object.keys(answers).length/questions.length*100)+"%";
