@@ -336,6 +336,26 @@ footer{background:#0d2138;color:#cedbea;padding:45px 0 18px}.foot{display:grid;g
 
 </head>
 <body>
+<section class="home-resume-cta" id="home-resume-cta">
+  <div class="wrap home-resume-inner">
+    <div><span class="resume-mini-label">FREE CAREER TOOL</span>
+      <h2>Build a Professional Resume — Free</h2>
+      <p>Fresher ho ya experienced, apni details bharo, live preview dekho aur resume PDF mein download karo. No sign-up, no AI fee.</p>
+    </div>
+    <a class="btn primary home-resume-btn" href="resume-builder.html">📄 Create My Resume Free →</a>
+  </div>
+</section>
+<style>
+.resume-nav-link{display:inline-flex!important;align-items:center;gap:5px;background:#eaf2ff;color:#145ac4!important;border:1px solid #c9ddff;padding:8px 11px;border-radius:10px;font-weight:900!important;white-space:nowrap}
+.home-resume-cta{background:linear-gradient(110deg,#eaf3ff,#fff 60%,#f1fbf7);border-bottom:1px solid #dce7f3;padding:17px 0}
+.home-resume-inner{display:flex;align-items:center;justify-content:space-between;gap:18px}
+.home-resume-inner h2{margin:3px 0;color:#102a43;font-size:clamp(19px,2.5vw,27px);line-height:1.2}
+.home-resume-inner p{margin:4px 0 0;color:#53657b;font-size:13px}
+.resume-mini-label{font-size:10px;letter-spacing:1px;font-weight:950;color:#1769e8}
+.home-resume-btn{white-space:nowrap;background:#1769e8!important;color:#fff!important;padding:13px 18px!important;border-radius:12px;font-weight:900!important;box-shadow:0 8px 20px #1769e82b}
+@media(max-width:700px){.home-resume-inner{align-items:flex-start;flex-direction:column}.home-resume-btn{width:100%;justify-content:center}.resume-nav-link{font-size:10px!important;padding:6px 8px}}
+</style>
+
 <!-- LIVE NOTIFICATION POPUP -->
 <div id="livePopup" class="livePopup" aria-live="polite">
 <div class="livePopupBar"></div><div class="livePopupInner"><div class="livePopupTop"><div class="livePopupLabel">🔔 NEW UPDATE</div><button id="livePopupClose" class="livePopupClose" aria-label="Close">×</button></div>
@@ -349,6 +369,8 @@ footer{background:#0d2138;color:#cedbea;padding:45px 0 18px}.foot{display:grid;g
 <a href="#home" class="brand"><div class="logo">IJ</div><div>India Jobs Portal<small>Private Jobs • Government Jobs • Fresher Jobs • Career Support</small></div></a>
 <button class="mobileMenuToggle" id="mobileMenuToggle" type="button" aria-expanded="false" aria-controls="mainMenu">☰ Menu</button><div class="menu" id="mainMenu">
 <a href="jobs.html">Jobs</a><a href="government-jobs.html">Govt Jobs</a><a href="post-a-job.html">Post a Job</a><a href="job-seeker.html">👤 Job Seeker</a><button type="button" class="employerChatNavBtn" id="openEmployerChat">🏢 HR / Company Chat</button><a href="#donate">💜 Donate</a><a class="btn primary" href="inquiry.html">Inquiry</a><a class="admin-top-link" href="admin-dashboard.html">🔐 Admin</a>
+
+<a href="resume-builder.html" class="resume-nav-link">📄 Free Resume Builder</a>
 </div></div></nav>
 
 <!-- SINGLE DYNAMIC JOB MESSAGE -->

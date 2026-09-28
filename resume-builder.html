@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Free Resume Builder | India Jobs Portal</title>
+<meta name="description" content="Create a professional fresher or experienced resume online for free. Live preview, clean templates and print or save as PDF. No sign-up or paid AI required.">
+<style>
+:root{--navy:#102a43;--blue:#1769e8;--ink:#182536;--muted:#64748b;--line:#dce5ef;--bg:#f5f8fc;--green:#16865b}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);font-family:Inter,Segoe UI,Arial,sans-serif;color:var(--ink);line-height:1.5}
+a{text-decoration:none;color:inherit}.wrap{width:min(1180px,94%);margin:auto}
+header{background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}
+.nav{height:64px;display:flex;align-items:center;justify-content:space-between;gap:12px}.brand{font-weight:950;color:var(--navy);font-size:17px}.brand small{display:block;font-size:10px;color:var(--muted);font-weight:600}
+.btn{display:inline-flex;align-items:center;justify-content:center;border:0;border-radius:10px;padding:11px 15px;font-weight:850;cursor:pointer;font-size:14px}
+.primary{background:var(--blue);color:#fff}.secondary{background:#fff;border:1px solid var(--line);color:var(--navy)}
+.hero{padding:22px 0 15px}.hero h1{font-size:clamp(27px,4vw,38px);color:var(--navy);margin:0 0 5px;letter-spacing:-1px}.hero p{margin:0;color:var(--muted)}
+.layout{display:grid;grid-template-columns:minmax(300px,.9fr) minmax(360px,1.1fr);gap:18px;align-items:start;padding-bottom:40px}
+.panel{background:#fff;border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:0 8px 24px #102a4309}
+.panel h2{font-size:18px;margin:0 0 4px;color:var(--navy)}.sub{font-size:12px;color:var(--muted);margin:0 0 15px}
+form{display:grid;grid-template-columns:1fr 1fr;gap:11px}.field{display:flex;flex-direction:column;gap:5px}.field.full{grid-column:1/-1}label{font-size:12px;font-weight:850;color:#34465b}
+input,textarea,select{font:inherit;font-size:13px;width:100%;border:1px solid #d6e0eb;border-radius:9px;padding:10px 11px;background:#fff;color:var(--ink);outline-color:#8db8fa}
+textarea{min-height:75px;resize:vertical}.hint{font-size:11px;color:var(--muted);margin-top:3px}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}.actions .btn{flex:1}
+.previewWrap{position:sticky;top:80px}.previewHead{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px}.previewHead h2{margin:0;color:var(--navy);font-size:18px}
+.resume{background:#fff;min-height:760px;padding:34px 38px;border:1px solid #d8e1eb;box-shadow:0 12px 32px #102a4310;color:#243447}
+.r-name{font-size:27px;font-weight:900;line-height:1.15;color:#102a43;margin:0}.r-target{font-size:14px;color:#1769e8;font-weight:800;margin:5px 0 8px}.r-contact{font-size:11px;color:#53657b;border-bottom:2px solid #1769e8;padding-bottom:12px;overflow-wrap:anywhere}
+.r-section{margin-top:17px;break-inside:avoid}.r-section h3{font-size:12px;letter-spacing:1px;text-transform:uppercase;color:#1769e8;border-bottom:1px solid #dce5ef;padding-bottom:5px;margin:0 0 7px}
+.r-section p,.r-section li{font-size:12px;line-height:1.55;margin:3px 0;white-space:pre-wrap}.r-section ul{margin:4px 0;padding-left:18px}
+footer{text-align:center;color:var(--muted);font-size:11px;padding:20px}
+@media(max-width:850px){.layout{grid-template-columns:1fr}.previewWrap{position:static}.resume{padding:25px;min-height:600px}}
+@media(max-width:520px){form{grid-template-columns:1fr}.field.full{grid-column:auto}.panel{padding:14px}.resume{padding:20px}.r-name{font-size:23px}.nav{height:auto;min-height:60px}}
+@media print{body{background:#fff}.no-print,header,.hero,.formPanel,footer{display:none!important}.wrap{width:100%;margin:0}.layout{display:block;padding:0}.previewWrap{position:static}.previewHead{display:none}.resume{border:0;box-shadow:none;min-height:0;padding:0;margin:0;width:100%;color:#111}.r-name{color:#111}.r-target,.r-section h3{color:#111}.r-contact{border-color:#555;color:#333}@page{size:A4;margin:16mm}}
+</style>
+</head>
+<body>
+<header class="no-print"><div class="wrap nav"><a class="brand" href="index.html">India Jobs Portal<small>Private Jobs • Government Jobs • Career Support</small></a><a class="btn secondary" href="index.html">← Back to Home</a></div></header>
+<div class="wrap hero no-print"><h1>Free Resume Builder</h1><p>Apni details bharo, live preview dekho aur professional resume PDF mein save karo. No sign-up, no paid AI, no data sent to an AI service.</p></div>
+<main class="wrap layout">
+<section class="panel formPanel no-print">
+<h2>1. Enter Your Details</h2><p class="sub">Sirf wahi information bharo jo sach hai. Empty sections resume mein nahi dikhenge.</p>
+<form id="resumeForm">
+<div class="field"><label for="name">Full Name *</label><input id="name" placeholder="e.g. Rahul Sharma" required></div>
+<div class="field"><label for="target">Target Job Title</label><input id="target" placeholder="e.g. MIS Executive"></div>
+<div class="field"><label for="phone">Phone</label><input id="phone" type="tel" placeholder="Mobile number"></div>
+<div class="field"><label for="email">Email</label><input id="email" type="email" placeholder="name@example.com"></div>
+<div class="field full"><label for="location">City, State</label><input id="location" placeholder="Jaipur, Rajasthan"></div>
+<div class="field full"><label for="summary">Professional Summary / Career Objective</label><textarea id="summary" placeholder="2–4 lines about your genuine skills, education and career goal."></textarea><span class="hint">Fresher ho to education, skills aur target role par focus karo.</span></div>
+<div class="field full"><label for="education">Education</label><textarea id="education" placeholder="Degree | College/University | Year | Marks/CGPA (optional)"></textarea></div>
+<div class="field full"><label for="skills">Skills</label><textarea id="skills" placeholder="Excel, SQL, Power BI, Communication"></textarea></div>
+<div class="field full"><label for="experience">Experience / Internship</label><textarea id="experience" placeholder="Role | Company | Dates&#10;Your real responsibilities and achievements"></textarea></div>
+<div class="field full"><label for="projects">Projects</label><textarea id="projects" placeholder="Project name — tools used, what you built, real outcome"></textarea></div>
+<div class="field full"><label for="certifications">Certifications / Courses</label><textarea id="certifications" placeholder="Course or certificate | Issuer | Year"></textarea></div>
+<div class="field full"><label for="languages">Languages / Additional Information</label><input id="languages" placeholder="Hindi, English"></div>
+</form>
+<div class="actions"><button class="btn primary" type="button" onclick="window.print()">⬇ Download / Save as PDF</button><button class="btn secondary" type="button" id="clearBtn">Clear Form</button></div>
+<p class="hint">PDF ke liye print window mein “Save as PDF” select karein. A4 paper aur default margins use karein.</p>
+</section>
+<section class="previewWrap">
+<div class="previewHead no-print"><h2>2. Live Resume Preview</h2><span class="hint">Updates as you type</span></div>
+<article class="resume" id="resumePreview">
+<h1 class="r-name" id="p-name">Your Name</h1><div class="r-target" id="p-target">Target Job Title</div><div class="r-contact" id="p-contact">Phone · Email · City, State</div>
+<div class="r-section" id="sec-summary"><h3>Professional Summary</h3><p id="p-summary">Your professional summary will appear here.</p></div>
+<div class="r-section" id="sec-education"><h3>Education</h3><p id="p-education"></p></div>
+<div class="r-section" id="sec-skills"><h3>Skills</h3><p id="p-skills"></p></div>
+<div class="r-section" id="sec-experience"><h3>Experience & Internship</h3><p id="p-experience"></p></div>
+<div class="r-section" id="sec-projects"><h3>Projects</h3><p id="p-projects"></p></div>
+<div class="r-section" id="sec-certifications"><h3>Certifications & Courses</h3><p id="p-certifications"></p></div>
+<div class="r-section" id="sec-languages"><h3>Languages / Additional Information</h3><p id="p-languages"></p></div>
+</article>
+</section>
+</main>
+<footer class="no-print">India Jobs Portal · Free resume creation tool. Review all details before applying.</footer>
+<script>
+const ids=['name','target','phone','email','location','summary','education','skills','experience','projects','certifications','languages'];
+function safeText(s){return String(s||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
+function updatePreview(){
+  ids.forEach(id=>{const el=document.getElementById(id),out=document.getElementById('p-'+id);if(out)out.textContent=el.value.trim()||'';});
+  document.getElementById('p-name').textContent=document.getElementById('name').value.trim()||'Your Name';
+  document.getElementById('p-target').textContent=document.getElementById('target').value.trim()||'Target Job Title';
+  const contact=['phone','email','location'].map(id=>document.getElementById(id).value.trim()).filter(Boolean);
+  document.getElementById('p-contact').textContent=contact.join('  |  ')||'Phone · Email · City, State';
+  ['summary','education','skills','experience','projects','certifications','languages'].forEach(id=>{
+    const value=document.getElementById(id).value.trim();
+    document.getElementById('sec-'+id).style.display=value?'block':'none';
+  });
+}
+document.getElementById('resumeForm').addEventListener('input',updatePreview);
+document.getElementById('clearBtn').addEventListener('click',()=>{if(confirm('Clear all entered details?')){document.getElementById('resumeForm').reset();updatePreview();}});
+updatePreview();
+</script>
+</body></html>
