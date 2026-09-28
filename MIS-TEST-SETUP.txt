@@ -1,0 +1,7 @@
+MIS Executive Practice Test
+- New page: mis-practice-test.html
+- Entry points: homepage hero, popular job searches, and jobs page (where supported).
+- The page is a client-side static HTML practice test suitable for GitHub Pages.
+- Includes 100 questions (30 Basic, 30 Medium, 40 Hard), shuffled order, 90-minute timer, answer navigation, scoring, difficulty breakdown, and post-submit explanations.
+- The original workbook questions were marked Review; therefore the page clearly labels this as a practice beta and not an official assessment. Please review/validate the question bank and answers before promoting it as an authoritative exam.
+- No candidate answers or personal data are sent to a server. Results remain in the current browser session.
