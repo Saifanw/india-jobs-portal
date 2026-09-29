@@ -1,0 +1,38 @@
+INDIA JOBS PORTAL — SUPABASE FREE CLOUD LOGIN SETUP
+
+Important:
+- Supabase account/project aapke control mein hoga.
+- Free tier par shuruaat ho sakti hai; provider limits/change ho sakte hain.
+- Is ZIP mein integration code hai, lekin actual cloud login tabhi chalega jab aap apne project credentials add karenge.
+- Supabase service_role/secret key kabhi browser file mein paste na karein. Sirf Project URL + anon/publishable key use karein.
+
+STEP 1 — Create project
+1. https://supabase.com par sign up/login karein.
+2. New project create karein. Database password ko safe jagah note karein.
+3. Project ready hone par Project Settings > API (ya API Keys) kholein.
+4. Project URL aur anon/public/publishable key copy karein.
+
+STEP 2 — Create table and security
+1. Supabase Dashboard > SQL Editor > New query.
+2. Is ZIP ki SUPABASE-SCHEMA.sql file ka poora SQL paste karke Run karein.
+3. Table Editor mein user_dashboard_data table verify karein.
+   RLS policies har logged-in user ko sirf uske own row tak access deti hain.
+
+STEP 3 — Connect website
+1. supabase-config.js file open karein.
+2. YOUR-PROJECT-REF aur YOUR-SUPABASE-ANON-OR-PUBLISHABLE-KEY ko apne actual Project URL/key se replace karein.
+3. Save karein, phir updated website files GitHub repository mein upload/commit karein.
+4. GitHub Pages par site deploy hone ke baad Dashboard open karein.
+
+STEP 4 — Test
+1. Dashboard par Create Free Account karein.
+2. Agar email confirmation enabled hai, inbox mein verification link open karein.
+3. Login karein, profile fill karein, saved job add karein aur Sync Now dabayein.
+4. Logout karke dobara login karein. Data cloud se load hona chahiye.
+
+DATA / LIMITATIONS
+- Dashboard profile, saved jobs, application tracker, aur manually entered test results JSON payload ke roop mein sync hote hain.
+- Existing public jobs/admin job manager is integration se migrate nahi hote.
+- Existing dashboard ka local browser data automatic cloud account mein merge nahi hota. Login ke baad cloud row load hoti hai; pehle important local data ka backup rakh lein.
+- Supabase free tier mein quotas, pausing, backup/recovery aur service limits ho sakti hain. Free tier ko guaranteed unlimited/production SLA na samjhein.
+- Never collect/store passwords yourself; Supabase Auth handles passwords.

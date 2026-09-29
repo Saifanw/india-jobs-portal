@@ -16,12 +16,22 @@ label{font-weight:800;font-size:13px;display:block;margin:0 0 5px}input,select,t
 footer{text-align:center;padding:20px;color:var(--muted);font-size:12px}
 @media(max-width:760px){.grid{grid-template-columns:1fr 1fr}.formgrid{grid-template-columns:1fr}.full{grid-column:auto}}
 @media(max-width:480px){.grid{grid-template-columns:1fr}.card{padding:16px}nav a{flex:1;text-align:center}}
-</style></head><body>
+</style><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="supabase-config.js"></script></head><body>
 <header><div class="wrap"><h1>Job Seeker Dashboard</h1><p>Apni profile, saved jobs, applications aur test preparation ek jagah manage karein.</p>
 <nav><a href="index.html">← Homepage</a><a href="jobs.html">Browse Jobs</a><a href="resume-builder.html">Resume Builder</a><a href="mis-practice-test.html" class="primary">MIS Practice Test</a></nav></div></header>
 <main class="wrap">
 <div class="notice"><b>V1 Browser Save:</b> Aapka data is browser/device par save hota hai. Abhi account login ya cloud sync nahi hai. Public/shared computer par personal details save na karein.</div>
-<div class="grid">
+<section class="card" id="cloudCard">
+<h2 class="section">☁️ Free Cloud Login & Sync</h2>
+<p class="muted">Account banakar profile, saved jobs, applications aur test results ko apne account se sync karein. Email verification Supabase settings par depend karega.</p>
+<div class="formgrid">
+<div><label>Email</label><input id="cloudEmail" type="email" placeholder="you@example.com" autocomplete="email"></div>
+<div><label>Password (minimum 6 characters)</label><input id="cloudPassword" type="password" minlength="6" placeholder="Password" autocomplete="current-password"></div>
+</div>
+<div class="actions"><button class="btn primary" id="signupBtn" type="button">Create Free Account</button><button class="btn" id="loginBtn" type="button">Login</button><button class="btn secondary" id="logoutBtn" type="button" hidden>Logout</button><button class="btn secondary" id="syncBtn" type="button" hidden>Sync Now</button></div>
+<p class="muted" id="cloudStatus" aria-live="polite">Cloud login activate karne ke liye Supabase project URL aur anon/publishable key setup file mein add karni hogi. Setup guide ZIP mein hai.</p>
+</section>
+\n<div class="grid">
 <div class="card"><div class="muted">Profile Completion</div><div class="stat" id="completion">0%</div><div class="progress"><span id="bar"></span></div><p class="muted">Profile details bhar kar apni job profile complete karein.</p></div>
 <div class="card"><div class="muted">Saved Jobs</div><div class="stat" id="savedCount">0</div><p class="muted">Yahan aap manually saved job links rakh sakte hain.</p></div>
 <div class="card"><div class="muted">Applications Tracked</div><div class="stat" id="appCount">0</div><p class="muted">Apne job applications ka status update karein.</p></div>
@@ -47,7 +57,8 @@ const KEY='ijp_dashboard_v1';
 const defaults={profile:{},saved:[],apps:[],tests:[]};
 function load(){try{return {...defaults,...JSON.parse(localStorage.getItem(KEY)||'{}')}}catch(e){return structuredClone(defaults)}}
 let data=load();
-function save(){localStorage.setItem(KEY,JSON.stringify(data));render()}
+function save(){localStorage.setItem(KEY,JSON.stringify(data));render();if(window.ijpCloudSession)cloudSave().catch(e=>cloudMsg('Cloud sync error: '+(e.message||e)))}
+
 function esc(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 function render(){
  for(const id of ['name','email','phone','location','education','experience','skills','resume'])document.getElementById(id).value=data.profile[id]||'';
@@ -66,4 +77,45 @@ function removeItem(k,i){data[k].splice(i,1);save()}
 function cycleStatus(i){const s=['Applied','Assessment','Interview Scheduled','Offer Received','Rejected','No Response'];let a=data.apps[i];a.status=s[(s.indexOf(a.status)+1)%s.length];save()}
 function clearProfile(){if(confirm('Profile details clear kar dein?')){data.profile={};save()}}
 render();
+
+const cloudMsg=(s)=>{const el=document.getElementById('cloudStatus');if(el)el.textContent=s};
+const cloudReady=!!(window.supabase&&window.IJP_SUPABASE_CONFIG&&window.IJP_SUPABASE_CONFIG.url&&window.IJP_SUPABASE_CONFIG.anonKey&&!window.IJP_SUPABASE_CONFIG.url.includes('YOUR-PROJECT'));
+let cloudClient=null;
+if(cloudReady) cloudClient=window.supabase.createClient(window.IJP_SUPABASE_CONFIG.url,window.IJP_SUPABASE_CONFIG.anonKey);
+async function cloudSave(){
+ if(!cloudClient||!window.ijpCloudSession)return;
+ const {error}=await cloudClient.from('user_dashboard_data').upsert({user_id:window.ijpCloudSession.user.id,data:data,updated_at:new Date().toISOString()},{onConflict:'user_id'});
+ if(error)throw error;cloudMsg('Cloud sync complete. Aapka dashboard account mein save hai.');
+}
+async function cloudLoad(){
+ if(!cloudClient||!window.ijpCloudSession)return;
+ const {data:row,error}=await cloudClient.from('user_dashboard_data').select('data').eq('user_id',window.ijpCloudSession.user.id).maybeSingle();
+ if(error)throw error;
+ if(row&&row.data){data={...defaults,...row.data};localStorage.setItem(KEY,JSON.stringify(data));render();}
+ else await cloudSave();
+}
+function updateCloudButtons(loggedIn){
+ document.getElementById('logoutBtn').hidden=!loggedIn;
+ document.getElementById('syncBtn').hidden=!loggedIn;
+ document.getElementById('loginBtn').hidden=loggedIn;
+ document.getElementById('signupBtn').hidden=loggedIn;
+}
+async function cloudAuth(mode){
+ if(!cloudClient){cloudMsg('Cloud abhi configure nahi hai. ZIP ke SUPABASE-SETUP-HINDI.txt mein steps follow karein aur supabase-config.js update karein.');return}
+ const email=document.getElementById('cloudEmail').value.trim(),password=document.getElementById('cloudPassword').value;
+ if(!email||password.length<6){cloudMsg('Valid email aur kam se kam 6 characters ka password enter karein.');return}
+ cloudMsg('Please wait...');
+ const result=mode==='signup'?await cloudClient.auth.signUp({email,password}):await cloudClient.auth.signInWithPassword({email,password});
+ if(result.error){cloudMsg(result.error.message);return}
+ window.ijpCloudSession=result.data.session;
+ if(mode==='signup'&&!result.data.session){cloudMsg('Account request ho gayi. Email verification link check karein, phir login karein.');return}
+ try{await cloudLoad();updateCloudButtons(true);cloudMsg('Login successful. Dashboard cloud se sync ho gaya.')}catch(e){cloudMsg('Login hua, lekin data sync nahi hua: '+e.message)}
+}
+document.getElementById('signupBtn').addEventListener('click',()=>cloudAuth('signup'));
+document.getElementById('loginBtn').addEventListener('click',()=>cloudAuth('login'));
+document.getElementById('logoutBtn').addEventListener('click',async()=>{if(cloudClient){await cloudClient.auth.signOut()}window.ijpCloudSession=null;updateCloudButtons(false);cloudMsg('Logout ho gaye. Local browser data is device par rahega.')});
+document.getElementById('syncBtn').addEventListener('click',async()=>{try{await cloudSave()}catch(e){cloudMsg('Sync error: '+e.message)}});
+if(cloudClient){cloudClient.auth.getSession().then(async({data:res})=>{window.ijpCloudSession=res.session;if(res.session){updateCloudButtons(true);try{await cloudLoad()}catch(e){cloudMsg('Cloud load error: '+e.message)}}else updateCloudButtons(false)});}
+else updateCloudButtons(false);
+
 </script></body></html>
