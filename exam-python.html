@@ -57,12 +57,57 @@ const $=id=>document.getElementById(id);
 function esc(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
 let bank={},current=[],mode="practice",activeTrack="mis",answered={},examState={questionIndex:0},submitted=false;
 function add(track,topic,en,hi,opts,correct,exp,level="Intermediate"){
-  // Shuffle the answer options and keep the correct answer index aligned.
-  const paired=opts.map((text,index)=>({text,isCorrect:index===correct}));
-  for(let i=paired.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[paired[i],paired[j]]=[paired[j],paired[i]]}
-  const shuffledOpts=paired.map(x=>x.text);
-  const shuffledCorrect=paired.findIndex(x=>x.isCorrect);
-  bank[track].push({topic,en,hi,opts:shuffledOpts,correct:shuffledCorrect,exp,level});
+  // Normalize options into an array so one malformed question cannot crash
+  // the entire question bank.
+  let optionList = opts;
+
+  if (typeof optionList === "string") {
+    try {
+      const parsed = JSON.parse(optionList);
+      optionList = Array.isArray(parsed) ? parsed : optionList.split("|");
+    } catch (e) {
+      optionList = optionList.split("|");
+    }
+  }
+
+  if (!Array.isArray(optionList) && optionList && typeof optionList === "object") {
+    optionList = Object.values(optionList);
+  }
+
+  if (!Array.isArray(optionList) || optionList.length === 0) {
+    console.error("Invalid question options; question skipped:", {
+      track, topic, opts
+    });
+    return;
+  }
+
+  const correctIndex = Number(correct);
+  if (!Number.isInteger(correctIndex) || correctIndex < 0 || correctIndex >= optionList.length) {
+    console.error("Invalid correct-answer index; question skipped:", {
+      track, topic, correct, optionCount: optionList.length
+    });
+    return;
+  }
+
+  const paired = optionList.map((text,index)=>({
+    text: String(text),
+    isCorrect: index === correctIndex
+  }));
+
+  for(let i=paired.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [paired[i],paired[j]]=[paired[j],paired[i]];
+  }
+
+  const shuffledOpts = paired.map(x=>x.text);
+  const shuffledCorrect = paired.findIndex(x=>x.isCorrect);
+
+  bank[track].push({
+    topic, en, hi,
+    opts: shuffledOpts,
+    correct: shuffledCorrect,
+    exp, level
+  });
 }
 TRACKS.forEach(t=>bank[t.id]=[]);
 // Carefully authored bilingual MIS and Excel foundations
@@ -194,7 +239,7 @@ function renderQuestions(){
     <div class="pill">${esc(q.topic)} • ${esc(q.level)} / प्रश्न ${examState.questionIndex+1} of ${current.length}</div>
     <div class="qtitle">${examState.questionIndex+1}. ${esc(q.en||"Question text unavailable")}</div>
     <div class="hindi"><b>हिंदी / Hindi:</b> ${esc(q.hi||"इस प्रश्न का हिंदी अनुवाद उपलब्ध नहीं है।")}</div>
-    ${q.opts.map((o,j)=>`<label class="opt"><input type="radio" name="currentAnswer" value="${j}" ${answered[examState.questionIndex]===j?"checked":""} ${submitted?"disabled":""} onchange="answered[examState.questionIndex]=${j}"><span><b>${String.fromCharCode(65+j)}.</b> ${esc(o)}</span></label>`).join("")}
+    ${(Array.isArray(q.opts)?q.opts:[]).map((o,j)=>`<label class="opt"><input type="radio" name="currentAnswer" value="${j}" ${answered[examState.questionIndex]===j?"checked":""} ${submitted?"disabled":""} onchange="answered[examState.questionIndex]=${j}"><span><b>${String.fromCharCode(65+j)}.</b> ${esc(o)}</span></label>`).join("")}
     ${submitted?`<div class="explain"><b>Answer / सही उत्तर:</b> ${String.fromCharCode(65+q.correct)}. ${esc(q.opts[q.correct])}<br><b>Explanation / व्याख्या:</b> ${esc(q.exp||"")}</div>`:""}
   </article>`;
   $("countLabel").textContent=`Question ${examState.questionIndex+1} of ${current.length} / प्रश्न ${examState.questionIndex+1} / ${current.length}`;
