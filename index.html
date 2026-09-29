@@ -79,6 +79,29 @@ footer{background:#0d2138;color:#cedbea;padding:45px 0 18px}.foot{display:grid;g
 .hindiJobTrack span:before{content:"•";color:#1769e8;margin-right:11px}
 @keyframes hindiMove{from{transform:translateX(0)}to{transform:translateX(-50%)}}
 .categoryStrip{background:#f8fbff;border-bottom:1px solid var(--line);padding:10px 0}.categoryInner{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.categoryInner strong{font-size:11px;color:var(--navy);margin-right:3px}.categoryInner a{font-size:10.5px;font-weight:800;color:#40516a;background:#fff;border:1px solid #dbe5ef;border-radius:20px;padding:4px 9px}.categoryInner a:hover{color:var(--blue);border-color:#bcd6fb}
+
+/* Featured Government Jobs + Exam Prep section */
+.govt-feature{background:linear-gradient(135deg,#102b4e 0%,#174f87 55%,#1769a9 100%);color:#fff;padding:38px 0;margin:10px 0 0;position:relative;overflow:hidden}
+.govt-feature:before{content:"";position:absolute;width:330px;height:330px;border:50px solid #ffffff0d;border-radius:50%;right:-100px;top:-180px;pointer-events:none}
+.govt-feature .govt-inner{position:relative;z-index:1}
+.govt-feature .govt-head{display:flex;justify-content:space-between;align-items:flex-end;gap:18px;margin-bottom:20px}
+.govt-feature .govt-kicker{font-size:12px;font-weight:900;letter-spacing:1.5px;color:#a8d7ff;text-transform:uppercase}
+.govt-feature h2{font-size:clamp(25px,3vw,36px);line-height:1.15;margin:7px 0;color:#fff}
+.govt-feature .govt-intro{color:#d9eaff;margin:0;max-width:650px;font-size:15px}
+.govt-feature .govt-head-cta{flex-shrink:0;display:inline-flex;align-items:center;justify-content:center;background:#fff;color:#124a80;padding:12px 17px;border-radius:11px;font-weight:950;text-decoration:none}
+.govt-feature .govt-head-cta:hover{background:#e8f4ff;transform:translateY(-1px)}
+.govt-feature .govt-cards{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:13px}
+.govt-feature .govt-card{display:flex;flex-direction:column;gap:8px;min-height:156px;padding:17px;background:#ffffff12;border:1px solid #ffffff30;border-radius:16px;color:#fff;text-decoration:none;transition:transform .15s,background .15s}
+.govt-feature .govt-card:hover{transform:translateY(-3px);background:#ffffff20}
+.govt-feature .govt-card .gicon{font-size:27px;line-height:1}
+.govt-feature .govt-card strong{font-size:17px;color:#fff}
+.govt-feature .govt-card small{font-size:12px;color:#d9eaff;line-height:1.5}
+.govt-feature .govt-card b{margin-top:auto;font-size:12px;color:#b8e0ff}
+.govt-feature .govt-bottom{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-top:17px;padding:15px 17px;background:#061c333b;border:1px solid #ffffff24;border-radius:14px}
+.govt-feature .govt-bottom p{margin:0;color:#e3f1ff;font-size:13px}
+.govt-feature .govt-bottom a{color:#fff;font-weight:900;text-decoration:underline;text-underline-offset:3px;white-space:nowrap}
+@media(max-width:850px){.govt-feature .govt-cards{grid-template-columns:repeat(2,minmax(0,1fr))}.govt-feature .govt-head{align-items:flex-start;flex-direction:column}}
+@media(max-width:480px){.govt-feature{padding:28px 0}.govt-feature .govt-cards{gap:9px}.govt-feature .govt-card{padding:13px;min-height:150px}.govt-feature .govt-card strong{font-size:15px}.govt-feature .govt-bottom{align-items:flex-start;flex-direction:column}}
 </style>
 
 <style>
@@ -485,6 +508,22 @@ nav .menu a[href="#donate"]:hover{background:#f1f5f9!important;color:#1769e8!imp
         <span>💬</span><div><strong>Inquiry Karein</strong><small>Job & Career Support</small></div><b>→</b>
       </a>
     </div>
+  </div>
+</section>
+
+<section class="govt-feature" id="govt-exam-hub" aria-labelledby="govtFeatureTitle">
+  <div class="wrap govt-inner">
+    <div class="govt-head">
+      <div><div class="govt-kicker">🏛️ Government Jobs &amp; Exam Preparation</div><h2 id="govtFeatureTitle">Sarkari Naukri ki Taiyari, Yahin Se Shuru Karein</h2><p class="govt-intro">India-wide government vacancy search, exam-wise practice aur mock tests — ek hi jagah. Apna exam choose karein aur preparation shuru karein.</p></div>
+      <a class="govt-head-cta" href="government-jobs.html">Browse Govt Jobs →</a>
+    </div>
+    <div class="govt-cards">
+      <a class="govt-card" href="government-jobs.html"><span class="gicon">📋</span><strong>Latest Govt Jobs</strong><small>State, qualification aur department ke hisaab se vacancies filter karein.</small><b>View Government Jobs →</b></a>
+      <a class="govt-card" href="government-mock-test.html"><span class="gicon">📝</span><strong>Free Mini Mock Test</strong><small>15 questions, timer, negative marking aur answer explanations ke saath practice karein.</small><b>Start Mock Test →</b></a>
+      <a class="govt-card" href="government-mock-test.html"><span class="gicon">🎯</span><strong>SSC &amp; Railway Practice</strong><small>Reasoning, maths aur general awareness ki practice ke liye mock test open karein.</small><b>Practice Now →</b></a>
+      <a class="govt-card" href="career-prep-center.html"><span class="gicon">📚</span><strong>Preparation Center</strong><small>Exam preparation resources, aptitude aur career learning pages explore karein.</small><b>Explore Preparation →</b></a>
+    </div>
+    <div class="govt-bottom"><p>📌 Official notifications, eligibility aur exam dates apply karne se pehle recruiting authority ki website par verify karein.</p><a href="government-jobs.html">All Government Recruitment Updates →</a></div>
   </div>
 </section>
 
