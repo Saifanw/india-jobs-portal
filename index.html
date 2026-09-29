@@ -1047,5 +1047,56 @@ const visitorDb=getFirestore(visitorApp);
 @media(max-width:560px){.ij-right-quick-actions{top:auto;bottom:78px;transform:none;width:auto;right:8px;gap:5px}.ij-float-btn{min-height:32px;padding:7px 10px;font-size:11px}.ij-float-btn span{display:inline}.ij-dashboard-float{bottom:10px}.heroLatestJobsList{max-height:none}}
 </style>
 
+
+<style id="mobile-quick-actions-fix">
+/* Mobile: keep quick links inside the viewport in a compact bottom rail.
+   Desktop positioning and existing colors remain unchanged. */
+@media (max-width: 560px) {
+  .ij-right-quick-actions {
+    position: fixed !important;
+    left: 8px !important;
+    right: 8px !important;
+    bottom: max(8px, env(safe-area-inset-bottom)) !important;
+    top: auto !important;
+    transform: none !important;
+    z-index: 10030 !important;
+    width: auto !important;
+    max-width: none !important;
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    gap: 7px !important;
+    padding: 7px !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    background: rgba(255,255,255,.97) !important;
+    border: 1px solid #d7e3ef !important;
+    border-radius: 16px !important;
+    box-shadow: 0 5px 24px rgba(16,42,67,.18) !important;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .ij-right-quick-actions::-webkit-scrollbar { display: none !important; }
+  .ij-right-quick-actions .ij-float-btn {
+    flex: 0 0 auto !important;
+    width: auto !important;
+    min-height: 38px !important;
+    padding: 9px 12px !important;
+    border-radius: 12px !important;
+    font-size: 12px !important;
+    line-height: 1.2 !important;
+    white-space: nowrap !important;
+    box-shadow: none !important;
+  }
+  .ij-right-quick-actions .ij-float-btn span {
+    display: inline !important;
+    overflow: visible !important;
+    text-overflow: clip !important;
+  }
+  .ij-dashboard-float { display: none !important; }
+  body { padding-bottom: calc(78px + env(safe-area-inset-bottom)) !important; }
+}
+</style>
+
 </body>
 </html>
