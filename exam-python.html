@@ -57,6 +57,7 @@ const $=id=>document.getElementById(id);
 function esc(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
 let bank={},current=[],mode="practice",activeTrack="mis",answered={},examState={questionIndex:0},submitted=false;
 function add(track,topic,en,hi,opts,correct,exp,level="Intermediate"){
+  // Normalize options, but never let one malformed record stop the full bank.
   let optionList = opts;
 
   if (typeof optionList === "string") {
@@ -72,28 +73,44 @@ function add(track,topic,en,hi,opts,correct,exp,level="Intermediate"){
     optionList = Object.values(optionList);
   }
 
-  if (!Array.isArray(optionList) || optionList.length < 2) {
-    console.error("Question skipped: options must be an array with at least two choices.", {track, topic, opts});
+  if (!Array.isArray(optionList) || optionList.length === 0) {
+    console.error("Skipping question with unusable options:", {track, topic, opts});
     return;
   }
 
-  const correctIndex = Number(correct);
-  const safeCorrect = Number.isInteger(correctIndex) &&
-    correctIndex >= 0 && correctIndex < optionList.length ? correctIndex : 0;
-
-  if (safeCorrect !== correctIndex) {
-    console.warn("Invalid correct-answer index; using first option.", {track, topic, correct});
+  // In this question bank the authored correct answer is normally index 0.
+  // If a record contains a bad index, retain the question and use option 0
+  // rather than leaving the whole subject with an empty seed bank.
+  let correctIndex = Number(correct);
+  if (!Number.isInteger(correctIndex) || correctIndex < 0 || correctIndex >= optionList.length) {
+    console.warn("Invalid correct index; defaulting to first option:", {
+      track, topic, correct, optionCount: optionList.length
+    });
+    correctIndex = 0;
   }
+
+  const paired = optionList.map((text,index)=>({
+    text: String(text),
+    isCorrect: index === correctIndex
+  }));
+
+  for(let i=paired.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [paired[i],paired[j]]=[paired[j],paired[i]];
+  }
+
+  const shuffledOpts = paired.map(x=>x.text);
+  const shuffledCorrect = paired.findIndex(x=>x.isCorrect);
 
   if (!bank[track]) bank[track] = [];
   bank[track].push({
-    topic: String(topic ?? "General"),
-    en: String(en ?? "Question text unavailable"),
-    hi: String(hi ?? "हिंदी प्रश्न उपलब्ध नहीं है"),
-    opts: optionList.map(option => String(option)),
-    correct: safeCorrect,
-    exp: String(exp ?? ""),
-    level: String(level ?? "Intermediate")
+    topic: String(topic || "General"),
+    en: String(en || "Question text unavailable"),
+    hi: String(hi || "हिंदी प्रश्न उपलब्ध नहीं है"),
+    opts: shuffledOpts,
+    correct: shuffledCorrect >= 0 ? shuffledCorrect : 0,
+    exp: String(exp || ""),
+    level: String(level || "Intermediate")
   });
 }
 TRACKS.forEach(t=>bank[t.id]=[]);
@@ -180,40 +197,27 @@ sql_concepts.forEach(q=>add("sql",...q));
 const contexts=[["monthly sales report","मासिक बिक्री रिपोर्ट"],["branch performance sheet","ब्रांच प्रदर्शन शीट"],["inventory register","इन्वेंटरी रजिस्टर"],["customer support log","कस्टमर सपोर्ट लॉग"],["employee attendance report","कर्मचारी उपस्थिति रिपोर्ट"],["production shift report","प्रोडक्शन शिफ्ट रिपोर्ट"],["quality inspection file","क्वालिटी निरीक्षण फ़ाइल"],["finance reconciliation","वित्तीय मिलान"],["recruitment tracker","भर्ती ट्रैकर"],["delivery SLA report","डिलीवरी SLA रिपोर्ट"],["e-commerce orders","ई-कॉमर्स ऑर्डर"],["training assessment","ट्रेनिंग असेसमेंट"],["regional KPI dashboard","क्षेत्रीय KPI डैशबोर्ड"],["daily MIS workbook","डेली MIS वर्कबुक"],["customer feedback dataset","ग्राहक प्रतिक्रिया डेटा"],["machine downtime log","मशीन डाउनटाइम लॉग"],["purchase register","खरीद रजिस्टर"],["monthly billing file","मासिक बिलिंग फ़ाइल"],["marketing campaign data","मार्केटिंग अभियान डेटा"],["job applicant database","जॉब आवेदक डेटाबेस"]];
 function expandBank(track,target){
   const seeds = (bank[track] || []).slice();
-
   if (!seeds.length) {
-    console.error("Cannot expand empty question bank:", track);
+    console.error("Question bank has no seed records:", track);
     return;
   }
 
-  // Keep each field in its original position and do not re-pass records
-  // through add(), which could corrupt already-normalized question data.
-  const expanded = seeds.map(q => ({
+  const cloneQuestion = q => ({
     topic: q.topic,
     en: q.en,
     hi: q.hi,
     opts: Array.isArray(q.opts) ? [...q.opts] : [],
-    correct: q.correct,
-    exp: q.exp,
-    level: q.level
-  }));
+    correct: Number.isInteger(q.correct) ? q.correct : 0,
+    exp: q.exp || "",
+    level: q.level || "Intermediate"
+  });
 
-  // Fill the target count with complete copies of valid records.
+  const expanded = seeds.map(cloneQuestion);
   let i = 0;
   while (expanded.length < target) {
-    const q = seeds[i % seeds.length];
-    expanded.push({
-      topic: q.topic,
-      en: q.en,
-      hi: q.hi,
-      opts: Array.isArray(q.opts) ? [...q.opts] : [],
-      correct: q.correct,
-      exp: q.exp,
-      level: q.level
-    });
+    expanded.push(cloneQuestion(seeds[i % seeds.length]));
     i++;
   }
-
   bank[track] = expanded;
 }
 expandBank("python",500);
@@ -231,7 +235,7 @@ for(const [id,qs] of Object.entries(extras)){qs.forEach(q=>add(id,...q));const s
 $("tracks").innerHTML=TRACKS.map(t=>`<article class="track"><div style="font-size:28px">${t.icon}</div><h3>${t.name}</h3><b class="status">${t.hi}</b><p>${t.desc}</p><div class="count">${bank[t.id].length} practice questions / अभ्यास प्रश्न</div><button onclick="chooseTrack('${t.id}')">Start Preparation / शुरू करें</button></article>`).join("");
 $("trackSelect").innerHTML=TRACKS.map(t=>`<option value="${t.id}">${t.name} / ${t.hi}</option>`).join("");$("trackSelect").value="python";$("trackSelect").onchange=()=>{const chosen=$("trackSelect").value;if(chosen)location.href="exam-"+chosen+".html"};
 function chooseTrack(id){location.href="exam-"+id+".html"}
-function fillTopics(){const id=$("trackSelect").value;const topics=[...new Set(bank[id].map(q=>q.topic))];$("topicSelect").innerHTML='<option value="all">All topics / सभी विषय</option>'+topics.map(t=>`<option>${esc(t)}</option>`).join("")}
+function fillTopics(){const id=$("trackSelect").value;const topics=[...new Set((bank[id]||[]).map(q=>q.topic))];$("topicSelect").innerHTML='<option value="all">All topics / सभी विषय</option>'+topics.map(t=>`<option>${esc(t)}</option>`).join("")}
 
 
 function loadQuestions(){
@@ -267,7 +271,7 @@ function renderQuestions(){
     <div class="qtitle">${examState.questionIndex+1}. ${esc(q.en||"Question text unavailable")}</div>
     <div class="hindi"><b>हिंदी / Hindi:</b> ${esc(q.hi||"इस प्रश्न का हिंदी अनुवाद उपलब्ध नहीं है।")}</div>
     ${(Array.isArray(q.opts)?q.opts:[]).map((o,j)=>`<label class="opt"><input type="radio" name="currentAnswer" value="${j}" ${answered[examState.questionIndex]===j?"checked":""} ${submitted?"disabled":""} onchange="answered[examState.questionIndex]=${j}"><span><b>${String.fromCharCode(65+j)}.</b> ${esc(o)}</span></label>`).join("")}
-    ${submitted?`<div class="explain"><b>Answer / सही उत्तर:</b> ${String.fromCharCode(65+(Number.isInteger(q.correct)?q.correct:0))}. ${esc(Array.isArray(q.opts)?q.opts[q.correct]:"")}<br><b>Explanation / व्याख्या:</b> ${esc(q.exp||"")}</div>`:""}
+    ${submitted?`<div class="explain"><b>Answer / सही उत्तर:</b> ${String.fromCharCode(65+q.correct)}. ${esc(Array.isArray(q.opts)?q.opts[q.correct]:"")}<br><b>Explanation / व्याख्या:</b> ${esc(q.exp||"")}</div>`:""}
   </article>`;
   $("countLabel").textContent=`Question ${examState.questionIndex+1} of ${current.length} / प्रश्न ${examState.questionIndex+1} / ${current.length}`;
   $("progress").style.width=((examState.questionIndex+1)/current.length*100)+"%";
