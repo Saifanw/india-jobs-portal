@@ -57,61 +57,12 @@ const $=id=>document.getElementById(id);
 function esc(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
 let bank={},current=[],mode="practice",activeTrack="mis",answered={},examState={questionIndex:0},submitted=false;
 function add(track,topic,en,hi,opts,correct,exp,level="Intermediate"){
-  // Normalize options, but never let one malformed record stop the full bank.
-  let optionList = opts;
-
-  if (typeof optionList === "string") {
-    try {
-      const parsed = JSON.parse(optionList);
-      optionList = Array.isArray(parsed) ? parsed : optionList.split("|");
-    } catch (e) {
-      optionList = optionList.split("|");
-    }
-  }
-
-  if (!Array.isArray(optionList) && optionList && typeof optionList === "object") {
-    optionList = Object.values(optionList);
-  }
-
-  if (!Array.isArray(optionList) || optionList.length === 0) {
-    console.error("Skipping question with unusable options:", {track, topic, opts});
-    return;
-  }
-
-  // In this question bank the authored correct answer is normally index 0.
-  // If a record contains a bad index, retain the question and use option 0
-  // rather than leaving the whole subject with an empty seed bank.
-  let correctIndex = Number(correct);
-  if (!Number.isInteger(correctIndex) || correctIndex < 0 || correctIndex >= optionList.length) {
-    console.warn("Invalid correct index; defaulting to first option:", {
-      track, topic, correct, optionCount: optionList.length
-    });
-    correctIndex = 0;
-  }
-
-  const paired = optionList.map((text,index)=>({
-    text: String(text),
-    isCorrect: index === correctIndex
-  }));
-
-  for(let i=paired.length-1;i>0;i--){
-    const j=Math.floor(Math.random()*(i+1));
-    [paired[i],paired[j]]=[paired[j],paired[i]];
-  }
-
-  const shuffledOpts = paired.map(x=>x.text);
-  const shuffledCorrect = paired.findIndex(x=>x.isCorrect);
-
-  if (!bank[track]) bank[track] = [];
-  bank[track].push({
-    topic: String(topic || "General"),
-    en: String(en || "Question text unavailable"),
-    hi: String(hi || "हिंदी प्रश्न उपलब्ध नहीं है"),
-    opts: shuffledOpts,
-    correct: shuffledCorrect >= 0 ? shuffledCorrect : 0,
-    exp: String(exp || ""),
-    level: String(level || "Intermediate")
-  });
+  // Shuffle the answer options and keep the correct answer index aligned.
+  const paired=opts.map((text,index)=>({text,isCorrect:index===correct}));
+  for(let i=paired.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[paired[i],paired[j]]=[paired[j],paired[i]]}
+  const shuffledOpts=paired.map(x=>x.text);
+  const shuffledCorrect=paired.findIndex(x=>x.isCorrect);
+  bank[track].push({topic,en,hi,opts:shuffledOpts,correct:shuffledCorrect,exp,level});
 }
 TRACKS.forEach(t=>bank[t.id]=[]);
 // Carefully authored bilingual MIS and Excel foundations
@@ -126,68 +77,68 @@ const baseMIS=[
 ["MIS Fundamentals","A dashboard is primarily used to:","डैशबोर्ड का मुख्य उपयोग क्या है?",["Show key metrics and trends at a glance","Replace source data","Hide exceptions","Store employee passwords"],0,"Dashboards provide a concise view of key indicators. / डैशबोर्ड मुख्य संकेतकों का संक्षिप्त दृश्य देता है।","Beginner"]
 ]
 excel_core=[
-("Formulas & Functions","Which formula multiplies Units in F2 by Rate in G2?","F2 में Units और G2 में Rate को गुणा करने का फ़ॉर्मूला कौन-सा है?",["=F2*G2","=SUM(F2:G2)","=COUNT(F2,G2)","=F2/G2"],0,"Multiplication uses *. / गुणा के लिए * का प्रयोग होता है।","Beginner"),
-("Formulas & Functions","Which function tests a condition and returns one of two results?","कौन-सा फ़ंक्शन शर्त जाँचकर दो में से परिणाम देता है?",["IF","LEFT","CONCAT","ROUNDUP"],0,"IF(logical_test, value_if_true, value_if_false). / IF शर्त के आधार पर परिणाम देता है।","Beginner"),
-("Lookup & Reference","Which modern function can look left or right from a lookup key?","कौन-सा आधुनिक फ़ंक्शन lookup key से बाएँ या दाएँ डेटा लौटा सकता है?",["XLOOKUP","VLOOKUP only","COUNT","SUM"],0,"XLOOKUP supports separate lookup and return arrays. / XLOOKUP में lookup और return arrays अलग हो सकते हैं।","Intermediate"),
-("Lookup & Reference","What does $A$1 mean in a copied formula?","कॉपी किए गए फ़ॉर्मूले में $A$1 का क्या अर्थ है?",["Absolute column and row reference","Relative reference only","Text string","Invalid cell"],0,"Dollar signs lock both column and row. / $ कॉलम और रो दोनों को स्थिर करता है।","Intermediate"),
-("PivotTable & Charts","To summarize sales by region, use:","क्षेत्र के अनुसार बिक्री का सारांश बनाने के लिए क्या उपयोग करेंगे?",["PivotTable with Region in Rows and Sales in Values","Merge cells","Spell check","Page layout"],0,"PivotTables aggregate data by categories. / PivotTable श्रेणियों के अनुसार डेटा जोड़ता है।","Beginner"),
-("Power Query & Data Cleaning","Why use Power Query for recurring monthly files?","हर महीने आने वाली फ़ाइलों के लिए Power Query क्यों उपयोग करें?",["Create repeatable transformation steps and refresh","Manually retype every value","Only change colors","Disable validation"],0,"Power Query records transformation steps for repeatable refresh. / यह दोहराए जा सकने वाले डेटा रूपांतरण बनाता है।","Advanced"),
-("Formulas & Functions","Which function sums values using multiple criteria?","कई शर्तों के आधार पर जोड़ने वाला फ़ंक्शन कौन-सा है?",["SUMIFS","SUMIF only","COUNTBLANK","LEFT"],0,"SUMIFS supports multiple criteria. / SUMIFS कई शर्तों पर काम करता है।","Intermediate"),
-("Formulas & Functions","Which function counts cells meeting one criterion?","एक शर्त पूरी करने वाले सेल गिनने का फ़ंक्शन?",["COUNTIF","SUM","MAX","PROPER"],0,"COUNTIF(range, criteria) counts matches. / COUNTIF मेल खाने वाले सेल गिनता है।","Beginner")
+["Formulas & Functions","Which formula multiplies Units in F2 by Rate in G2?","F2 में Units और G2 में Rate को गुणा करने का फ़ॉर्मूला कौन-सा है?",["=F2*G2","=SUM(F2:G2)","=COUNT(F2,G2)","=F2/G2"],0,"Multiplication uses *. / गुणा के लिए * का प्रयोग होता है।","Beginner"],
+["Formulas & Functions","Which function tests a condition and returns one of two results?","कौन-सा फ़ंक्शन शर्त जाँचकर दो में से परिणाम देता है?",["IF","LEFT","CONCAT","ROUNDUP"],0,"IF(logical_test, value_if_true, value_if_false). / IF शर्त के आधार पर परिणाम देता है।","Beginner"],
+["Lookup & Reference","Which modern function can look left or right from a lookup key?","कौन-सा आधुनिक फ़ंक्शन lookup key से बाएँ या दाएँ डेटा लौटा सकता है?",["XLOOKUP","VLOOKUP only","COUNT","SUM"],0,"XLOOKUP supports separate lookup and return arrays. / XLOOKUP में lookup और return arrays अलग हो सकते हैं।","Intermediate"],
+["Lookup & Reference","What does $A$1 mean in a copied formula?","कॉपी किए गए फ़ॉर्मूले में $A$1 का क्या अर्थ है?",["Absolute column and row reference","Relative reference only","Text string","Invalid cell"],0,"Dollar signs lock both column and row. / $ कॉलम और रो दोनों को स्थिर करता है।","Intermediate"],
+["PivotTable & Charts","To summarize sales by region, use:","क्षेत्र के अनुसार बिक्री का सारांश बनाने के लिए क्या उपयोग करेंगे?",["PivotTable with Region in Rows and Sales in Values","Merge cells","Spell check","Page layout"],0,"PivotTables aggregate data by categories. / PivotTable श्रेणियों के अनुसार डेटा जोड़ता है।","Beginner"],
+["Power Query & Data Cleaning","Why use Power Query for recurring monthly files?","हर महीने आने वाली फ़ाइलों के लिए Power Query क्यों उपयोग करें?",["Create repeatable transformation steps and refresh","Manually retype every value","Only change colors","Disable validation"],0,"Power Query records transformation steps for repeatable refresh. / यह दोहराए जा सकने वाले डेटा रूपांतरण बनाता है।","Advanced"],
+["Formulas & Functions","Which function sums values using multiple criteria?","कई शर्तों के आधार पर जोड़ने वाला फ़ंक्शन कौन-सा है?",["SUMIFS","SUMIF only","COUNTBLANK","LEFT"],0,"SUMIFS supports multiple criteria. / SUMIFS कई शर्तों पर काम करता है।","Intermediate"],
+["Formulas & Functions","Which function counts cells meeting one criterion?","एक शर्त पूरी करने वाले सेल गिनने का फ़ंक्शन?",["COUNTIF","SUM","MAX","PROPER"],0,"COUNTIF(range, criteria) counts matches. / COUNTIF मेल खाने वाले सेल गिनता है।","Beginner"]
 ]
 python_concepts=[
-("Python Basics","Which built-in type stores an ordered, mutable sequence?","कौन-सा built-in type क्रमबद्ध और mutable sequence रखता है?",["list","tuple","str","int"],0,"A list is ordered and mutable. / list क्रमबद्ध और बदली जा सकती है।"),
-("Python Basics","What is the result of len('Data')?","len('Data') का परिणाम क्या होगा?",["4","3","5","Error"],0,"There are four characters. / इसमें चार अक्षर हैं।"),
-("Data Types & Collections","Which collection stores unique elements?","कौन-सा collection unique elements रखता है?",["set","list","tuple","str"],0,"A set contains unique hashable values. / set में unique hashable values होती हैं।"),
-("Data Types & Collections","Which structure stores key-value pairs?","कौन-सी संरचना key-value जोड़े रखती है?",["dict","set","tuple","range"],0,"A dictionary maps keys to values. / dictionary keys को values से जोड़ती है।"),
-("Control Flow & Functions","Which keyword starts a function definition?","फ़ंक्शन की परिभाषा किस keyword से शुरू होती है?",["def","func","function","lambda only"],0,"def defines a named function. / def नाम वाला फ़ंक्शन बनाता है।"),
-("Control Flow & Functions","What does range(3) produce when iterated?","range(3) पर iteration करने पर क्या मान मिलते हैं?",["0, 1, 2","1, 2, 3","0, 1, 2, 3","3 only"],0,"The stop value is excluded. / अंतिम stop मान शामिल नहीं होता।"),
-("OOP & Exceptions","Which block handles an exception?","Exception को संभालने वाला block कौन-सा है?",["except","final","catch in Python syntax","rescue"],0,"Python uses try/except. / Python में try/except का उपयोग होता है।"),
-("OOP & Exceptions","Which method is commonly used to initialize an instance?","Instance initialize करने के लिए सामान्य method कौन-सा है?",["__init__","__start__","__newinstance__","initiate"],0,"__init__ initializes instance attributes. / __init__ instance attributes सेट करता है।"),
-("Files & Modules","Which mode opens a file for reading text?","टेक्स्ट फ़ाइल पढ़ने के लिए कौन-सा mode है?",["r","w","a","x"],0,"r opens an existing file for reading. / r पढ़ने के लिए फ़ाइल खोलता है।"),
-("NumPy & Pandas","Which pandas method previews the first rows?","Pandas में शुरुआती rows देखने का method?",["head()","tailall()","firstrows()","preview()"],0,"DataFrame.head() returns the first rows. / head() पहली rows दिखाता है।"),
-("NumPy & Pandas","Which pandas method reports column data types and non-null counts?","कॉलम के data types और non-null counts कौन दिखाता है?",["info()","describe only","shape()","plot()"],0,"info() summarizes DataFrame structure. / info() DataFrame की संरचना बताता है।"),
-("NumPy & Pandas","Which operation combines DataFrames using matching keys?","मिलती-जुलती keys से DataFrames जोड़ने का operation?",["merge()","melt() only","sample()","rank()"],0,"merge performs database-style joins. / merge join करता है।"),
-("Python Basics","What does type(7) return?","type(7) क्या लौटाता है?",["int","float","str","bool"],0,"7 is an integer. / 7 integer है।"),
-("Control Flow & Functions","Which keyword skips to the next loop iteration?","अगली loop iteration पर जाने का keyword?",["continue","break","pass only","return"],0,"continue skips the rest of the current iteration. / continue वर्तमान iteration का शेष भाग छोड़ता है।"),
-("Data Types & Collections","What is tuple mutability?","Tuple mutable है या immutable?",["Immutable","Mutable","Always a set","A dictionary"],0,"Tuple elements cannot be reassigned in place. / Tuple के elements in-place बदले नहीं जा सकते।"),
-("OOP & Exceptions","Which concept allows a class to derive from another class?","एक class दूसरी class से गुण ले, इसे क्या कहते हैं?",["Inheritance","Iteration","Indexing","Casting"],0,"Inheritance creates a derived class. / Inheritance से derived class बनती है।"),
-("Files & Modules","What is the benefit of using with open(...) as f?","with open(...) as f का लाभ क्या है?",["File is automatically closed when block exits","File is always deleted","It encrypts file","It converts CSV to SQL"],0,"The context manager handles cleanup. / context manager फ़ाइल बंद करने का ध्यान रखता है।"),
-("NumPy & Pandas","Which pandas method identifies missing values?","Missing values पहचानने का Pandas method?",["isna()","iszero()","missing()","nullcheck()"],0,"isna() returns a boolean mask for missing values. / isna() missing values के लिए boolean mask देता है।"),
-("NumPy & Pandas","Which NumPy object is central to its n-dimensional arrays?","NumPy के n-dimensional array का मुख्य object?",["ndarray","DataFrame","Series","MatrixTable"],0,"NumPy's ndarray stores multidimensional arrays. / ndarray multidimensional arrays रखता है।"),
-("Python Basics","What is the result of 10 // 3?","10 // 3 का परिणाम?",["3","3.333","1","4"],0,"// performs floor division. / // floor division करता है।"),
-("Control Flow & Functions","What does return do in a function?","Function में return क्या करता है?",["Sends a value back and exits the function","Prints only","Repeats loop","Imports a module"],0,"return passes a result to the caller. / return caller को परिणाम देता है।"),
-("Data Types & Collections","Which list operation adds one item to the end?","List के अंत में एक item जोड़ने का method?",["append()","extend only","insert without index","push()"],0,"append adds its argument as one item. / append एक item जोड़ता है।"),
-("OOP & Exceptions","Which special method provides a developer-friendly string representation?","Object की developer-friendly string representation कौन देता है?",["__repr__","__loop__","__formatall__","__main__"],0,"__repr__ is intended as an unambiguous representation. / __repr__ स्पष्ट representation के लिए है।"),
-("Files & Modules","Which standard module supports CSV reading and writing?","CSV पढ़ने-लिखने के लिए कौन-सा standard module?",["csv","excel","pandascore","sheet"],0,"The csv module reads and writes delimited files. / csv module delimited files संभालता है।"),
-("NumPy & Pandas","What does df.shape return?","df.shape क्या लौटाता है?",["Tuple of row and column counts","Only column names","All data values","Missing count only"],0,"shape returns (rows, columns). / shape (rows, columns) देता है.")
+["Python Basics","Which built-in type stores an ordered, mutable sequence?","कौन-सा built-in type क्रमबद्ध और mutable sequence रखता है?",["list","tuple","str","int"],0,"A list is ordered and mutable. / list क्रमबद्ध और बदली जा सकती है।"],
+["Python Basics","What is the result of len('Data')?","len('Data') का परिणाम क्या होगा?",["4","3","5","Error"],0,"There are four characters. / इसमें चार अक्षर हैं।"],
+["Data Types & Collections","Which collection stores unique elements?","कौन-सा collection unique elements रखता है?",["set","list","tuple","str"],0,"A set contains unique hashable values. / set में unique hashable values होती हैं।"],
+["Data Types & Collections","Which structure stores key-value pairs?","कौन-सी संरचना key-value जोड़े रखती है?",["dict","set","tuple","range"],0,"A dictionary maps keys to values. / dictionary keys को values से जोड़ती है।"],
+["Control Flow & Functions","Which keyword starts a function definition?","फ़ंक्शन की परिभाषा किस keyword से शुरू होती है?",["def","func","function","lambda only"],0,"def defines a named function. / def नाम वाला फ़ंक्शन बनाता है।"],
+["Control Flow & Functions","What does range(3) produce when iterated?","range(3) पर iteration करने पर क्या मान मिलते हैं?",["0, 1, 2","1, 2, 3","0, 1, 2, 3","3 only"],0,"The stop value is excluded. / अंतिम stop मान शामिल नहीं होता।"],
+["OOP & Exceptions","Which block handles an exception?","Exception को संभालने वाला block कौन-सा है?",["except","final","catch in Python syntax","rescue"],0,"Python uses try/except. / Python में try/except का उपयोग होता है।"],
+["OOP & Exceptions","Which method is commonly used to initialize an instance?","Instance initialize करने के लिए सामान्य method कौन-सा है?",["__init__","__start__","__newinstance__","initiate"],0,"__init__ initializes instance attributes. / __init__ instance attributes सेट करता है।"],
+["Files & Modules","Which mode opens a file for reading text?","टेक्स्ट फ़ाइल पढ़ने के लिए कौन-सा mode है?",["r","w","a","x"],0,"r opens an existing file for reading. / r पढ़ने के लिए फ़ाइल खोलता है।"],
+["NumPy & Pandas","Which pandas method previews the first rows?","Pandas में शुरुआती rows देखने का method?",["head()","tailall()","firstrows()","preview()"],0,"DataFrame.head() returns the first rows. / head() पहली rows दिखाता है।"],
+["NumPy & Pandas","Which pandas method reports column data types and non-null counts?","कॉलम के data types और non-null counts कौन दिखाता है?",["info()","describe only","shape()","plot()"],0,"info() summarizes DataFrame structure. / info() DataFrame की संरचना बताता है।"],
+["NumPy & Pandas","Which operation combines DataFrames using matching keys?","मिलती-जुलती keys से DataFrames जोड़ने का operation?",["merge()","melt() only","sample()","rank()"],0,"merge performs database-style joins. / merge join करता है।"],
+["Python Basics","What does type(7) return?","type(7) क्या लौटाता है?",["int","float","str","bool"],0,"7 is an integer. / 7 integer है।"],
+["Control Flow & Functions","Which keyword skips to the next loop iteration?","अगली loop iteration पर जाने का keyword?",["continue","break","pass only","return"],0,"continue skips the rest of the current iteration. / continue वर्तमान iteration का शेष भाग छोड़ता है।"],
+["Data Types & Collections","What is tuple mutability?","Tuple mutable है या immutable?",["Immutable","Mutable","Always a set","A dictionary"],0,"Tuple elements cannot be reassigned in place. / Tuple के elements in-place बदले नहीं जा सकते।"],
+["OOP & Exceptions","Which concept allows a class to derive from another class?","एक class दूसरी class से गुण ले, इसे क्या कहते हैं?",["Inheritance","Iteration","Indexing","Casting"],0,"Inheritance creates a derived class. / Inheritance से derived class बनती है।"],
+["Files & Modules","What is the benefit of using with open(...) as f?","with open(...) as f का लाभ क्या है?",["File is automatically closed when block exits","File is always deleted","It encrypts file","It converts CSV to SQL"],0,"The context manager handles cleanup. / context manager फ़ाइल बंद करने का ध्यान रखता है।"],
+["NumPy & Pandas","Which pandas method identifies missing values?","Missing values पहचानने का Pandas method?",["isna()","iszero()","missing()","nullcheck()"],0,"isna() returns a boolean mask for missing values. / isna() missing values के लिए boolean mask देता है।"],
+["NumPy & Pandas","Which NumPy object is central to its n-dimensional arrays?","NumPy के n-dimensional array का मुख्य object?",["ndarray","DataFrame","Series","MatrixTable"],0,"NumPy's ndarray stores multidimensional arrays. / ndarray multidimensional arrays रखता है।"],
+["Python Basics","What is the result of 10 // 3?","10 // 3 का परिणाम?",["3","3.333","1","4"],0,"// performs floor division. / // floor division करता है।"],
+["Control Flow & Functions","What does return do in a function?","Function में return क्या करता है?",["Sends a value back and exits the function","Prints only","Repeats loop","Imports a module"],0,"return passes a result to the caller. / return caller को परिणाम देता है।"],
+["Data Types & Collections","Which list operation adds one item to the end?","List के अंत में एक item जोड़ने का method?",["append()","extend only","insert without index","push()"],0,"append adds its argument as one item. / append एक item जोड़ता है।"],
+["OOP & Exceptions","Which special method provides a developer-friendly string representation?","Object की developer-friendly string representation कौन देता है?",["__repr__","__loop__","__formatall__","__main__"],0,"__repr__ is intended as an unambiguous representation. / __repr__ स्पष्ट representation के लिए है।"],
+["Files & Modules","Which standard module supports CSV reading and writing?","CSV पढ़ने-लिखने के लिए कौन-सा standard module?",["csv","excel","pandascore","sheet"],0,"The csv module reads and writes delimited files. / csv module delimited files संभालता है।"],
+["NumPy & Pandas","What does df.shape return?","df.shape क्या लौटाता है?",["Tuple of row and column counts","Only column names","All data values","Missing count only"],0,"shape returns (rows, columns). / shape (rows, columns) देता है."]
 ]
 sql_concepts=[
-("SQL Basics","Which statement retrieves data from a table?","टेबल से डेटा निकालने का statement कौन-सा है?",["SELECT","UPDATE","DELETE","ALTER"],0,"SELECT retrieves rows and expressions. / SELECT डेटा पढ़ता है।"),
-("SQL Basics","Which clause filters rows before grouping?","Grouping से पहले rows filter करने वाला clause?",["WHERE","HAVING","ORDER BY","FROM only"],0,"WHERE filters individual rows. / WHERE rows को filter करता है।"),
-("Filtering & Sorting","Which operator checks whether a value falls within an inclusive range?","Inclusive range जाँचने वाला operator?",["BETWEEN","LIKE","EXISTS only","UNION"],0,"BETWEEN includes both endpoints in standard SQL. / BETWEEN दोनों सीमाएँ शामिल करता है।"),
-("Filtering & Sorting","How do you sort newest dates first?","नई तारीख पहले लाने के लिए?",["ORDER BY date_column DESC","ORDER BY date_column ASC","GROUP BY date_column","WHERE date_column"],0,"DESC sorts in descending order. / DESC घटते क्रम में sort करता है।"),
-("Aggregations","Which function counts rows?","Rows गिनने वाला aggregate function?",["COUNT(*)","SUM(*)","ADD(*)","TOTALROWS()"],0,"COUNT(*) counts rows, including rows with NULL columns. / COUNT(*) सभी rows गिनता है।"),
-("Aggregations","Which clause filters groups after aggregation?","Aggregation के बाद groups filter करने वाला clause?",["HAVING","WHERE","SELECT","JOIN"],0,"HAVING filters grouped results. / HAVING grouped results filter करता है।"),
-("Joins & Subqueries","Which join preserves all rows from the left table?","Left table की सभी rows रखने वाला join?",["LEFT JOIN","INNER JOIN","CROSS JOIN only","RIGHT JOIN"],0,"Unmatched right-side columns are NULL. / unmatched right columns NULL होते हैं।"),
-("Joins & Subqueries","What can cause row multiplication in a join?","Join में rows बढ़ने का सामान्य कारण?",["Multiple matches for a join key","Using SELECT","Column aliases","ORDER BY"],0,"Check key uniqueness and relationship cardinality. / Join key की uniqueness जाँचें।"),
-("CTE & Window Functions","Which keyword defines a common table expression?","CTE बनाने का keyword?",["WITH","WINDOW","TEMPORARY only","DEFINE"],0,"WITH introduces a CTE. / WITH CTE शुरू करता है।"),
-("CTE & Window Functions","Which function assigns a unique sequential number within an ordered partition?","Partition में क्रमवार unique number कौन देता है?",["ROW_NUMBER()","COUNT() only","SUM()","COALESCE()"],0,"ROW_NUMBER numbers rows according to the window ordering. / ROW_NUMBER क्रम के अनुसार नंबर देता है।"),
-("Database Design & Performance","What does a primary key enforce?","Primary key क्या enforce करती है?",["Uniqueness and non-null identity for each row","Duplicate values","Only sorting","Encryption"],0,"A primary key uniquely identifies each row. / Primary key हर row की unique पहचान है।"),
-("Database Design & Performance","What is an index commonly used for?","Index का सामान्य उपयोग?",["Speed up selected data access, with storage/write tradeoffs","Guarantee no bugs","Replace all constraints","Encrypt every column"],0,"Indexes can improve reads but consume space and affect writes. / Index reads तेज़ कर सकता है पर storage/write cost होती है।"),
-("SQL Basics","Which statement changes existing row values?","मौजूदा row values बदलने वाला statement?",["UPDATE","INSERT","CREATE","SELECT"],0,"UPDATE modifies rows matching its predicate. / UPDATE matching rows बदलता है।"),
-("Filtering & Sorting","How do you test for missing SQL values?","SQL में missing/NULL जाँचने का सही तरीका?",["IS NULL","= NULL","== NULL","NULL()"],0,"Use IS NULL, not equality. / NULL जाँचने के लिए IS NULL लिखें।"),
-("Aggregations","Which expression calculates average salary?","औसत salary निकालने का expression?",["AVG(salary)","MEAN(salary)","AVERAGE(*)","MID(salary)"],0,"AVG computes the arithmetic mean of non-NULL inputs. / AVG non-NULL values का औसत निकालता है।"),
-("Joins & Subqueries","Which join returns only matching rows from both tables?","दोनों tables की matching rows देने वाला join?",["INNER JOIN","LEFT JOIN","FULL OUTER JOIN","CROSS JOIN"],0,"INNER JOIN returns rows with matching join conditions. / INNER JOIN matching rows देता है।"),
-("CTE & Window Functions","Which window function calculates a running total?","Running total के लिए कौन-सा window expression?",["SUM(x) OVER(ORDER BY date)","COUNT(x) only","GROUP BY date only","DISTINCT x"],0,"A windowed SUM with ordering can calculate cumulative totals. / Window SUM cumulative total दे सकता है।"),
-("Database Design & Performance","A foreign key is used to:","Foreign key का उपयोग?",["Enforce a relationship to a referenced key","Sort a report","Create a chart","Count rows"],0,"Foreign keys help preserve referential integrity. / Foreign key संबंध की integrity बनाए रखती है।"),
-("SQL Basics","Which command adds new rows?","नई rows जोड़ने वाला command?",["INSERT INTO","UPDATE","DROP","ALTER"],0,"INSERT adds records. / INSERT नए records जोड़ता है।"),
-("Filtering & Sorting","Which pattern finds names starting with 'A'?","A से शुरू होने वाले नाम खोजने का pattern?",["LIKE 'A%'","LIKE '%A'","LIKE '_A_'","= '%A%'"],0,"% matches zero or more characters. / % शून्य या अधिक characters से मेल खाता है।"),
-("Aggregations","What does GROUP BY do?","GROUP BY क्या करता है?",["Groups rows for aggregate calculations","Sorts only","Deletes duplicates from source","Creates index"],0,"GROUP BY forms groups based on selected expressions. / GROUP BY समूह बनाता है।"),
-("Joins & Subqueries","What does UNION do by default?","UNION default में क्या करता है?",["Combines compatible result sets and removes duplicate rows","Joins columns by key","Always preserves duplicates","Updates both tables"],0,"UNION removes duplicates; UNION ALL preserves them. / UNION duplicates हटाता है।"),
-("CTE & Window Functions","What is the key difference between GROUP BY and a window function?","GROUP BY और window function में मुख्य अंतर?",["Window functions retain row-level rows while adding analytic values","They are always identical","GROUP BY always retains every original row","Window functions only delete rows"],0,"Window calculations can preserve detail rows. / Window function detail rows बनाए रख सकता है।"),
-("Database Design & Performance","Which transaction property means all operations succeed or none do?","Transaction की कौन-सी property all-or-nothing है?",["Atomicity","Availability","Indexing","Normalization"],0,"Atomicity is the all-or-nothing property. / Atomicity में पूरा transaction सफल या rollback होता है।"),
-("SQL Basics","Which command removes selected rows based on a condition?","Condition के आधार पर rows हटाने वाला command?",["DELETE FROM ... WHERE","DROP DATABASE","ALTER TABLE","SELECT"],0,"DELETE removes rows; use a careful WHERE clause. / DELETE rows हटाता है, WHERE सावधानी से लगाएँ।")
+["SQL Basics","Which statement retrieves data from a table?","टेबल से डेटा निकालने का statement कौन-सा है?",["SELECT","UPDATE","DELETE","ALTER"],0,"SELECT retrieves rows and expressions. / SELECT डेटा पढ़ता है।"],
+["SQL Basics","Which clause filters rows before grouping?","Grouping से पहले rows filter करने वाला clause?",["WHERE","HAVING","ORDER BY","FROM only"],0,"WHERE filters individual rows. / WHERE rows को filter करता है।"],
+["Filtering & Sorting","Which operator checks whether a value falls within an inclusive range?","Inclusive range जाँचने वाला operator?",["BETWEEN","LIKE","EXISTS only","UNION"],0,"BETWEEN includes both endpoints in standard SQL. / BETWEEN दोनों सीमाएँ शामिल करता है।"],
+["Filtering & Sorting","How do you sort newest dates first?","नई तारीख पहले लाने के लिए?",["ORDER BY date_column DESC","ORDER BY date_column ASC","GROUP BY date_column","WHERE date_column"],0,"DESC sorts in descending order. / DESC घटते क्रम में sort करता है।"],
+["Aggregations","Which function counts rows?","Rows गिनने वाला aggregate function?",["COUNT(*)","SUM(*)","ADD(*)","TOTALROWS()"],0,"COUNT(*) counts rows, including rows with NULL columns. / COUNT(*) सभी rows गिनता है।"],
+["Aggregations","Which clause filters groups after aggregation?","Aggregation के बाद groups filter करने वाला clause?",["HAVING","WHERE","SELECT","JOIN"],0,"HAVING filters grouped results. / HAVING grouped results filter करता है।"],
+["Joins & Subqueries","Which join preserves all rows from the left table?","Left table की सभी rows रखने वाला join?",["LEFT JOIN","INNER JOIN","CROSS JOIN only","RIGHT JOIN"],0,"Unmatched right-side columns are NULL. / unmatched right columns NULL होते हैं।"],
+["Joins & Subqueries","What can cause row multiplication in a join?","Join में rows बढ़ने का सामान्य कारण?",["Multiple matches for a join key","Using SELECT","Column aliases","ORDER BY"],0,"Check key uniqueness and relationship cardinality. / Join key की uniqueness जाँचें।"],
+["CTE & Window Functions","Which keyword defines a common table expression?","CTE बनाने का keyword?",["WITH","WINDOW","TEMPORARY only","DEFINE"],0,"WITH introduces a CTE. / WITH CTE शुरू करता है।"],
+["CTE & Window Functions","Which function assigns a unique sequential number within an ordered partition?","Partition में क्रमवार unique number कौन देता है?",["ROW_NUMBER()","COUNT() only","SUM()","COALESCE()"],0,"ROW_NUMBER numbers rows according to the window ordering. / ROW_NUMBER क्रम के अनुसार नंबर देता है।"],
+["Database Design & Performance","What does a primary key enforce?","Primary key क्या enforce करती है?",["Uniqueness and non-null identity for each row","Duplicate values","Only sorting","Encryption"],0,"A primary key uniquely identifies each row. / Primary key हर row की unique पहचान है।"],
+["Database Design & Performance","What is an index commonly used for?","Index का सामान्य उपयोग?",["Speed up selected data access, with storage/write tradeoffs","Guarantee no bugs","Replace all constraints","Encrypt every column"],0,"Indexes can improve reads but consume space and affect writes. / Index reads तेज़ कर सकता है पर storage/write cost होती है।"],
+["SQL Basics","Which statement changes existing row values?","मौजूदा row values बदलने वाला statement?",["UPDATE","INSERT","CREATE","SELECT"],0,"UPDATE modifies rows matching its predicate. / UPDATE matching rows बदलता है।"],
+["Filtering & Sorting","How do you test for missing SQL values?","SQL में missing/NULL जाँचने का सही तरीका?",["IS NULL","= NULL","== NULL","NULL()"],0,"Use IS NULL, not equality. / NULL जाँचने के लिए IS NULL लिखें।"],
+["Aggregations","Which expression calculates average salary?","औसत salary निकालने का expression?",["AVG(salary)","MEAN(salary)","AVERAGE(*)","MID(salary)"],0,"AVG computes the arithmetic mean of non-NULL inputs. / AVG non-NULL values का औसत निकालता है।"],
+["Joins & Subqueries","Which join returns only matching rows from both tables?","दोनों tables की matching rows देने वाला join?",["INNER JOIN","LEFT JOIN","FULL OUTER JOIN","CROSS JOIN"],0,"INNER JOIN returns rows with matching join conditions. / INNER JOIN matching rows देता है।"],
+["CTE & Window Functions","Which window function calculates a running total?","Running total के लिए कौन-सा window expression?",["SUM(x) OVER(ORDER BY date)","COUNT(x) only","GROUP BY date only","DISTINCT x"],0,"A windowed SUM with ordering can calculate cumulative totals. / Window SUM cumulative total दे सकता है।"],
+["Database Design & Performance","A foreign key is used to:","Foreign key का उपयोग?",["Enforce a relationship to a referenced key","Sort a report","Create a chart","Count rows"],0,"Foreign keys help preserve referential integrity. / Foreign key संबंध की integrity बनाए रखती है।"],
+["SQL Basics","Which command adds new rows?","नई rows जोड़ने वाला command?",["INSERT INTO","UPDATE","DROP","ALTER"],0,"INSERT adds records. / INSERT नए records जोड़ता है।"],
+["Filtering & Sorting","Which pattern finds names starting with 'A'?","A से शुरू होने वाले नाम खोजने का pattern?",["LIKE 'A%'","LIKE '%A'","LIKE '_A_'","= '%A%'"],0,"% matches zero or more characters. / % शून्य या अधिक characters से मेल खाता है।"],
+["Aggregations","What does GROUP BY do?","GROUP BY क्या करता है?",["Groups rows for aggregate calculations","Sorts only","Deletes duplicates from source","Creates index"],0,"GROUP BY forms groups based on selected expressions. / GROUP BY समूह बनाता है।"],
+["Joins & Subqueries","What does UNION do by default?","UNION default में क्या करता है?",["Combines compatible result sets and removes duplicate rows","Joins columns by key","Always preserves duplicates","Updates both tables"],0,"UNION removes duplicates; UNION ALL preserves them. / UNION duplicates हटाता है।"],
+["CTE & Window Functions","What is the key difference between GROUP BY and a window function?","GROUP BY और window function में मुख्य अंतर?",["Window functions retain row-level rows while adding analytic values","They are always identical","GROUP BY always retains every original row","Window functions only delete rows"],0,"Window calculations can preserve detail rows. / Window function detail rows बनाए रख सकता है।"],
+["Database Design & Performance","Which transaction property means all operations succeed or none do?","Transaction की कौन-सी property all-or-nothing है?",["Atomicity","Availability","Indexing","Normalization"],0,"Atomicity is the all-or-nothing property. / Atomicity में पूरा transaction सफल या rollback होता है।"],
+["SQL Basics","Which command removes selected rows based on a condition?","Condition के आधार पर rows हटाने वाला command?",["DELETE FROM ... WHERE","DROP DATABASE","ALTER TABLE","SELECT"],0,"DELETE removes rows; use a careful WHERE clause. / DELETE rows हटाता है, WHERE सावधानी से लगाएँ।"]
 ]
 
 baseMIS.forEach(q=>add("mis",...q));
@@ -195,35 +146,8 @@ excel_core.forEach(q=>add("excel",...q));
 python_concepts.forEach(q=>add("python",...q));
 sql_concepts.forEach(q=>add("sql",...q));
 const contexts=[["monthly sales report","मासिक बिक्री रिपोर्ट"],["branch performance sheet","ब्रांच प्रदर्शन शीट"],["inventory register","इन्वेंटरी रजिस्टर"],["customer support log","कस्टमर सपोर्ट लॉग"],["employee attendance report","कर्मचारी उपस्थिति रिपोर्ट"],["production shift report","प्रोडक्शन शिफ्ट रिपोर्ट"],["quality inspection file","क्वालिटी निरीक्षण फ़ाइल"],["finance reconciliation","वित्तीय मिलान"],["recruitment tracker","भर्ती ट्रैकर"],["delivery SLA report","डिलीवरी SLA रिपोर्ट"],["e-commerce orders","ई-कॉमर्स ऑर्डर"],["training assessment","ट्रेनिंग असेसमेंट"],["regional KPI dashboard","क्षेत्रीय KPI डैशबोर्ड"],["daily MIS workbook","डेली MIS वर्कबुक"],["customer feedback dataset","ग्राहक प्रतिक्रिया डेटा"],["machine downtime log","मशीन डाउनटाइम लॉग"],["purchase register","खरीद रजिस्टर"],["monthly billing file","मासिक बिलिंग फ़ाइल"],["marketing campaign data","मार्केटिंग अभियान डेटा"],["job applicant database","जॉब आवेदक डेटाबेस"]];
-function expandBank(track,target){
-  const seeds = (bank[track] || []).slice();
-  if (!seeds.length) {
-    console.error("Question bank has no seed records:", track);
-    return;
-  }
-
-  const cloneQuestion = q => ({
-    topic: q.topic,
-    en: q.en,
-    hi: q.hi,
-    opts: Array.isArray(q.opts) ? [...q.opts] : [],
-    correct: Number.isInteger(q.correct) ? q.correct : 0,
-    exp: q.exp || "",
-    level: q.level || "Intermediate"
-  });
-
-  const expanded = seeds.map(cloneQuestion);
-  let i = 0;
-  while (expanded.length < target) {
-    expanded.push(cloneQuestion(seeds[i % seeds.length]));
-    i++;
-  }
-  bank[track] = expanded;
-}
-expandBank("python",500);
-expandBank("sql",500);
-expandBank("mis",500);
-expandBank("excel",500);
+function expandBank(track,target){const seeds=bank[track].slice();let n=0;for(let i=0;i<seeds.length&&n<target;i++){const q=seeds[i];for(let j=0;j<contexts.length&&n<target;j++){const c=contexts[(j+i*3)%contexts.length];add(track,q.topic,`[${c[0]}] ${q.en}`,`[${c[1]}] ${q.hi}`,q.opts.slice(),q.correct,`${q.exp} Workplace context / कार्यस्थल संदर्भ: ${c[1]}।`,j<6?"Beginner":j<14?"Intermediate":"Advanced");n++}}while(bank[track].length<target){const q=seeds[bank[track].length%seeds.length],c=contexts[bank[track].length%contexts.length];add(track,q.topic,`Applied practice: ${q.en} (${c[0]})`,`व्यावहारिक अभ्यास: ${q.hi} (${c[1]})`,q.opts.slice(),q.correct,q.exp,q.level)}}
+expandBank("python",500);expandBank("sql",500);expandBank("mis",500);expandBank("excel",500);
 const extras={
 powerbi:[["Power Query","What does Power Query primarily do?","Power Query का मुख्य काम क्या है?",["Connect, clean and transform data repeatably","Only format chart colors","Write emails","Create passwords"],0,"Power Query repeatable data preparation steps बनाता है।","Beginner"],["Data Modeling","Why create a date table in Power BI?","Power BI में Date Table क्यों बनाते हैं?",["Support time intelligence and date slicing","Change font","Replace fact tables","Hide dates"],0,"Date table consistent time calculations में मदद करती है।","Intermediate"],["DAX","Which DAX function modifies filter context?","कौन-सा DAX function filter context बदलता है?",["CALCULATE","FORMAT only","COUNTROWS only","CONCATENATE"],0,"CALCULATE filter context बदलता है।","Advanced"]],
 analyst:[["Statistics","What does median represent?","Median क्या दर्शाता है?",["Middle value after sorting","Most frequent value","Arithmetic total","Range"],0,"Median क्रमबद्ध डेटा का मध्य मान है।","Beginner"],["Data Cleaning","Why inspect missing values?","Missing values क्यों जाँचें?",["They may bias results or affect calculations","They always mean zero","They improve every model","Always ignore them"],0,"Missingness परिणाम प्रभावित कर सकती है।","Intermediate"],["Case Studies","High clicks but low conversions: what examine?","क्लिक अधिक, conversion कम: क्या जाँचेंगे?",["Conversion funnel, audience, landing page and tracking","Only logo color","Delete data","Assume sales high"],0,"Funnel और tracking जाँचें।","Advanced"]],
