@@ -1,7 +1,7 @@
 // India Jobs Portal - Supabase public client configuration
-// Replace both values with your Supabase project's Project URL and anon/publishable key.
-// NEVER put a service_role or secret key in this public file.
+// Public publishable key is intended for browser use.
+// NEVER put service_role or secret keys in this file.
 window.IJP_SUPABASE_CONFIG = {
-  url: "https://YOUR-PROJECT-REF.supabase.co",
-  anonKey: "YOUR-SUPABASE-ANON-OR-PUBLISHABLE-KEY"
+  url: "https://yzpfvqxzdirfvhxtfcsu.supabase.co",
+  anonKey: "sb_publishable_1T6qlWe6b2NUqtPs3zoh3A_-xwAOf1T"
 };
