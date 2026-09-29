@@ -64,7 +64,7 @@ const TRACKS=[
 ];
 const $=id=>document.getElementById(id);
 function esc(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
-let bank={},current=[],mode="practice",activeTrack="mis",answered={},currentIndex=0,submitted=false;
+let bank={},current=[],mode="practice",activeTrack="mis",answered={},examState={questionIndex:0},submitted=false;
 function add(track,topic,en,hi,opts,correct,exp,level="Intermediate"){
   // Shuffle the answer options and keep the correct answer index aligned.
   const paired=opts.map((text,index)=>({text,isCorrect:index===correct}));
@@ -191,30 +191,30 @@ function loadQuestions(){
   }
   if(!list.length) list=bank[activeTrack].slice();
   const requestedCount=parseInt(($("qcount")&&$("qcount").value)||"100",10); current=list.sort(()=>Math.random()-.5).slice(0,Number.isFinite(requestedCount)&&requestedCount>0?requestedCount:100);
-  currentIndex=0; mode="mock"; submitted=false; answered={};
+  examState.questionIndex=0; mode="mock"; submitted=false; answered={};
   $("result").classList.add("hidden");
   $("submitBtn").disabled=false;
   renderQuestions();
 }
 function renderQuestions(){
   if(!current.length){$("questions").innerHTML='<div class="notice">No questions found / प्रश्न नहीं मिले।</div>';return;}
-  const q=current[currentIndex];
+  const q=current[examState.questionIndex];
   $("questions").innerHTML=`<article class="qcard">
-    <div class="pill">${esc(q.topic)} • ${esc(q.level)} / प्रश्न ${currentIndex+1} of ${current.length}</div>
-    <div class="qtitle">${currentIndex+1}. ${esc(q.en||"Question text unavailable")}</div>
+    <div class="pill">${esc(q.topic)} • ${esc(q.level)} / प्रश्न ${examState.questionIndex+1} of ${current.length}</div>
+    <div class="qtitle">${examState.questionIndex+1}. ${esc(q.en||"Question text unavailable")}</div>
     <div class="hindi"><b>हिंदी / Hindi:</b> ${esc(q.hi||"इस प्रश्न का हिंदी अनुवाद उपलब्ध नहीं है।")}</div>
-    ${q.opts.map((o,j)=>`<label class="opt"><input type="radio" name="currentAnswer" value="${j}" ${answered[currentIndex]===j?"checked":""} ${submitted?"disabled":""} onchange="answered[currentIndex]=${j}"><span><b>${String.fromCharCode(65+j)}.</b> ${esc(o)}</span></label>`).join("")}
+    ${q.opts.map((o,j)=>`<label class="opt"><input type="radio" name="currentAnswer" value="${j}" ${answered[examState.questionIndex]===j?"checked":""} ${submitted?"disabled":""} onchange="answered[examState.questionIndex]=${j}"><span><b>${String.fromCharCode(65+j)}.</b> ${esc(o)}</span></label>`).join("")}
     ${submitted?`<div class="explain"><b>Answer / सही उत्तर:</b> ${String.fromCharCode(65+q.correct)}. ${esc(q.opts[q.correct])}<br><b>Explanation / व्याख्या:</b> ${esc(q.exp||"")}</div>`:""}
   </article>`;
-  $("countLabel").textContent=`Question ${currentIndex+1} of ${current.length} / प्रश्न ${currentIndex+1} / ${current.length}`;
-  $("progress").style.width=((currentIndex+1)/current.length*100)+"%";
-  $("prevQuestion").disabled=currentIndex===0;
-  $("nextQuestion").disabled=currentIndex===current.length-1;
-  $("nextQuestion").textContent=currentIndex===current.length-1?"Last Question / अंतिम प्रश्न":"Next / अगला प्रश्न →";
+  $("countLabel").textContent=`Question ${examState.questionIndex+1} of ${current.length} / प्रश्न ${examState.questionIndex+1} / ${current.length}`;
+  $("progress").style.width=((examState.questionIndex+1)/current.length*100)+"%";
+  $("prevQuestion").disabled=examState.questionIndex===0;
+  $("nextQuestion").disabled=examState.questionIndex===current.length-1;
+  $("nextQuestion").textContent=examState.questionIndex===current.length-1?"Last Question / अंतिम प्रश्न":"Next / अगला प्रश्न →";
 }
 function moveQuestion(delta){
   if(!current.length)return;
-  currentIndex=Math.max(0,Math.min(current.length-1,currentIndex+delta));
+  examState.questionIndex=Math.max(0,Math.min(current.length-1,examState.questionIndex+delta));
   renderQuestions();
   $("practice").scrollIntoView({behavior:"smooth",block:"start"});
 }
