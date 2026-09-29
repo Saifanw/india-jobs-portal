@@ -165,4 +165,17 @@ const sales=[["SO-101","2026-09-01","Amit","North","Keyboard",8,650,5200,5000],[
 $("salesTable").querySelector("tbody").innerHTML=sales.map(r=>"<tr>"+r.map(v=>"<td>"+esc(v)+"</td>").join("")+"</tr>").join("");
 $("salesCsv").onclick=()=>downloadCSV("MIS_Excel_Practice_Sales.csv",[["Order ID","Date","Employee","Region","Product","Units","Rate","Sales","Target"],...sales]);
 $("trackSelect").onchange=()=>{fillTopics();loadQuestions()};$("topicSelect").onchange=loadQuestions;$("levelSelect").onchange=loadQuestions;fillTopics();loadQuestions();
-</script></body></html>
+</script>
+<script>
+/* V12: route the center's exam actions to the subject-specific one-question-at-a-time exam pages. */
+(function(){
+ function wire(){
+   var sel=document.getElementById("trackSelect");
+   function go(){var id=sel&&sel.value;if(id)location.href="exam-"+id+".html"}
+   ["loadBtn","startBtn","practiceBtn"].forEach(function(id){var b=document.getElementById(id);if(b)b.onclick=go});
+ }
+ if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",wire,{once:true});else wire();
+})();
+</script>
+
+</body></html>

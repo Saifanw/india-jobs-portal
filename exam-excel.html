@@ -261,4 +261,49 @@ $("practiceBtn").onclick=()=>{try{loadQuestions();showAnswers()}catch(loadErr){c
 $("topicSelect").onchange=()=>{try{loadQuestions()}catch(e){console.error(e)}};
 $("levelSelect").onchange=()=>{try{loadQuestions()}catch(e){console.error(e)}};
 try { loadQuestions(); } catch(initLoadErr) { console.error(initLoadErr); $("questions").innerHTML='<div class="notice">Load error: '+esc(initLoadErr.message||String(initLoadErr))+'</div>'; }
-</script></body></html>
+</script>
+<script>
+/* V12 resilient exam boot: rebind controls after the DOM is ready and initialize visible question. */
+(function(){
+ function bootExam(){
+   try {
+     if(typeof loadQuestions!=="function" || typeof renderQuestions!=="function") {
+       var q=document.getElementById("questions");
+       if(q) q.innerHTML='<div class="notice">Question engine did not initialize. Please refresh the page / प्रश्न इंजन शुरू नहीं हुआ। पेज रीफ्रेश करें।</div>';
+       return;
+     }
+     var byId=function(id){return document.getElementById(id)};
+     var load=byId("loadBtn"), practice=byId("practiceBtn"), start=byId("startBtn");
+     var prev=byId("prevQuestion"), next=byId("nextQuestion"), submit=byId("submitBtn");
+     if(load) load.onclick=function(){try{loadQuestions()}catch(e){showLoadError(e)}};
+     if(practice) practice.onclick=function(){try{loadQuestions();showAnswers()}catch(e){showLoadError(e)}};
+     if(start) start.onclick=function(){try{loadQuestions();mock()}catch(e){showLoadError(e)}};
+     if(prev) prev.onclick=function(){try{moveQuestion(-1)}catch(e){showLoadError(e)}};
+     if(next) next.onclick=function(){try{moveQuestion(1)}catch(e){showLoadError(e)}};
+     if(submit) submit.onclick=function(){try{
+       if(!current || !current.length){loadQuestions()}
+       if(!current || !current.length){showLoadError(new Error("No questions loaded"));return}
+       var score=0; current.forEach(function(q,i){if(answered[i]===q.correct)score++});
+       var pct=Math.round(score/current.length*100); submitted=true;
+       var result=byId("result"); if(result){result.classList.remove("hidden");result.innerHTML='<h3>Your score / आपका स्कोर: '+score+'/'+current.length+' ('+pct+'%)</h3><p>Review the answer explanations below. / नीचे उत्तर और व्याख्या देखें।</p>'}
+       renderQuestions();
+     }catch(e){showLoadError(e)}};
+     if(byId("trackSelect") && byId("topicSelect") && typeof fillTopics==="function"){
+       fillTopics();
+       byId("trackSelect").value=byId("trackSelect").value||"python";
+     }
+     if(!window.__v12ExamLoaded && (!current || !current.length)){window.__v12ExamLoaded=true;loadQuestions()}
+   } catch(e){showLoadError(e)}
+ }
+ function showLoadError(e){
+   var q=document.getElementById("questions");
+   if(q) q.innerHTML='<div class="notice"><b>Question loading error / प्रश्न लोड करने में त्रुटि:</b> '+String(e&&e.message||e).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})+'</div>';
+   console.error("V12 exam boot:",e);
+ }
+ if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",bootExam,{once:true});
+ else bootExam();
+ window.addEventListener("load",bootExam,{once:true});
+})();
+</script>
+
+</body></html>
