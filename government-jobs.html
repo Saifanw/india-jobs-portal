@@ -1,29 +1,127 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Government Jobs | India Jobs Portal</title><style>
-*{box-sizing:border-box}body{margin:0;font:16px Arial;background:#f4f7fb;color:#172b45}.top{background:#102a43;color:#fff;padding:17px 4%;font-weight:800}main{max-width:1000px;width:92%;margin:25px auto}.card{background:#fff;border:1px solid #dce5ef;border-radius:14px;padding:20px}.job{border:1px solid #dce5ef;border-radius:12px;padding:16px;margin:12px 0;background:#fbfdff}.muted{color:#64748b;font-size:13px}.btn{display:inline-block;background:#1769e8;color:white;padding:10px 14px;border-radius:8px;text-decoration:none;font-weight:800;margin-top:10px}.status{padding:15px;text-align:center;color:#64748b}a{color:#1769e8}
-</style></head><body><div class="top">India Jobs Portal · Government Jobs</div><main><section class="card"><h1>Government Job Vacancies</h1><p class="muted">Approved government vacancies appear here. Application details ko official recruitment website par verify karein.</p><div id="jobs" class="status">Loading approved government jobs…</div><p><a href="index.html">← Home</a> · <a href="jobs.html">Browse all jobs</a></p></section></main>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Government Jobs & Exam Preparation | India Jobs Portal</title>
+<meta name="description" content="Search government jobs across India by state, qualification, department and recruitment status. Explore upcoming exams, syllabus, mock tests and preparation resources.">
+<meta name="keywords" content="government jobs India, latest govt jobs, upcoming government exams, CET 2026, SSC jobs, railway jobs, state government jobs, government exam mock test">
+<style>
+:root{--navy:#102a43;--blue:#1769e8;--blue2:#0b57d0;--bg:#f3f7fc;--ink:#172b45;--muted:#64748b;--line:#dbe5ef;--green:#087f5b;--amber:#a65e00}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);font:15px/1.55 Inter,Segoe UI,Arial,sans-serif;color:var(--ink)}a{color:inherit;text-decoration:none}.wrap{width:min(1200px,94%);margin:auto}
+header{background:linear-gradient(120deg,#102a43,#164e83);color:#fff;padding:15px 0}.head{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}.brand{font-size:20px;font-weight:900}.nav{display:flex;gap:8px;flex-wrap:wrap}.nav a{border:1px solid #ffffff50;border-radius:9px;padding:8px 11px;font-weight:800;font-size:13px}
+.hero{margin:22px 0;background:linear-gradient(130deg,#0f3761,#1769e8);color:#fff;border-radius:20px;padding:clamp(22px,4vw,42px);box-shadow:0 12px 32px #102a4320}.eyebrow{display:inline-block;background:#ffffff20;border:1px solid #ffffff40;padding:5px 11px;border-radius:99px;font-size:12px;font-weight:900}.hero h1{font-size:clamp(28px,4.4vw,44px);line-height:1.12;margin:14px 0 10px}.hero p{max-width:820px;color:#e3efff;margin:0}.hero-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:20px}.btn{display:inline-flex;align-items:center;justify-content:center;background:var(--blue);color:white;padding:11px 15px;border:0;border-radius:10px;font-weight:900;cursor:pointer}.btn.white{background:white;color:var(--navy)}.btn.green{background:var(--green)}.btn.light{background:#eaf1fb;color:var(--navy)}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:18px 0}.stat,.panel{background:#fff;border:1px solid var(--line);border-radius:16px;padding:17px;box-shadow:0 7px 22px #102a4308}.stat b{display:block;font-size:22px;color:var(--navy)}.stat span{font-size:12px;color:var(--muted);font-weight:800}
+.section-head{display:flex;justify-content:space-between;align-items:end;gap:12px;flex-wrap:wrap;margin:28px 0 12px}.section-head h2{margin:0;color:var(--navy);font-size:clamp(21px,3vw,28px)}.section-head p{margin:4px 0 0;color:var(--muted);font-size:13px}
+.filters{display:grid;grid-template-columns:2fr repeat(4,minmax(0,1fr));gap:10px;align-items:end}.field label{display:block;font-size:12px;font-weight:900;color:var(--navy);margin-bottom:5px}.field input,.field select{width:100%;padding:12px;border:1px solid #cbd7e4;border-radius:10px;background:#fff;font:inherit;min-width:0}
+.filter-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:13px}.resultbar{display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap;margin:16px 0;color:var(--muted);font-size:13px;font-weight:800}
+.jobs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}.job{background:#fff;border:1px solid var(--line);border-radius:15px;padding:17px;display:flex;flex-direction:column;gap:7px;box-shadow:0 6px 20px #102a4308}.job h3{margin:0;color:var(--navy);font-size:18px}.job .company{font-weight:900}.meta{display:flex;gap:7px;flex-wrap:wrap}.tag{display:inline-flex;padding:4px 8px;border-radius:99px;background:#edf4ff;color:#1b4f91;font-size:11px;font-weight:900}.job p{margin:0;color:#52657a;font-size:13px}.job .job-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:auto;padding-top:8px}.empty{background:#fff;border:1px dashed #b8c8d9;border-radius:14px;padding:28px;text-align:center;color:var(--muted);grid-column:1/-1}
+.examgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px}.exam{background:#fff;border:1px solid var(--line);border-radius:15px;padding:17px;display:flex;flex-direction:column;gap:8px}.exam h3{margin:0;color:var(--navy);font-size:17px}.exam .date{font-size:19px;font-weight:950;color:#b45309}.exam p{margin:0;color:var(--muted);font-size:13px}.exam .actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:auto;padding-top:7px}
+.resources{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}.resource{background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px}.resource b{display:block;color:var(--navy);margin-bottom:5px}.resource p{font-size:13px;color:var(--muted);margin:0 0 10px}
+.notice{background:#fff8e7;border:1px solid #f1d18a;border-radius:12px;padding:13px;color:#7c4a03;font-size:13px;margin:14px 0}.small{font-size:12px;color:var(--muted)}footer{padding:30px 0;color:var(--muted);font-size:12px;text-align:center}
+@media(max-width:900px){.filters{grid-template-columns:repeat(2,minmax(0,1fr))}.filters .wide{grid-column:1/-1}.examgrid{grid-template-columns:repeat(2,minmax(0,1fr))}.resources{grid-template-columns:repeat(2,minmax(0,1fr))}.stats{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:600px){.jobs,.examgrid,.resources{grid-template-columns:1fr}.filters{grid-template-columns:1fr}.filters .wide{grid-column:auto}.hero{margin:13px 0;border-radius:15px}.hero-actions .btn{flex:1}.nav{width:100%}.nav a{flex:1;text-align:center}.stat,.panel{padding:14px}}
+</style>
+</head>
+<body>
+<header><div class="wrap head"><a class="brand" href="index.html">🇮🇳 India Jobs Portal</a><nav class="nav"><a href="index.html">Home</a><a href="jobs.html">Private Jobs</a><a href="career-prep-center.html">Preparation Center</a><a href="job-seeker-dashboard.html">My Dashboard</a></nav></div></header>
+<main class="wrap">
+<section class="hero">
+<span class="eyebrow">GOVERNMENT JOBS • EXAM CALENDAR • FREE PRACTICE</span>
+<h1>Find Government Jobs Across India</h1>
+<p>State, qualification aur department ke hisaab se vacancies search karein. Upcoming exams, official application links, syllabus guidance aur practice tests ek hi jagah explore karein.</p>
+<div class="hero-actions"><a class="btn white" href="#job-search">🔎 Search Government Jobs</a><a class="btn green" href="#upcoming-exams">📅 Upcoming Exams</a><a class="btn white" href="#prep-resources">📝 Free Preparation</a></div>
+</section>
+<div class="stats">
+<div class="stat"><b id="statJobs">—</b><span>APPROVED GOVERNMENT LISTINGS</span></div>
+<div class="stat"><b>All India</b><span>STATE & CENTRAL RECRUITMENTS</span></div>
+<div class="stat"><b>Free</b><span>EXAM PREPARATION LINKS</span></div>
+<div class="stat"><b>Official</b><span>APPLY VIA SOURCE NOTICE</span></div>
+</div>
+
+<section id="job-search" class="panel">
+<div class="section-head" style="margin-top:0"><div><h2>Search & Filter Vacancies</h2><p>Filter the approved government listings available in the portal database.</p></div></div>
+<div class="filters">
+<div class="field wide"><label>Search job / department / keyword</label><input id="searchInput" placeholder="e.g. CET, Police, Clerk, SSC, Railway"></div>
+<div class="field"><label>State / Location</label><select id="stateFilter"><option value="">All India / All States</option></select></div>
+<div class="field"><label>Qualification</label><select id="qualFilter"><option value="">All Qualifications</option><option>10th Pass</option><option>12th Pass</option><option>Graduate</option><option>Diploma / ITI</option><option>B.Tech / Engineering</option><option>Postgraduate</option></select></div>
+<div class="field"><label>Department / Exam</label><select id="deptFilter"><option value="">All Departments</option><option>SSC</option><option>UPSC</option><option>Railway / RRB</option><option>Banking</option><option>Police / Defence</option><option>Teaching</option><option>State Recruitment</option><option>Other</option></select></div>
+<div class="field"><label>Application status</label><select id="statusFilter"><option value="">All Listings</option><option value="open">Application Open</option><option value="upcoming">Upcoming</option></select></div>
+</div>
+<div class="filter-actions"><button class="btn" id="applyFilters">Apply Filters</button><button class="btn light" id="clearFilters">Clear</button></div>
+<div class="resultbar"><span id="resultCount">Loading approved government vacancies…</span><span class="small">Always verify eligibility and dates in official notification.</span></div>
+<div id="jobs" class="jobs"><div class="empty">Loading government vacancies…</div></div>
+</section>
+
+<section id="upcoming-exams">
+<div class="section-head"><div><h2>Upcoming Government Exams</h2><p>Exam calendar highlights. Confirm every date from the official board notice before relying on it.</p></div></div>
+<div class="notice"><b>Notice:</b> The Rajasthan exam dates below were supplied in a user-shared message and have not been independently confirmed in this page. Verify the official RSSB notification before publishing or making travel/application decisions.</div>
+<div class="examgrid">
+<article class="exam"><span class="tag">Rajasthan · CET</span><h3>RSSB CET 2026 — Senior Secondary (12th Level)</h3><div class="date">1–3 December 2026</div><p>As stated in the supplied schedule message. Check RSSB official notice for confirmation, syllabus and updates.</p><div class="actions"><a class="btn" href="https://rssb.rajasthan.gov.in/" target="_blank" rel="noopener">Official RSSB ↗</a><a class="btn light" href="career-prep-center.html">Preparation Center</a></div></article>
+<article class="exam"><span class="tag">Rajasthan · CET</span><h3>RSSB CET 2026 — Graduation Level</h3><div class="date">16–18 January 2027</div><p>As stated in the supplied schedule message. Confirm the latest schedule and syllabus from RSSB.</p><div class="actions"><a class="btn" href="https://rssb.rajasthan.gov.in/" target="_blank" rel="noopener">Official RSSB ↗</a><a class="btn light" href="career-prep-center.html">Preparation Center</a></div></article>
+<article class="exam"><span class="tag">Rajasthan · Recruitment</span><h3>Lab Attendant Recruitment 2025</h3><div class="date">25 January 2027</div><p>54 posts as stated in the supplied schedule message. Verify exam date and recruitment details in the official notice.</p><div class="actions"><a class="btn" href="https://rssb.rajasthan.gov.in/" target="_blank" rel="noopener">Official RSSB ↗</a><a class="btn light" href="career-prep-center.html">Preparation Center</a></div></article>
+<article class="exam"><span class="tag">Rajasthan · Engineering</span><h3>Junior Engineer Recruitment 2026</h3><div class="date">3–5 February 2027</div><p>874 posts as stated in the supplied schedule message. Confirm discipline-wise eligibility and exam dates officially.</p><div class="actions"><a class="btn" href="https://rssb.rajasthan.gov.in/" target="_blank" rel="noopener">Official RSSB ↗</a><a class="btn light" href="career-prep-center.html">Preparation Center</a></div></article>
+<article class="exam"><span class="tag">Central Government</span><h3>SSC & UPSC Examination Updates</h3><div class="date">Check official calendars</div><p>For current notices, application windows, admit cards and results, use the respective official examination portals.</p><div class="actions"><a class="btn" href="https://ssc.gov.in/" target="_blank" rel="noopener">SSC ↗</a><a class="btn light" href="https://upsc.gov.in/" target="_blank" rel="noopener">UPSC ↗</a></div></article>
+<article class="exam"><span class="tag">Central Government</span><h3>Railway & Banking Exams</h3><div class="date">Check official notices</div><p>Follow official recruitment board and IBPS notifications for application dates, exam schedules and instructions.</p><div class="actions"><a class="btn" href="https://www.rrbcdg.gov.in/" target="_blank" rel="noopener">RRB ↗</a><a class="btn light" href="https://www.ibps.in/" target="_blank" rel="noopener">IBPS ↗</a></div></article>
+</div>
+</section>
+
+<section id="prep-resources">
+<div class="section-head"><div><h2>Exam Preparation & Study Centre</h2><p>Use the existing preparation pages and test system. Exam-specific banks can be added as they are built and verified.</p></div></div>
+<div class="resources">
+<div class="resource"><b>📚 Preparation Center</b><p>Open the current career preparation hub and available subject tracks.</p><a class="btn" href="career-prep-center.html">Open Center</a></div>
+<div class="resource"><b>🧠 Aptitude Practice</b><p>Practice aptitude questions using the existing test page.</p><a class="btn" href="exam-aptitude.html">Practice Aptitude</a></div>
+<div class="resource"><b>📝 General Exam Practice</b><p>Explore existing question practice and learning resources.</p><a class="btn" href="interview-preparation.html">Open Preparation</a></div>
+<div class="resource"><b>📄 Official Syllabus & Notices</b><p>Always refer to the relevant recruitment authority for final syllabus, eligibility and exam instructions.</p><a class="btn" href="https://rssb.rajasthan.gov.in/" target="_blank" rel="noopener">RSSB Official</a></div>
+</div>
+</section>
+<div class="notice"><b>Disclaimer:</b> India Jobs Portal is an independent information and preparation platform, not a government website. Recruitment details, dates, vacancies and eligibility must be verified from the official recruiting authority. Never pay unofficial agents for a government job.</div>
+</main>
+<footer class="wrap">India Jobs Portal · Government Jobs & Exam Preparation · <a href="index.html">Home</a></footer>
 <script type="module">
 import {initializeApp} from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
 import {getFirestore,collection,query,where,getDocs} from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
-const firebaseConfig = {
-  apiKey: "AIzaSyCh20UGNM3-tWZiB6pkNUXcbWK-lwkc-sU",
-  authDomain: "india-jobs-portal.firebaseapp.com",
-  projectId: "india-jobs-portal",
-  storageBucket: "india-jobs-portal.firebasestorage.app",
-  messagingSenderId: "1035209974762",
-  appId: "1:1035209974762:web:622a242e1a291c4b604893",
-  measurementId: "G-XSH6QC1PG4"
-};
-const db=getFirestore(initializeApp(firebaseConfig,"india-government-jobs")),root=document.getElementById("jobs");
-const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const firebaseConfig={apiKey:"AIzaSyCh20UGNM3-tWZiB6pkNUXcbWK-lwkc-sU",authDomain:"india-jobs-portal.firebaseapp.com",projectId:"india-jobs-portal",storageBucket:"india-jobs-portal.firebasestorage.app",messagingSenderId:"1035209974762",appId:"1:1035209974762:web:622a242e1a291c4b604893",measurementId:"G-XSH6QC1PG4"};
+const db=getFirestore(initializeApp(firebaseConfig,"india-government-jobs-v2"));
+const root=document.getElementById("jobs"),count=document.getElementById("resultCount");
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+let allJobs=[];
+const stateOf=j=>String(j.state||j.location||"India").split(",").map(x=>x.trim()).filter(Boolean)[0]||"India";
+const qualOf=j=>String(j.qualification||j.education||"");
+const deptOf=j=>String(j.department||j.exam||j.company||j.category||"");
+function fillStates(){const sel=document.getElementById("stateFilter");const states=[...new Set(allJobs.map(stateOf).filter(x=>x&&x!=="India"))].sort();sel.innerHTML='<option value="">All India / All States</option>'+states.map(s=>`<option value="${esc(s)}">${esc(s)}</option>`).join("");}
+function render(){
+ const term=document.getElementById("searchInput").value.trim().toLowerCase(),state=document.getElementById("stateFilter").value.toLowerCase(),qual=document.getElementById("qualFilter").value.toLowerCase(),dept=document.getElementById("deptFilter").value.toLowerCase(),status=document.getElementById("statusFilter").value;
+ const filtered=allJobs.filter(j=>{
+  const hay=[j.title,j.company,j.location,j.description,j.notes,j.department,j.exam,j.category].join(" ").toLowerCase();
+  const d=deptOf(j).toLowerCase(),q=qualOf(j).toLowerCase(),deadline=String(j.deadline||j.lastDate||"");
+  const stateMatch=!state||stateOf(j).toLowerCase().includes(state);
+  const qualMatch=!qual||q.includes(qual)||(qual==="b.tech / engineering"&&/b\.?tech|engineer|engineering/i.test(q));
+  let deptMatch=true;
+  if(dept==="railway / rrb") deptMatch=/railway|rrb/i.test(hay);
+  else if(dept==="police / defence") deptMatch=/police|defence|defense|army|navy|air force/i.test(hay);
+  else if(dept==="state recruitment") deptMatch=/state|rssb|rpsc|uppsc|upsssc|state board/i.test(hay);
+  else if(dept==="other") deptMatch=!/ssc|upsc|railway|rrb|bank|ibps|police|defence|defense|teaching|teacher|rssb|rpsc/i.test(hay);
+  else if(dept) deptMatch=hay.includes(dept)||d.includes(dept);
+  let statusMatch=true;if(status==="open")statusMatch=!!deadline&&(!Number.isNaN(Date.parse(deadline))?Date.parse(deadline)>=Date.now():true);if(status==="upcoming")statusMatch=/upcoming|coming soon|not started/i.test(String(j.recruitmentStatus||j.statusLabel||""));
+  return (!term||hay.includes(term))&&stateMatch&&qualMatch&&deptMatch&&statusMatch;
+ });
+ document.getElementById("statJobs").textContent=allJobs.length;
+ count.textContent=`Showing ${filtered.length} of ${allJobs.length} approved government listings`;
+ if(!filtered.length){root.innerHTML='<div class="empty"><b>No matching government jobs found.</b><br>Try clearing one or more filters. New approved government vacancies appear here when added to the admin database.</div>';return;}
+ root.innerHTML=filtered.map(j=>{
+  const apply=String(j.apply||j.applyLink||j.officialLink||"");const valid=/^https?:\/\//i.test(apply);
+  const loc=String(j.location||"India"),deadline=String(j.deadline||j.lastDate||"Check official notice");
+  return `<article class="job"><div class="meta"><span class="tag">${esc(j.category||j.jobCategory||"Government")}</span><span class="tag">${esc(j.qualification||"Eligibility: see notice")}</span></div><h3>${esc(j.title||"Government Vacancy")}</h3><div class="company">${esc(j.company||j.department||"Recruitment Authority")}</div><p>📍 ${esc(loc)} · 💰 ${esc(j.salary||"As per notification")}</p><p>📅 Last date: ${esc(deadline)}</p><p>${esc(j.description||"Please check the official recruitment notification for details.")}</p><div class="job-actions">${valid?`<a class="btn" href="${esc(apply)}" target="_blank" rel="noopener noreferrer">Official Apply / Notice ↗</a>`:""}<a class="btn light" href="career-prep-center.html">Preparation Center</a></div></article>`;
+ }).join("");
+}
+document.getElementById("applyFilters").addEventListener("click",render);
+document.getElementById("searchInput").addEventListener("input",render);
+["stateFilter","qualFilter","deptFilter","statusFilter"].forEach(id=>document.getElementById(id).addEventListener("change",render));
+document.getElementById("clearFilters").addEventListener("click",()=>{["searchInput","stateFilter","qualFilter","deptFilter","statusFilter"].forEach(id=>document.getElementById(id).value="");render();});
 try{
  const snap=await getDocs(query(collection(db,"jobs"),where("status","==","approved")));
- const jobs=snap.docs.map(d=>({id:d.id,...d.data()})).filter(j=>[j.category,j.jobCategory,j.type,j.jobType].some(x=>/government|govt/i.test(String(x||""))));
- if(!jobs.length){root.innerHTML='<div class="status">Abhi koi approved government vacancy available nahi hai.</div>';}
- else{root.className="";root.innerHTML=jobs.map(j=>{
- const u=String(j.apply||j.applyLink||"");const link=/^https?:\\/\\//i.test(u)?`<a class="btn" href="${esc(u)}" target="_blank" rel="noopener noreferrer">Official Apply Link ↗</a>`:"";
- return `<article class="job"><h3>${esc(j.title||"Government Vacancy")}</h3><b>${esc(j.company||"Recruitment Authority")}</b><p class="muted">${esc(j.location||"India")} · ${esc(j.salary||"Salary as per notification")} · Last date: ${esc(j.deadline||j.lastDate||"Check official notice")}</p><p>${esc(j.description||"Please check official recruitment notice.")}</p>${link}</article>`;
- }).join("");}
-}catch(e){console.error(e);root.textContent="Government jobs load nahi ho paaye. Firebase Rules/connection check karein.";root.className="status";}
-</script></body></html>
+ allJobs=snap.docs.map(d=>({id:d.id,...d.data()})).filter(j=>[j.category,j.jobCategory,j.type,j.jobType].some(x=>/government|govt/i.test(String(x||""))));
+ fillStates();render();
+}catch(e){console.error(e);count.textContent="Could not load live vacancies. Please check connection or Firebase read rules.";root.innerHTML='<div class="empty">Government job listings could not load right now. Please refresh or try again later.</div>';}
+</script>
+</body></html>
