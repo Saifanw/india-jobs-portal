@@ -399,7 +399,7 @@ nav .menu a[href="#donate"]:hover{background:#f1f5f9!important;color:#1769e8!imp
 </style>
 
 </head>
-<body><div style="background:#eaf1fb;padding:10px 4%;text-align:center;font-weight:800"><a href="career-prep-center.html" style="color:#1769e8">New: Career Prep Center — MIS • Excel • Python • SQL • Power BI • More / करियर तैयारी केंद्र खोलें →</a></div>
+<body>
 
 
 <!-- LIVE NOTIFICATION POPUP -->
@@ -414,7 +414,7 @@ nav .menu a[href="#donate"]:hover{background:#f1f5f9!important;color:#1769e8!imp
 <nav><div class="wrap navin">
 <a href="#home" class="brand"><div class="logo">IJ</div><div>India Jobs Portal<small>Private Jobs • Government Jobs • Fresher Jobs • Career Support</small></div></a>
 <button class="mobileMenuToggle" id="mobileMenuToggle" type="button" aria-expanded="false" aria-controls="mainMenu">☰ Menu</button><div class="menu" id="mainMenu">
-<a href="jobs.html">Jobs</a><a href="government-jobs.html">Govt Jobs</a><a href="post-a-job.html">Post a Job</a><a href="job-seeker.html">👤 Job Seeker</a><button type="button" class="employerChatNavBtn" id="openEmployerChat">🏢 HR / Company Chat</button><a href="#donate">💜 Donate</a><a class="btn primary" href="inquiry.html">Inquiry</a><a class="admin-top-link" href="admin-dashboard.html">🔐 Admin</a>
+<a href="career-prep-center.html" class="prep-center-nav" style="background:#eaf2ff;border:1px solid #c9dcff;border-radius:10px;padding:9px 12px;color:#1558b0;font-weight:800;white-space:nowrap">📝 Test &amp; Preparation</a><button type="button" class="employerChatNavBtn" id="openEmployerChat">🏢 HR / Company Chat</button><a href="#donate">💜 Donate</a><a class="btn primary" href="inquiry.html">Inquiry</a><a class="admin-top-link" href="admin-dashboard.html">🔐 Admin</a>
 
 <a href="resume-builder.html" class="resume-nav-link">📄 Free Resume Builder</a>
 </div></div></nav>
@@ -443,7 +443,6 @@ nav .menu a[href="#donate"]:hover{background:#f1f5f9!important;color:#1769e8!imp
       <div class="heroButtons">
         <a class="heroBtn primaryHero" href="jobs.html">🔎 Latest Jobs</a>
         <a class="heroBtn secondaryHero" href="job-seeker.html">👤 Job Seeker</a>
-        <a class="heroBtn secondaryHero" href="mis-practice-test.html">📝 MIS Practice Test</a> <a href="mis-advanced-preparation.html">Advanced MIS Preparation</a>
       </div>
       <div class="heroMiniTags">
         <span>India Jobs</span><span>Private Jobs</span><span>Govt Jobs</span><span>Fresher Jobs</span><span>MIS</span><span>Data Analyst</span>
@@ -478,6 +477,9 @@ nav .menu a[href="#donate"]:hover{background:#f1f5f9!important;color:#1769e8!imp
       <a class="quickCard pro green" href="job-seeker.html">
         <span>👤</span><div><strong>Find a Job</strong><small>Job chahiye? Yahan se milegi</small></div><b>→</b>
       </a>
+      <a class="quickCard pro blue" href="career-prep-center.html">
+        <span>📝</span><div><strong>Test &amp; Preparation</strong><small>MIS • Excel • Python • SQL • Interview</small></div><b>→</b>
+      </a>
       <a class="quickCard pro orange" href="#contact">
         <span>💬</span><div><strong>Inquiry Karein</strong><small>Job & Career Support</small></div><b>→</b>
       </a>
@@ -492,7 +494,6 @@ nav .menu a[href="#donate"]:hover{background:#f1f5f9!important;color:#1769e8!imp
   </div>
   <div class="popularJobLinks" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:10px">
     <a href="jobs.html?search=MIS" class="popularJobBtn">📊 MIS Jobs</a>
-    <a href="mis-practice-test.html" class="popularJobBtn">📝 MIS Preparation Test</a>
     <a href="jobs.html?search=Data%20Analyst" class="popularJobBtn">📈 Data Analyst</a>
     <a href="jobs.html?search=Fresher" class="popularJobBtn">🎓 Fresher Jobs</a>
     <a href="jobs.html?search=Work%20from%20Home" class="popularJobBtn">🏠 Work From Home</a>
@@ -1016,14 +1017,34 @@ const visitorDb=getFirestore(visitorApp);
 
 
 <!-- Sticky candidate/employer quick links -->
-<aside class="job-float-actions" aria-label="Quick job actions">
-<a class="f-jobs" href="jobs.html" title="Browse latest jobs">🔎 <span>Latest Jobs</span></a>
-<a class="f-seeker" href="job-seeker.html" title="Need a job?">👤 <span>Need a Job?</span></a>
-<a class="f-resume" href="resume-builder.html" title="Build a free resume">📄 <span>Resume Builder</span></a>
-<a class="f-govt" href="government-jobs.html" title="Government vacancies">🏛️ <span>Govt Jobs</span></a>
-<a class="f-post" href="post-a-job.html" title="Employers: post a vacancy">➕ <span>Post a Job</span></a>
-</aside>
 
-<a href="job-seeker-dashboard.html" style="position:fixed;right:18px;bottom:82px;z-index:9999;background:#1769e8;color:#fff;padding:12px 17px;border-radius:30px;font-weight:800;box-shadow:0 8px 24px #102a4340">My Dashboard</a>
+
+
+
+<!-- Right-side quick actions: compact persistent shortcuts -->
+<div class="ij-right-quick-actions" aria-label="Quick job actions">
+  <a class="ij-float-btn ij-blue" href="jobs.html">🔎 <span>Latest Jobs</span></a>
+  <a class="ij-float-btn ij-green" href="job-seeker.html">👤 <span>Need a Job?</span></a>
+  <a class="ij-float-btn ij-blue" href="resume-builder.html">📄 <span>Resume Builder</span></a>
+  <a class="ij-float-btn ij-amber" href="government-jobs.html">🏛️ <span>Govt Jobs</span></a>
+  <a class="ij-float-btn ij-red" href="post-a-job.html">＋ <span>Post a Job</span></a>
+</div>
+<a class="ij-dashboard-float" href="job-seeker-dashboard.html">My Dashboard</a>
+<style>
+/* Compact the vacancies card so it occupies a smaller right-side column */
+@media (min-width: 900px) {
+  .heroGrid { grid-template-columns:minmax(0,1.55fr) minmax(280px,.65fr)!important; gap:22px!important; }
+  .latestHeroJobs { max-width:365px; width:100%; justify-self:end; padding:14px!important; }
+  .heroLatestJobsList { max-height:270px; overflow:auto; }
+}
+.ij-right-quick-actions{position:fixed;right:14px;top:50%;transform:translateY(-50%);z-index:1000;display:flex;flex-direction:column;gap:8px;width:138px}
+.ij-float-btn{display:flex;align-items:center;justify-content:flex-start;gap:9px;min-height:40px;padding:9px 12px;border-radius:25px;color:#fff!important;text-decoration:none;font-size:13px;font-weight:850;box-shadow:0 5px 18px rgba(15,35,60,.22);border:1px solid rgba(255,255,255,.35);white-space:nowrap}
+.ij-float-btn span{overflow:hidden;text-overflow:ellipsis}
+.ij-blue{background:#1769e8}.ij-green{background:#07856b}.ij-amber{background:#a96200}.ij-red{background:#b91f3a}
+.ij-dashboard-float{position:fixed;right:18px;bottom:22px;z-index:1000;display:inline-flex;align-items:center;justify-content:center;padding:14px 22px;border-radius:28px;background:#1769e8;color:#fff!important;text-decoration:none;font-weight:900;box-shadow:0 7px 22px rgba(15,35,60,.23)}
+@media(max-width:900px){.ij-right-quick-actions{right:7px;width:118px;gap:6px}.ij-float-btn{font-size:11px;padding:8px 9px;min-height:36px}.ij-dashboard-float{right:10px;bottom:12px;padding:11px 16px;font-size:13px}.latestHeroJobs{max-width:100%}}
+@media(max-width:560px){.ij-right-quick-actions{top:auto;bottom:78px;transform:none;width:auto;right:8px;gap:5px}.ij-float-btn{min-height:32px;padding:7px 10px;font-size:11px}.ij-float-btn span{display:inline}.ij-dashboard-float{bottom:10px}.heroLatestJobsList{max-height:none}}
+</style>
+
 </body>
 </html>

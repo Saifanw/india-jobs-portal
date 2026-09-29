@@ -72,6 +72,11 @@ async function load() {
         ${j.deadline || j.lastDate ? `<span>📅 Deadline: ${esc(j.deadline || j.lastDate)}</span>` : ""}
       </div>
       ${applyUrl ? `<a class="btn" href="${esc(applyUrl)}" target="_blank" rel="noopener noreferrer">Apply Now ↗</a>` : `<p><b>Application link is not available. Please check the job notice.</b></p>`}
+      <div class="section" style="margin-top:16px;padding:16px;border:1px solid #cfe0ff;background:#f3f7ff;border-radius:14px">
+        <h3 style="margin:0 0 6px;color:#12345a">Prepare for this job / इस जॉब की तैयारी करें</h3>
+        <p style="margin:0 0 10px">Practice relevant Excel, MIS, SQL, Python, communication, aptitude and interview questions before applying. / Apply करने से पहले संबंधित टेस्ट और इंटरव्यू की तैयारी करें।</p>
+        <a class="btn" href="career-prep-center.html">📝 Test &amp; Preparation खोलें →</a>
+      </div>
       <div class="section"><h2>Job Description</h2><p>${esc(j.description || "Details not provided.").replace(/\n/g,"<br>")}</p></div>
       ${j.notes ? `<div class="section"><h2>Additional Information</h2><p>${esc(j.notes).replace(/\n/g,"<br>")}</p></div>` : ""}
       <p class="note">Please verify vacancy details and the application route before applying.</p>
