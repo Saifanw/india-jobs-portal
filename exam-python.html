@@ -57,8 +57,7 @@ const $=id=>document.getElementById(id);
 function esc(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
 let bank={},current=[],mode="practice",activeTrack="mis",answered={},examState={questionIndex:0},submitted=false;
 function add(track,topic,en,hi,opts,correct,exp,level="Intermediate"){
-  // Normalize options into an array so one malformed question cannot crash
-  // the entire question bank.
+  // Normalize options, but never let one malformed record stop the full bank.
   let optionList = opts;
 
   if (typeof optionList === "string") {
@@ -75,18 +74,19 @@ function add(track,topic,en,hi,opts,correct,exp,level="Intermediate"){
   }
 
   if (!Array.isArray(optionList) || optionList.length === 0) {
-    console.error("Invalid question options; question skipped:", {
-      track, topic, opts
-    });
+    console.error("Skipping question with unusable options:", {track, topic, opts});
     return;
   }
 
-  const correctIndex = Number(correct);
+  // In this question bank the authored correct answer is normally index 0.
+  // If a record contains a bad index, retain the question and use option 0
+  // rather than leaving the whole subject with an empty seed bank.
+  let correctIndex = Number(correct);
   if (!Number.isInteger(correctIndex) || correctIndex < 0 || correctIndex >= optionList.length) {
-    console.error("Invalid correct-answer index; question skipped:", {
+    console.warn("Invalid correct index; defaulting to first option:", {
       track, topic, correct, optionCount: optionList.length
     });
-    return;
+    correctIndex = 0;
   }
 
   const paired = optionList.map((text,index)=>({
@@ -102,11 +102,15 @@ function add(track,topic,en,hi,opts,correct,exp,level="Intermediate"){
   const shuffledOpts = paired.map(x=>x.text);
   const shuffledCorrect = paired.findIndex(x=>x.isCorrect);
 
+  if (!bank[track]) bank[track] = [];
   bank[track].push({
-    topic, en, hi,
+    topic: String(topic || "General"),
+    en: String(en || "Question text unavailable"),
+    hi: String(hi || "हिंदी प्रश्न उपलब्ध नहीं है"),
     opts: shuffledOpts,
-    correct: shuffledCorrect,
-    exp, level
+    correct: shuffledCorrect >= 0 ? shuffledCorrect : 0,
+    exp: String(exp || ""),
+    level: String(level || "Intermediate")
   });
 }
 TRACKS.forEach(t=>bank[t.id]=[]);
@@ -191,7 +195,14 @@ excel_core.forEach(q=>add("excel",...q));
 python_concepts.forEach(q=>add("python",...q));
 sql_concepts.forEach(q=>add("sql",...q));
 const contexts=[["monthly sales report","मासिक बिक्री रिपोर्ट"],["branch performance sheet","ब्रांच प्रदर्शन शीट"],["inventory register","इन्वेंटरी रजिस्टर"],["customer support log","कस्टमर सपोर्ट लॉग"],["employee attendance report","कर्मचारी उपस्थिति रिपोर्ट"],["production shift report","प्रोडक्शन शिफ्ट रिपोर्ट"],["quality inspection file","क्वालिटी निरीक्षण फ़ाइल"],["finance reconciliation","वित्तीय मिलान"],["recruitment tracker","भर्ती ट्रैकर"],["delivery SLA report","डिलीवरी SLA रिपोर्ट"],["e-commerce orders","ई-कॉमर्स ऑर्डर"],["training assessment","ट्रेनिंग असेसमेंट"],["regional KPI dashboard","क्षेत्रीय KPI डैशबोर्ड"],["daily MIS workbook","डेली MIS वर्कबुक"],["customer feedback dataset","ग्राहक प्रतिक्रिया डेटा"],["machine downtime log","मशीन डाउनटाइम लॉग"],["purchase register","खरीद रजिस्टर"],["monthly billing file","मासिक बिलिंग फ़ाइल"],["marketing campaign data","मार्केटिंग अभियान डेटा"],["job applicant database","जॉब आवेदक डेटाबेस"]];
-function expandBank(track,target){const seeds=bank[track].slice();let n=0;for(let i=0;i<seeds.length&&n<target;i++){const q=seeds[i];for(let j=0;j<contexts.length&&n<target;j++){const c=contexts[(j+i*3)%contexts.length];add(track,q.topic,`[${c[0]}] ${q.en}`,`[${c[1]}] ${q.hi}`,q.opts.slice(),q.correct,`${q.exp} Workplace context / कार्यस्थल संदर्भ: ${c[1]}।`,j<6?"Beginner":j<14?"Intermediate":"Advanced");n++}}while(bank[track].length<target){const q=seeds[bank[track].length%seeds.length],c=contexts[bank[track].length%contexts.length];add(track,q.topic,`Applied practice: ${q.en} (${c[0]})`,`व्यावहारिक अभ्यास: ${q.hi} (${c[1]})`,q.opts.slice(),q.correct,q.exp,q.level)}}
+function expandBank(track,target){
+  const seeds=(bank[track]||[]).slice();
+  if(!seeds.length){
+    console.error("Cannot expand empty question bank:",track);
+    return;
+  }
+  let n=0;
+  for(let i=0;i<seeds.length&&n<target;i++){const q=seeds[i];for(let j=0;j<contexts.length&&n<target;j++){const c=contexts[(j+i*3)%contexts.length];add(track,q.topic,`[${c[0]}] ${q.en}`,`[${c[1]}] ${q.hi}`,q.opts.slice(),q.correct,`${q.exp} Workplace context / कार्यस्थल संदर्भ: ${c[1]}।`,j<6?"Beginner":j<14?"Intermediate":"Advanced");n++}}while(bank[track].length<target){const q=seeds[bank[track].length%seeds.length],c=contexts[bank[track].length%contexts.length];add(track,q.topic,`Applied practice: ${q.en} (${c[0]})`,`व्यावहारिक अभ्यास: ${q.hi} (${c[1]})`,q.opts.slice(),q.correct,q.exp,q.level)}}
 expandBank("python",500);expandBank("sql",500);expandBank("mis",500);expandBank("excel",500);
 const extras={
 powerbi:[["Power Query","What does Power Query primarily do?","Power Query का मुख्य काम क्या है?",["Connect, clean and transform data repeatably","Only format chart colors","Write emails","Create passwords"],0,"Power Query repeatable data preparation steps बनाता है।","Beginner"],["Data Modeling","Why create a date table in Power BI?","Power BI में Date Table क्यों बनाते हैं?",["Support time intelligence and date slicing","Change font","Replace fact tables","Hide dates"],0,"Date table consistent time calculations में मदद करती है।","Intermediate"],["DAX","Which DAX function modifies filter context?","कौन-सा DAX function filter context बदलता है?",["CALCULATE","FORMAT only","COUNTROWS only","CONCATENATE"],0,"CALCULATE filter context बदलता है।","Advanced"]],
