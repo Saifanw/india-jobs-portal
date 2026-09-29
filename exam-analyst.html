@@ -56,7 +56,14 @@ const TRACKS=[
 const $=id=>document.getElementById(id);
 function esc(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
 let bank={},current=[],mode="practice",activeTrack="mis",answered={};
-function add(track,topic,en,hi,opts,correct,exp,level="Intermediate"){bank[track].push({topic,en,hi,opts,correct,exp,level})}
+function add(track,topic,en,hi,opts,correct,exp,level="Intermediate"){
+  // Shuffle the answer options and keep the correct answer index aligned.
+  const paired=opts.map((text,index)=>({text,isCorrect:index===correct}));
+  for(let i=paired.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[paired[i],paired[j]]=[paired[j],paired[i]]}
+  const shuffledOpts=paired.map(x=>x.text);
+  const shuffledCorrect=paired.findIndex(x=>x.isCorrect);
+  bank[track].push({topic,en,hi,opts:shuffledOpts,correct:shuffledCorrect,exp,level});
+}
 TRACKS.forEach(t=>bank[t.id]=[]);
 // Carefully authored bilingual MIS and Excel foundations
 const baseMIS=[
