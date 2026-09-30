@@ -1,0 +1,39 @@
+name: Generate SEO Job Pages
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 * * * *"
+
+permissions:
+  contents: write
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - run: pip install firebase-admin google-auth requests
+
+      - name: Generate SEO pages and sitemap
+        env:
+          GOOGLE_SERVICE_ACCOUNT_JSON: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_JSON }}
+        run: python .github/scripts/generate_seo_jobs.py
+
+      - name: Notify Google Indexing API
+        env:
+          GOOGLE_SERVICE_ACCOUNT_JSON: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_JSON }}
+        run: python .github/scripts/notify_google_indexing.py
+
+      - name: Commit generated files
+        run: |
+          git config user.name "india-jobs-seo-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add jobs sitemap.xml sitemaps .seo-job-manifest.json .seo-changes.json
+          git diff --cached --quiet && echo "No changes." || (git commit -m "chore: update SEO job pages and sitemap" && git push)
